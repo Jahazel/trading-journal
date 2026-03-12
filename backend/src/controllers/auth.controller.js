@@ -54,4 +54,40 @@ async function signUp(req, res) {
   }
 }
 
-module.exports = { signUp };
+async function login(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please enter all fields." });
+    }
+
+    const existingUser = await User.findOne({
+      email: email,
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({ message: "User not found." });
+    }
+
+    const isMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Password is incorrect." });
+    }
+
+    const token = jsonwebtoken.sign(
+      { id: existingUser.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    return res.status(200).json({
+      token: token,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { signUp, login };
