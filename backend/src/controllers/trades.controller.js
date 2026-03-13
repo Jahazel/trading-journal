@@ -1,4 +1,5 @@
 const Trade = require("../models/trade.model");
+const POINT_VALUES = require("../config/constants");
 
 async function getAllTrades(req, res) {
   try {
@@ -35,4 +36,55 @@ async function getTrade(req, res) {
   }
 }
 
-module.exports = { getAllTrades, getTrade };
+function getPnl(contract, contracts, exitPrice, entryPrice, direction) {
+  if (direction === "Long") {
+    return (exitPrice - entryPrice) * contracts * POINT_VALUES[contract];
+  } else {
+    return (entryPrice - exitPrice) * contracts * POINT_VALUES[contract];
+  }
+}
+
+async function createTrade(req, res) {
+  try {
+    const {
+      contract,
+      direction,
+      contracts,
+      entryPrice,
+      exitPrice,
+      stopLoss,
+      target,
+      entryTime,
+      exitTime,
+      setup,
+      notes,
+    } = req.body;
+    const userId = req.userId;
+
+    const newTradeEntry = new Trade({
+      userId: userId,
+      contract: contract.toUpperCase(),
+      direction: direction,
+      contracts: contracts,
+      entryPrice: entryPrice,
+      exitPrice: exitPrice,
+      stopLoss: stopLoss,
+      target: target,
+      entryTime: entryTime,
+      exitTime: exitTime,
+      pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
+      setup: setup,
+      notes: notes,
+    });
+
+    const savedTradeEntry = await newTradeEntry.save();
+
+    return res.status(201).json({
+      savedTradeEntry,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { getAllTrades, getTrade, createTrade };
