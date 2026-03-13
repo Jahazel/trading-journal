@@ -25,7 +25,9 @@ async function getTrade(req, res) {
     }
 
     if (tradeEntry.userId.toString() !== req.userId) {
-      return res.status(401).json({ message: "Trade entry not found." });
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to view this trade." });
     }
 
     return res.status(200).json({
@@ -110,7 +112,9 @@ async function updateTrade(req, res) {
     }
 
     if (tradeEntry.userId.toString() !== req.userId) {
-      return res.status(401).json({ message: "Trade entry not found." });
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to update this trade." });
     }
 
     tradeEntry.contract = contract.toUpperCase();
@@ -142,4 +146,35 @@ async function updateTrade(req, res) {
   }
 }
 
-module.exports = { getAllTrades, getTrade, createTrade, updateTrade };
+async function deleteTrade(req, res) {
+  try {
+    const tradeId = req.params.id;
+    const tradeEntry = await Trade.findById(tradeId);
+
+    if (!tradeEntry) {
+      return res.status(404).json({ message: "Trade entry not found." });
+    }
+
+    if (tradeEntry.userId.toString() !== req.userId) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to delete this trade." });
+    }
+
+    await Trade.findByIdAndDelete(tradeId);
+
+    return res
+      .status(200)
+      .json({ message: "Trade entry was successfully deleted." });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = {
+  getAllTrades,
+  getTrade,
+  createTrade,
+  updateTrade,
+  deleteTrade,
+};
