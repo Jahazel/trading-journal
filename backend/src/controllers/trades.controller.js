@@ -24,7 +24,7 @@ async function getTrade(req, res) {
       return res.status(404).json({ message: "Trade entry not found." });
     }
 
-    if (tradeEntry.userId !== req.userId) {
+    if (tradeEntry.userId.toString() !== req.userId) {
       return res.status(401).json({ message: "Trade entry not found." });
     }
 
@@ -87,4 +87,59 @@ async function createTrade(req, res) {
   }
 }
 
-module.exports = { getAllTrades, getTrade, createTrade };
+async function updateTrade(req, res) {
+  try {
+    const {
+      contract,
+      direction,
+      contracts,
+      entryPrice,
+      exitPrice,
+      stopLoss,
+      target,
+      entryTime,
+      exitTime,
+      setup,
+      notes,
+    } = req.body;
+    const tradeId = req.params.id;
+    const tradeEntry = await Trade.findById(tradeId);
+
+    if (!tradeEntry) {
+      return res.status(404).json({ message: "Trade entry not found." });
+    }
+
+    if (tradeEntry.userId.toString() !== req.userId) {
+      return res.status(401).json({ message: "Trade entry not found." });
+    }
+
+    tradeEntry.contract = contract.toUpperCase();
+    tradeEntry.direction = direction;
+    tradeEntry.contracts = contracts;
+    tradeEntry.entryPrice = entryPrice;
+    tradeEntry.exitPrice = exitPrice;
+    tradeEntry.stopLoss = stopLoss;
+    tradeEntry.target = target;
+    tradeEntry.entryTime = entryTime;
+    tradeEntry.exitTime = exitTime;
+    tradeEntry.pnl = getPnl(
+      contract,
+      contracts,
+      exitPrice,
+      entryPrice,
+      direction,
+    );
+    tradeEntry.setup = setup;
+    tradeEntry.notes = notes;
+
+    const savedTradeEntry = await tradeEntry.save();
+
+    return res.status(200).json({
+      savedTradeEntry,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+module.exports = { getAllTrades, getTrade, createTrade, updateTrade };

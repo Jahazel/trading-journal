@@ -1,7 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middleware/auth.middleware");
 const tradesController = require("../controllers/trades.controller");
-const { getAllTrades, getTrade, createTrade } = tradesController;
+const { getAllTrades, getTrade, createTrade, updateTrade } = tradesController;
 
 const router = express.Router();
 
