@@ -29,8 +29,7 @@ async function signUp(req, res) {
       }
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       username: username,
@@ -67,13 +66,13 @@ async function login(req, res) {
     });
 
     if (!existingUser) {
-      return res.status(400).json({ message: "User not found." });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Password is incorrect." });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const token = jsonwebtoken.sign(
