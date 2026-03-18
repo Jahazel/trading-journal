@@ -18,7 +18,7 @@ const LoginPage = () => {
       const response = await api.post("/api/auth/login", credentials);
 
       localStorage.setItem("token", response.data.token);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       setError(error.response.data.message);
     }
