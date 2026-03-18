@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { useState } from "react";
 
 const LoginPage = () => {
   const {
@@ -9,13 +10,17 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm({ mode: "onTouched" });
 
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
   const onSubmit = async (credentials) => {
     try {
       const response = await api.post("/api/auth/login", credentials);
 
       localStorage.setItem("token", response.data.token);
+      navigate("/");
     } catch (error) {
-      console.error(error.response.data);
+      setError(error.response.data.message);
     }
   };
 
@@ -59,6 +64,7 @@ const LoginPage = () => {
               />
               {errors.password && <span>{errors.password.message}</span>}
             </div>
+            {error && <p className="error-msg">{error}</p>}
             <button type="submit" className="auth-btn">
               Sign In
             </button>
