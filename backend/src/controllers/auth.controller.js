@@ -47,6 +47,7 @@ async function signUp(req, res) {
 
     return res.status(201).json({
       token: token,
+      username: savedUser.username,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -83,6 +84,7 @@ async function login(req, res) {
 
     return res.status(200).json({
       token: token,
+      username: existingUser.username,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

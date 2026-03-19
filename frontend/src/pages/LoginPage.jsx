@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage = () => {
   const {
@@ -12,12 +13,14 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const { setAuth } = useAuth();
 
   const onSubmit = async (credentials) => {
     try {
       const response = await api.post("/api/auth/login", credentials);
 
-      localStorage.setItem("token", response.data.token);
+      setAuth({ token: response.data.token, username: response.data.username });
+
       navigate("/dashboard");
     } catch (error) {
       setError(error.response.data.message);
