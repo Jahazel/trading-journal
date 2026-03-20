@@ -11,17 +11,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="nav-bar">
-      <div className="nav-left">
-        <span className="nav-logo">Trading Journal</span>
-      </div>
-      <div className="nav-right">
-        <span className="nav-username">Welcome back, {user}</span>
-        <button className="logout-btn" onClick={handleLogout}>
-          Sign Out
-        </button>
-      </div>
-    </nav>
+    <>
+      {user ? (
+        <nav className="nav-bar">
+          <div className="nav-left">
+            <span className="nav-logo">Trading Journal</span>
+          </div>
+          <div className="nav-right">
+            <span className="nav-username">Welcome back, {user}</span>
+            <button className="logout-btn" onClick={handleLogout}>
+              Sign Out
+            </button>
+          </div>
+        </nav>
+      ) : (
+        <nav className="nav-bar">
+          <div className="nav-left">
+            <span className="nav-logo">Trading Journal</span>
+          </div>
+        </nav>
+      )}
+    </>
   );
 };
 

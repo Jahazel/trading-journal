@@ -6,11 +6,13 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import RootRedirect from "./components/RootRedirect";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
       <AuthProvider>
+        <Navbar />
         <Routes>
           <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<LoginPage />} />
