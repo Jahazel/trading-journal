@@ -160,3 +160,8 @@ body {
   background-color: #4f46e5;
   color: white;
 }
+
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 70px);
+}
