@@ -166,7 +166,6 @@ body {
   height: calc(100vh - 70px);
 }
 
-/* Sidebar */
 .sidebar-container {
   width: 280px;
   min-width: 280px;
@@ -231,7 +230,6 @@ body {
   color: #666;
 }
 
-/* Trade Card */
 .trade-card {
   display: flex;
   align-items: center;
@@ -276,4 +274,8 @@ body {
 
 .pnl.loss {
   color: #c62828;
+}
+
+.sidebar-container a {
+  text-decoration: none;
 }

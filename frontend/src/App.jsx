@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import RootRedirect from "./components/RootRedirect";
 import Navbar from "./components/Navbar";
+import TradeDetail from "./components/TradeDetail";
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route path="trades/:id" element={<TradeDetail />} />
+            </Route>
           </Route>
         </Routes>
       </AuthProvider>

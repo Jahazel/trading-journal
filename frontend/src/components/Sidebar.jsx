@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEntries } from "../api/api";
 import TradeCard from "./TradeCard";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const {
@@ -29,15 +30,17 @@ const Sidebar = () => {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <h2>Journal Entries</h2>
+        <h2>Entries</h2>
         <button className="new-entry-btn">+</button>
       </div>
       <div className="entries-container">
-        {entries.trades.length === 0 ? (
+        {entries?.trades?.length === 0 ? (
           <p className="no-entries">No entries yet.</p>
         ) : (
           entries.trades.map(({ direction, pnl, _id }) => (
-            <TradeCard key={_id} direction={direction} pnl={pnl} _id={_id} />
+            <Link to={`/dashboard/trades/${_id}`}>
+              <TradeCard key={_id} direction={direction} pnl={pnl} _id={_id} />
+            </Link>
           ))
         )}
       </div>

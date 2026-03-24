@@ -1,3 +1,4 @@
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
@@ -5,7 +6,9 @@ const Dashboard = () => {
     <>
       <div className="dashboard-container">
         <Sidebar />
-        <h1 className="dashboard ">content</h1>
+        <div className="entry-container">
+          <Outlet />
+        </div>
       </div>
     </>
   );
