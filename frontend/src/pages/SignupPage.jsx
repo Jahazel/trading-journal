@@ -17,7 +17,7 @@ const SignupPage = () => {
 
   const onSubmit = async (credentials) => {
     try {
-      const response = await api.post("/api/auth/signup", credentials);
+      const response = await api.post("/auth/signup", credentials);
 
       setAuth({ token: response.data.token, username: response.data.username });
 

@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const onSubmit = async (credentials) => {
     try {
-      const response = await api.post("/api/auth/login", credentials);
+      const response = await api.post("/auth/login", credentials);
 
       setAuth({ token: response.data.token, username: response.data.username });
 
