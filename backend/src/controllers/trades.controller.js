@@ -81,9 +81,7 @@ async function createTrade(req, res) {
 
     const savedTradeEntry = await newTradeEntry.save();
 
-    return res.status(201).json({
-      savedTradeEntry,
-    });
+    return res.status(201).json(savedTradeEntry);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
