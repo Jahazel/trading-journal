@@ -34,4 +34,15 @@ const getEntry = async (id) => {
   }
 };
 
-export { api, getEntries, getEntry };
+const createEntry = async (tradeData) => {
+  try {
+    const response = await api.post("/trades", tradeData);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error saving jountal entry:", error);
+    throw error;
+  }
+};
+
+export { api, getEntries, getEntry, createEntry };

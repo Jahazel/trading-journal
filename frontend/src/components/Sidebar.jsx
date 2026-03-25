@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEntries } from "../api/api";
 import TradeCard from "./TradeCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const {
@@ -12,6 +12,11 @@ const Sidebar = () => {
     queryKey: ["entries"],
     queryFn: getEntries,
   });
+  const navigate = useNavigate();
+
+  const createEntry = () => {
+    navigate("trades/new-entry");
+  };
 
   if (isLoading)
     return (
@@ -31,7 +36,9 @@ const Sidebar = () => {
     <div className="sidebar-container">
       <div className="sidebar-header">
         <h2>Entries</h2>
-        <button className="new-entry-btn">+</button>
+        <button className="new-entry-btn" onClick={createEntry}>
+          +
+        </button>
       </div>
       <div className="entries-container">
         {entries?.trades?.length === 0 ? (
