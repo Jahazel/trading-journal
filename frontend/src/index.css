@@ -539,3 +539,159 @@ body {
     gap: 8px;
   }
 }
+
+/* Add these styles to your existing CSS */
+
+/* Form container */
+form {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Form layout - two columns for better spacing */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Make full-width fields span both columns */
+.form-group:has(textarea),
+.form-group:has(button),
+.form-group:has(.error-msg) {
+  grid-column: span 2;
+}
+
+/* Style select dropdowns to match inputs */
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: white;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  border-color: #4f46e5;
+}
+
+/* Style textarea to match inputs */
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form-group textarea:focus {
+  border-color: #4f46e5;
+}
+
+/* Style number inputs to match */
+.form-group input[type="number"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input[type="number"]:focus {
+  border-color: #4f46e5;
+}
+
+/* Style datetime inputs */
+.form-group input[type="datetime-local"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-group input[type="datetime-local"]:focus {
+  border-color: #4f46e5;
+}
+
+/* Submit button styling */
+.submit-entry-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
+}
+
+.submit-entry-btn:hover:not(:disabled) {
+  background-color: #4338ca;
+}
+
+.submit-entry-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Error message styling (match your existing .error-msg) */
+.form-group span {
+  display: block;
+  font-size: 12px;
+  color: #e53e3e;
+  margin-top: 4px;
+}
+
+/* Optional: Add a heading for the form */
+.form-header {
+  grid-column: span 2;
+  margin-bottom: 8px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.form-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.form-header p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Responsive: single column on mobile */
+@media (max-width: 640px) {
+  form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .form-group:has(textarea),
+  .form-group:has(button),
+  .form-group:has(.error-msg) {
+    grid-column: span 1;
+  }
+}

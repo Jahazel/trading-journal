@@ -33,7 +33,13 @@ const NewEntry = () => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-header">
+          <h2>Log New Trade</h2>
+          <p>Enter your trade details below</p>
+        </div>
+
         <div className="form-group">
+          <label>Contract</label>
           <select
             {...register("contract", {
               required: "Selecting a contract type is required.",
@@ -49,6 +55,7 @@ const NewEntry = () => {
         </div>
 
         <div className="form-group">
+          <label>Direction</label>
           <select
             {...register("direction", {
               required: "Selecting a direction is required.",
