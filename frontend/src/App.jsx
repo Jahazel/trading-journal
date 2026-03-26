@@ -8,6 +8,7 @@ import RootRedirect from "./components/RootRedirect";
 import Navbar from "./components/Navbar";
 import TradeDetail from "./components/TradeDetail";
 import NewEntry from "./components/NewEntry";
+import EmptyDashboardState from "./components/EmptyDashboardState";
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />}>
-              <Route index element={<p>Select a trade to view details</p>} />
+              <Route index element={<EmptyDashboardState />} />
               <Route path="trades/:id" element={<TradeDetail />} />
               <Route path="trades/new-entry" element={<NewEntry />}></Route>
             </Route>

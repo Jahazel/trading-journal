@@ -708,3 +708,61 @@ body {
     grid-column: span 1;
   }
 }
+
+/* Empty State - Dashboard placeholder */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+}
+
+.empty-state-icon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 24px;
+  color: #9ca3af;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.empty-state-btn {
+  padding: 10px 20px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-state-btn:hover {
+  background-color: #4338ca;
+}
+
+.empty-state-btn svg {
+  width: 18px;
+  height: 18px;
+}
