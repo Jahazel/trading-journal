@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../api/api";
+import { login } from "../api/api";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -17,13 +17,16 @@ const LoginPage = () => {
 
   const onSubmit = async (credentials) => {
     try {
-      const response = await api.post("/auth/login", credentials);
+      const data = await login(credentials);
 
-      setAuth({ token: response.data.token, username: response.data.username });
+      setAuth({ token: data.token, username: data.username });
 
       navigate("/dashboard");
     } catch (error) {
-      setError(error.response.data.message);
+      setError(
+        error.response?.data?.message ||
+          "Login failed. Please check your credentials.",
+      );
     }
   };
 

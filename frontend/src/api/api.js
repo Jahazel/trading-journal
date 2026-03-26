@@ -12,6 +12,28 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const login = async (credentials) => {
+  try {
+    const response = await api.post("/auth/login", credentials);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error;
+  }
+};
+
+const signup = async (userData) => {
+  try {
+    const response = await api.post("/auth/signup", userData);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error signing up:", error);
+    throw error;
+  }
+};
+
 const getEntries = async () => {
   try {
     const response = await api.get("/trades");
@@ -45,4 +67,4 @@ const createEntry = async (tradeData) => {
   }
 };
 
-export { api, getEntries, getEntry, createEntry };
+export { getEntries, getEntry, createEntry, login, signup };

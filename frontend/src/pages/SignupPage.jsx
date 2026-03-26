@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../api/api";
+import { signup } from "../api/api";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -15,15 +15,17 @@ const SignupPage = () => {
   const [error, setError] = useState(null);
   const { setAuth } = useAuth();
 
-  const onSubmit = async (credentials) => {
+  const onSubmit = async (userData) => {
     try {
-      const response = await api.post("/auth/signup", credentials);
+      const data = await signup(userData);
 
-      setAuth({ token: response.data.token, username: response.data.username });
+      setAuth({ token: data.token, username: data.username });
 
       navigate("/dashboard");
     } catch (error) {
-      setError(error.response.data.message);
+      setError(
+        error.response?.data?.message || "Signup failed. Please try again.",
+      );
     }
   };
 
