@@ -57,7 +57,7 @@ const TradeDetail = () => {
     pnl,
     setup,
     notes,
-  } = entry?.tradeEntry || {};
+  } = entry || {};
 
   const isProfit = pnl > 0;
   const profitClass = isProfit ? "profit" : "loss";

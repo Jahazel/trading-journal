@@ -16,9 +16,14 @@ const NewEntry = () => {
   const addEntryMutation = useMutation({
     mutationFn: createEntry,
     onSuccess: (data) => {
+      if (!data?._id) {
+        console.error("No ID returned from the server");
+        return;
+      }
+
+      queryClient.setQueryData(["entry", data._id], data);
       queryClient.invalidateQueries({ queryKey: ["entries"] });
       navigate(`/dashboard/trades/${data._id}`);
-
       reset();
     },
     onError: (error) => {

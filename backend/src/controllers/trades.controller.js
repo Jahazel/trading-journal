@@ -7,9 +7,7 @@ async function getAllTrades(req, res) {
 
     const trades = await Trade.find({ userId }).sort({ createdAt: -1 });
 
-    return res.status(200).json({
-      trades,
-    });
+    return res.status(200).json(trades);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -30,9 +28,7 @@ async function getTrade(req, res) {
         .json({ message: "You don't have permission to view this trade." });
     }
 
-    return res.status(200).json({
-      tradeEntry,
-    });
+    return res.status(200).json(tradeEntry);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -136,9 +132,7 @@ async function updateTrade(req, res) {
 
     const savedTradeEntry = await tradeEntry.save();
 
-    return res.status(200).json({
-      savedTradeEntry,
-    });
+    return res.status(200).json(savedTradeEntry);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
