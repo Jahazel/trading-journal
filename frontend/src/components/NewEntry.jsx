@@ -37,7 +37,7 @@ const NewEntry = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="trade-form">
         <div className="form-header">
           <h2>Log New Trade</h2>
           <p>Enter your trade details below</p>
