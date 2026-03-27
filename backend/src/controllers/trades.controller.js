@@ -111,24 +111,24 @@ async function updateTrade(req, res) {
         .json({ message: "You don't have permission to update this trade." });
     }
 
-    tradeEntry.contract = contract.toUpperCase();
-    tradeEntry.direction = direction;
-    tradeEntry.contracts = contracts;
-    tradeEntry.entryPrice = entryPrice;
-    tradeEntry.exitPrice = exitPrice;
-    tradeEntry.stopLoss = stopLoss;
-    tradeEntry.target = target;
-    tradeEntry.entryTime = entryTime;
-    tradeEntry.exitTime = exitTime;
+    if (contract !== undefined) tradeEntry.contract = contract.toUpperCase();
+    if (direction !== undefined) tradeEntry.direction = direction;
+    if (contracts !== undefined) tradeEntry.contracts = contracts;
+    if (entryPrice !== undefined) tradeEntry.entryPrice = entryPrice;
+    if (exitPrice !== undefined) tradeEntry.exitPrice = exitPrice;
+    if (stopLoss !== undefined) tradeEntry.stopLoss = stopLoss;
+    if (target !== undefined) tradeEntry.target = target;
+    if (entryTime !== undefined) tradeEntry.entryTime = entryTime;
+    if (exitTime !== undefined) tradeEntry.exitTime = exitTime;
     tradeEntry.pnl = getPnl(
-      contract,
-      contracts,
-      exitPrice,
-      entryPrice,
-      direction,
+      contract ?? tradeEntry.contract,
+      contracts ?? tradeEntry.contracts,
+      exitPrice ?? tradeEntry.exitPrice,
+      entryPrice ?? tradeEntry.entryPrice,
+      direction ?? tradeEntry.direction,
     );
-    tradeEntry.setup = setup;
-    tradeEntry.notes = notes;
+    if (setup !== undefined) tradeEntry.setup = setup;
+    if (notes !== undefined) tradeEntry.notes = notes;
 
     const savedTradeEntry = await tradeEntry.save();
 
