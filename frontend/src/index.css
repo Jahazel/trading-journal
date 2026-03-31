@@ -716,3 +716,64 @@ body {
     padding: 20px;
   }
 }
+
+.nd-journal input,
+.nd-journal textarea,
+.nd-journal select {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: inherit;
+  color: #111827;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+  padding: 4px 8px;
+  width: 100%;
+}
+
+.nd-journal input:focus,
+.nd-journal textarea:focus,
+.nd-journal select:focus {
+  border-color: #4f46e5;
+  background: white;
+}
+
+.nd-journal textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.75;
+  padding: 14px 16px;
+  border-left: 3px solid #4f46e5;
+}
+
+.nd-journal input[type="number"] {
+  width: 120px;
+}
+
+.nd-journal .nd-title-row input,
+.nd-journal .nd-title-row select {
+  font-weight: 700;
+  padding: 2px 8px;
+  width: auto;
+}
+
+.nd-stat-value,
+.nd-ticker,
+.nd-badge,
+.nd-prose-block {
+  cursor: pointer;
+}
+
+.nd-stat-value:hover,
+.nd-ticker:hover,
+.nd-badge:hover {
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.nd-prose-block:hover {
+  border-left-color: #4f46e5;
+  transition: border-color 0.15s;
+}
