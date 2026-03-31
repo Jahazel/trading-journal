@@ -17,7 +17,7 @@ const NewEntry = () => {
     mutationFn: createEntry,
     onSuccess: (data) => {
       if (!data?._id) {
-        console.error("No ID returned from the server");
+        console.error("No ID returned from the server.");
         return;
       }
 

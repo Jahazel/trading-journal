@@ -67,4 +67,15 @@ const createEntry = async (tradeData) => {
   }
 };
 
-export { getEntries, getEntry, createEntry, login, signup };
+const updateEntry = async ({ id, ...fields }) => {
+  try {
+    const response = await api.patch(`/trades/${id}`, fields);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating trade entry:", error);
+    throw error;
+  }
+};
+
+export { login, signup, getEntries, getEntry, createEntry, updateEntry };
