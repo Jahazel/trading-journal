@@ -174,6 +174,9 @@ const TradeDetail = () => {
             <span className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
               {isProfit ? "+" : ""}${pnl?.toLocaleString()}
             </span>
+            <button className="delete-btn" onClick={handleDelete}>
+              Delete Trade
+            </button>
           </div>
           <div className="nd-meta">
             Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
@@ -395,7 +398,6 @@ const TradeDetail = () => {
           )}
         </div>
       </div>
-      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };
