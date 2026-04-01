@@ -86,6 +86,7 @@ const TradeDetail = () => {
   } = entry || {};
 
   const isProfit = pnl > 0;
+
   const formattedEntry =
     entryTime &&
     new Date(entryTime).toLocaleString("en-US", {
@@ -95,6 +96,7 @@ const TradeDetail = () => {
       hour: "numeric",
       minute: "2-digit",
     });
+
   const formattedExit =
     exitTime &&
     new Date(exitTime).toLocaleString("en-US", {
@@ -104,6 +106,15 @@ const TradeDetail = () => {
       hour: "numeric",
       minute: "2-digit",
     });
+
+  // Convert ISO datetime to value compatible with datetime-local input
+  const toDatetimeLocal = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60000);
+    return local.toISOString().slice(0, 16);
+  };
 
   const handleSave = () => {
     if (activeField) {
@@ -119,283 +130,232 @@ const TradeDetail = () => {
     }
   };
 
+  const activate = (field, value) => {
+    setActiveField(field);
+    setTempValue(value);
+  };
+
+  const sharedInputProps = {
+    onBlur: handleSave,
+    onKeyDown: (e) => {
+      if (e.key === "Enter") handleSave();
+    },
+    autoFocus: true,
+    onChange: (e) => setTempValue(e.target.value),
+    value: tempValue,
+  };
+
   return (
     <div className="entry-container">
       <div className="nd-journal">
+        {/* Header */}
         <div className="nd-header">
-          <div className="nd-breadcrumb">Trading Journal</div>
-          <div className="nd-title-row">
-            {activeField === "contract" ? (
-              <select
-                value={tempValue}
-                onChange={(e) => setTempValue(e.target.value)}
-                onBlur={handleSave}
-                autoFocus
-              >
-                <option value="NQ">NQ</option>
-                <option value="MNQ">MNQ</option>
-                <option value="ES">ES</option>
-                <option value="MES">MES</option>
-              </select>
-            ) : (
-              <span
-                className="nd-ticker"
-                onClick={() => {
-                  setActiveField("contract");
-                  setTempValue(contract);
-                }}
-              >
-                {contract}
-              </span>
-            )}
-
-            {activeField === "direction" ? (
-              <select
-                value={tempValue}
-                onChange={(e) => setTempValue(e.target.value)}
-                onBlur={handleSave}
-                autoFocus
-              >
-                <option value="Long">Long</option>
-                <option value="Short">Short</option>
-              </select>
-            ) : (
-              <span
-                className={`nd-badge ${direction?.toLowerCase()}`}
-                onClick={() => {
-                  setActiveField("direction");
-                  setTempValue(direction);
-                }}
-              >
-                {direction}
-              </span>
-            )}
-
-            <span className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
-              {isProfit ? "+" : ""}${pnl?.toLocaleString()}
-            </span>
+          <div className="nd-header-top">
+            <div className="nd-breadcrumb">Trading Journal</div>
             <button className="delete-btn" onClick={handleDelete}>
               Delete Trade
             </button>
+          </div>
+          <div className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
+            {isProfit ? "+" : ""}${pnl?.toLocaleString()}
           </div>
           <div className="nd-meta">
             Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
           </div>
         </div>
 
-        <div className="nd-body">
-          <div className="nd-section">
-            <div className="nd-section-label">Position</div>
-            <div className="nd-stats-row">
-              <div className="nd-stat">
-                <span className="nd-stat-label">Contracts</span>
-                {activeField === "contracts" ? (
-                  <input
-                    type="number"
-                    value={tempValue}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSave();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className="nd-stat-value"
-                    onClick={() => {
-                      setActiveField("contracts");
-                      setTempValue(contracts);
-                    }}
-                  >
-                    {contracts}
-                  </span>
-                )}
-              </div>
-
-              <div className="nd-stat">
-                <span className="nd-stat-label">Entry Price</span>
-                {activeField === "entryPrice" ? (
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={tempValue}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSave();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className="nd-stat-value"
-                    onClick={() => {
-                      setActiveField("entryPrice");
-                      setTempValue(entryPrice);
-                    }}
-                  >
-                    ${entryPrice?.toLocaleString()}
-                  </span>
-                )}
-              </div>
-
-              <div className="nd-stat">
-                <span className="nd-stat-label">Exit Price</span>
-                {activeField === "exitPrice" ? (
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={tempValue}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSave();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className="nd-stat-value"
-                    onClick={() => {
-                      setActiveField("exitPrice");
-                      setTempValue(exitPrice);
-                    }}
-                  >
-                    ${exitPrice?.toLocaleString()}
-                  </span>
-                )}
-              </div>
-
-              <div className="nd-stat">
-                <span className="nd-stat-label">Stop Loss</span>
-                {activeField === "stopLoss" ? (
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={tempValue}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSave();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className="nd-stat-value"
-                    onClick={() => {
-                      setActiveField("stopLoss");
-                      setTempValue(stopLoss);
-                    }}
-                  >
-                    ${stopLoss?.toLocaleString()}
-                  </span>
-                )}
-              </div>
-
-              <div className="nd-stat">
-                <span className="nd-stat-label">Target</span>
-                {activeField === "target" ? (
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={tempValue}
-                    onChange={(e) => setTempValue(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSave();
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <span
-                    className="nd-stat-value"
-                    onClick={() => {
-                      setActiveField("target");
-                      setTempValue(target);
-                    }}
-                  >
-                    ${target?.toLocaleString()}
-                  </span>
-                )}
-              </div>
+        {/* Property List */}
+        <div className="nd-properties">
+          {/* Contract */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("contract", contract)}
+          >
+            <span className="nd-label">Contract</span>
+            <div className="nd-value">
+              {activeField === "contract" ? (
+                <select {...sharedInputProps}>
+                  <option value="NQ">NQ</option>
+                  <option value="MNQ">MNQ</option>
+                  <option value="ES">ES</option>
+                  <option value="MES">MES</option>
+                </select>
+              ) : (
+                <span>{contract}</span>
+              )}
             </div>
           </div>
 
-          {activeField === "setup" ? (
-            <input
-              value={tempValue}
-              onChange={(e) => setTempValue(e.target.value)}
-              onBlur={handleSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSave();
-              }}
-              autoFocus
-            />
-          ) : (
-            <div className="nd-section">
-              <div className="nd-section-label">Setup</div>
-              {setup ? (
-                <div
-                  className="nd-prose-block"
-                  onClick={() => {
-                    setActiveField("setup");
-                    setTempValue(setup);
-                  }}
-                >
-                  {setup}
-                </div>
+          {/* Direction */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("direction", direction)}
+          >
+            <span className="nd-label">Direction</span>
+            <div className="nd-value">
+              {activeField === "direction" ? (
+                <select {...sharedInputProps}>
+                  <option value="Long">Long</option>
+                  <option value="Short">Short</option>
+                </select>
               ) : (
-                <div
-                  className="nd-prose-block nd-prose-empty"
-                  onClick={() => {
-                    setActiveField("setup");
-                    setTempValue("");
-                  }}
-                >
-                  No setup recorded.
-                </div>
+                <span className={`nd-badge ${direction?.toLowerCase()}`}>
+                  {direction}
+                </span>
               )}
             </div>
-          )}
+          </div>
 
-          {activeField === "notes" ? (
-            <textarea
-              value={tempValue}
-              onChange={(e) => setTempValue(e.target.value)}
-              onBlur={handleSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) handleSave();
-              }}
-              autoFocus
-            />
-          ) : (
-            <div className="nd-section">
-              <div className="nd-section-label">Notes</div>
-              {notes ? (
-                <div
-                  className="nd-prose-block"
-                  onClick={() => {
-                    setActiveField("notes");
-                    setTempValue(notes);
-                  }}
-                >
-                  {notes}
-                </div>
+          {/* Contracts */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("contracts", contracts)}
+          >
+            <span className="nd-label">Contracts</span>
+            <div className="nd-value">
+              {activeField === "contracts" ? (
+                <input type="number" {...sharedInputProps} />
               ) : (
-                <div
-                  className="nd-prose-block nd-prose-empty"
-                  onClick={() => {
-                    setActiveField("notes");
-                    setTempValue("");
-                  }}
-                >
-                  No notes added.
-                </div>
+                <span>{contracts}</span>
               )}
             </div>
-          )}
+          </div>
+
+          {/* Entry Price */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("entryPrice", entryPrice)}
+          >
+            <span className="nd-label">Entry Price</span>
+            <div className="nd-value">
+              {activeField === "entryPrice" ? (
+                <input type="number" step="0.01" {...sharedInputProps} />
+              ) : (
+                <span>${entryPrice?.toLocaleString()}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Exit Price */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("exitPrice", exitPrice)}
+          >
+            <span className="nd-label">Exit Price</span>
+            <div className="nd-value">
+              {activeField === "exitPrice" ? (
+                <input type="number" step="0.01" {...sharedInputProps} />
+              ) : (
+                <span>${exitPrice?.toLocaleString()}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Stop Loss */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("stopLoss", stopLoss)}
+          >
+            <span className="nd-label">Stop Loss</span>
+            <div className="nd-value">
+              {activeField === "stopLoss" ? (
+                <input type="number" step="0.01" {...sharedInputProps} />
+              ) : (
+                <span>${stopLoss?.toLocaleString()}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Target */}
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("target", target)}
+          >
+            <span className="nd-label">Target</span>
+            <div className="nd-value">
+              {activeField === "target" ? (
+                <input type="number" step="0.01" {...sharedInputProps} />
+              ) : (
+                <span>${target?.toLocaleString()}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Entry Time */}
+          <div
+            className="nd-row"
+            onClick={() =>
+              !activeField && activate("entryTime", toDatetimeLocal(entryTime))
+            }
+          >
+            <span className="nd-label">Entry Time</span>
+            <div className="nd-value">
+              {activeField === "entryTime" ? (
+                <input type="datetime-local" {...sharedInputProps} />
+              ) : (
+                <span>{formattedEntry}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Exit Time */}
+          <div
+            className="nd-row"
+            onClick={() =>
+              !activeField && activate("exitTime", toDatetimeLocal(exitTime))
+            }
+          >
+            <span className="nd-label">Exit Time</span>
+            <div className="nd-value">
+              {activeField === "exitTime" ? (
+                <input type="datetime-local" {...sharedInputProps} />
+              ) : (
+                <span>{formattedExit}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Setup */}
+          <div
+            className="nd-row nd-row-tall"
+            onClick={() => !activeField && activate("setup", setup || "")}
+          >
+            <span className="nd-label">Setup</span>
+            <div className="nd-value">
+              {activeField === "setup" ? (
+                <input {...sharedInputProps} />
+              ) : (
+                <span className={!setup ? "nd-empty" : ""}>
+                  {setup || "Empty"}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div
+            className="nd-row nd-row-tall"
+            onClick={() => !activeField && activate("notes", notes || "")}
+          >
+            <span className="nd-label">Notes</span>
+            <div className="nd-value">
+              {activeField === "notes" ? (
+                <input
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onBlur={handleSave}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) handleSave();
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span className={!notes ? "nd-empty" : ""}>
+                  {notes || "Empty"}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

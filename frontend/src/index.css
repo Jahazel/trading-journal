@@ -115,6 +115,7 @@ body {
   text-decoration: underline;
 }
 
+/* ── Navbar ── */
 .nav-bar {
   display: flex;
   align-items: center;
@@ -165,11 +166,13 @@ body {
   color: white;
 }
 
+/* ── Dashboard ── */
 .dashboard-container {
   display: flex;
   height: calc(100vh - 70px);
 }
 
+/* ── Sidebar ── */
 .sidebar-container {
   width: 280px;
   min-width: 280px;
@@ -234,6 +237,7 @@ body {
   color: #666;
 }
 
+/* ── Trade Card ── */
 .trade-card {
   display: flex;
   align-items: center;
@@ -284,6 +288,7 @@ body {
   text-decoration: none;
 }
 
+/* ── Entry Container ── */
 .entry-container {
   flex: 1;
   padding: 32px;
@@ -342,6 +347,7 @@ body {
   height: 48px;
 }
 
+/* ── New Trade Form ── */
 .trade-form {
   max-width: 800px;
   margin: 0 auto;
@@ -483,6 +489,7 @@ body {
   color: #6b7280;
 }
 
+/* ── Empty State ── */
 .empty-state {
   flex: 1;
   display: flex;
@@ -540,8 +547,9 @@ body {
   height: 18px;
 }
 
+/* ── Trade Detail Journal ── */
 .nd-journal {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
   background: white;
   border-radius: 12px;
@@ -549,56 +557,31 @@ body {
   overflow: hidden;
 }
 
+/* Header */
 .nd-header {
-  padding: 32px 40px 24px;
+  padding: 28px 32px 24px;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.nd-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
 .nd-breadcrumb {
   font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 12px;
   letter-spacing: 0.03em;
 }
 
-.nd-title-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.nd-ticker {
-  font-size: 26px;
-  font-weight: 700;
-  color: #111827;
-  letter-spacing: -0.5px;
-}
-
-.nd-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.nd-badge.long {
-  background: #e6f4ea;
-  color: #2e7d32;
-}
-
-.nd-badge.short {
-  background: #fdecea;
-  color: #c62828;
-}
-
 .nd-pnl {
-  font-size: 24px;
-  font-weight: 600;
-  margin-left: auto;
+  font-size: 36px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
 }
 
 .nd-pnl.profit {
@@ -614,119 +597,90 @@ body {
   color: #9ca3af;
 }
 
-.nd-body {
-  padding: 0 40px;
+/* Property List */
+.nd-properties {
+  padding: 0 32px;
 }
 
-.nd-section {
-  padding: 20px 0;
+.nd-row {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  gap: 16px;
 }
 
-.nd-section:last-child {
+.nd-row:last-child {
   border-bottom: none;
 }
 
-.nd-section-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #9ca3af;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-
-.nd-stats-row {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.nd-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.nd-stat-label {
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  color: #9ca3af;
-  text-transform: uppercase;
-}
-
-.nd-stat-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: #111827;
-  font-variant-numeric: tabular-nums;
-}
-
-.nd-prose-block {
-  font-size: 15px;
-  line-height: 1.75;
-  color: #374151;
-  padding: 14px 16px;
-  border-left: 3px solid #e5e7eb;
-  border-radius: 0 6px 6px 0;
+.nd-row:hover {
   background: #f9fafb;
-  white-space: pre-wrap;
+  margin: 0 -32px;
+  padding: 0 32px;
 }
 
-.nd-prose-empty {
+.nd-row-tall {
+  align-items: flex-start;
+  padding: 12px 0;
+}
+
+.nd-row-tall:hover {
+  padding: 12px 32px;
+}
+
+.nd-label {
+  font-size: 13px;
+  color: #9ca3af;
+  width: 120px;
+  min-width: 120px;
+  font-weight: 500;
+}
+
+.nd-value {
+  flex: 1;
+  font-size: 14px;
+  color: #111827;
+}
+
+.nd-value span {
+  display: block;
+  padding: 2px 0;
+}
+
+.nd-empty {
   color: #d1d5db;
   font-style: italic;
 }
 
-@media (max-width: 640px) {
-  .trade-form {
-    grid-template-columns: 1fr;
-    padding: 20px;
-  }
-
-  .trade-form .form-group:has(textarea),
-  .trade-form .form-group:has(button),
-  .trade-form .form-group:has(.error-msg) {
-    grid-column: span 1;
-  }
-
-  .trade-form .form-header {
-    grid-column: span 1;
-  }
-
-  .nd-header {
-    padding: 24px 20px 18px;
-  }
-
-  .nd-body {
-    padding: 0 20px;
-  }
-
-  .nd-stats-row {
-    gap: 20px;
-  }
-
-  .nd-ticker {
-    font-size: 22px;
-  }
-
-  .nd-pnl {
-    font-size: 20px;
-  }
+/* Badge in property list */
+.nd-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
-  .entry-container {
-    padding: 20px;
-  }
+.nd-badge.long {
+  background: #e6f4ea;
+  color: #2e7d32;
 }
 
+.nd-badge.short {
+  background: #fdecea;
+  color: #c62828;
+}
+
+/* Inputs inside property rows */
 .nd-journal input,
 .nd-journal textarea,
 .nd-journal select {
   font-family: inherit;
-  font-size: 16px;
-  font-weight: inherit;
+  font-size: 14px;
   color: #111827;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -747,41 +701,11 @@ body {
 .nd-journal textarea {
   resize: vertical;
   min-height: 80px;
-  line-height: 1.75;
-  padding: 14px 16px;
-  border-left: 3px solid #4f46e5;
+  line-height: 1.6;
+  padding: 8px;
 }
 
-.nd-journal input[type="number"] {
-  width: 120px;
-}
-
-.nd-journal .nd-title-row input,
-.nd-journal .nd-title-row select {
-  font-weight: 700;
-  padding: 2px 8px;
-  width: auto;
-}
-
-.nd-stat-value,
-.nd-ticker,
-.nd-badge,
-.nd-prose-block {
-  cursor: pointer;
-}
-
-.nd-stat-value:hover,
-.nd-ticker:hover,
-.nd-badge:hover {
-  opacity: 0.75;
-  transition: opacity 0.15s;
-}
-
-.nd-prose-block:hover {
-  border-left-color: #4f46e5;
-  transition: border-color 0.15s;
-}
-
+/* Delete button */
 .delete-btn {
   padding: 6px 14px;
   background-color: transparent;
@@ -798,4 +722,54 @@ body {
 .delete-btn:hover {
   background-color: #ef4444;
   color: white;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .trade-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .trade-form .form-group:has(textarea),
+  .trade-form .form-group:has(button),
+  .trade-form .form-group:has(.error-msg) {
+    grid-column: span 1;
+  }
+
+  .trade-form .form-header {
+    grid-column: span 1;
+  }
+
+  .nd-header {
+    padding: 20px 20px 16px;
+  }
+
+  .nd-properties {
+    padding: 0 20px;
+  }
+
+  .nd-row:hover {
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+
+  .nd-row-tall:hover {
+    padding: 12px 20px;
+  }
+
+  .nd-label {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .nd-pnl {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .entry-container {
+    padding: 20px;
+  }
 }
