@@ -78,4 +78,22 @@ const updateEntry = async ({ id, ...fields }) => {
   }
 };
 
-export { login, signup, getEntries, getEntry, createEntry, updateEntry };
+const deleteEntry = async (id) => {
+  try {
+    const response = await api.delete(`/trades/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting trade entry:", error);
+  }
+};
+
+export {
+  login,
+  signup,
+  getEntries,
+  getEntry,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+};

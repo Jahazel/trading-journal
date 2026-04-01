@@ -1,12 +1,14 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { getEntry, updateEntry } from "../api/api";
-import { useParams } from "react-router-dom";
+import { deleteEntry, getEntry, updateEntry } from "../api/api";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const TradeDetail = () => {
   const { id } = useParams();
   const [activeField, setActiveField] = useState(null);
   const [tempValue, setTempValue] = useState("");
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: entry,
@@ -18,8 +20,6 @@ const TradeDetail = () => {
     enabled: !!id,
   });
 
-  const queryClient = useQueryClient();
-
   const updateTradeMutation = useMutation({
     mutationFn: updateEntry,
     onSuccess: (data) => {
@@ -28,6 +28,17 @@ const TradeDetail = () => {
     },
     onError: (error) => {
       console.error("Failed to update trade entry", error);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteEntry,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["entries"] });
+      navigate("/dashboard");
+    },
+    onError: (error) => {
+      console.error("Failed to delete trade entry", error);
     },
   });
 
@@ -99,6 +110,12 @@ const TradeDetail = () => {
       updateTradeMutation.mutate({ id, [activeField]: tempValue });
       setActiveField(null);
       setTempValue("");
+    }
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this trade?")) {
+      deleteMutation.mutate(id);
     }
   };
 
@@ -378,6 +395,7 @@ const TradeDetail = () => {
           )}
         </div>
       </div>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };
