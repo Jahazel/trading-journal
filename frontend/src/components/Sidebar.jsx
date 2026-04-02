@@ -44,9 +44,9 @@ const Sidebar = () => {
         {entries?.length === 0 ? (
           <p className="no-entries">No entries yet.</p>
         ) : (
-          entries.map(({ direction, pnl, _id }) => (
+          entries.map(({ direction, _id, createdAt }) => (
             <Link key={_id} to={`/dashboard/trades/${_id}`}>
-              <TradeCard direction={direction} pnl={pnl} _id={_id} />
+              <TradeCard direction={direction} createdAt={createdAt} />
             </Link>
           ))
         )}

@@ -116,9 +116,9 @@ const TradeDetail = () => {
     return local.toISOString().slice(0, 16);
   };
 
-  const handleSave = () => {
+  const handleSave = (value = tempValue) => {
     if (activeField) {
-      updateTradeMutation.mutate({ id, [activeField]: tempValue });
+      updateTradeMutation.mutate({ id, [activeField]: value });
       setActiveField(null);
       setTempValue("");
     }
@@ -151,13 +151,15 @@ const TradeDetail = () => {
         {/* Header */}
         <div className="nd-header">
           <div className="nd-header-top">
-            <div className="nd-breadcrumb">Trading Journal</div>
+            <div>
+              <div className="nd-pnl-label">Net P&L</div>
+              <div className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
+                ${Math.abs(pnl)?.toLocaleString()}
+              </div>
+            </div>
             <button className="delete-btn" onClick={handleDelete}>
               Delete Trade
             </button>
-          </div>
-          <div className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
-            {isProfit ? "+" : ""}${pnl?.toLocaleString()}
           </div>
           <div className="nd-meta">
             Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
@@ -194,7 +196,14 @@ const TradeDetail = () => {
             <span className="nd-label">Direction</span>
             <div className="nd-value">
               {activeField === "direction" ? (
-                <select {...sharedInputProps}>
+                <select
+                  {...sharedInputProps}
+                  className="direction-select"
+                  onChange={(e) => {
+                    setTempValue(e.target.value);
+                    handleSave(e.target.value);
+                  }}
+                >
                   <option value="Long">Long</option>
                   <option value="Short">Short</option>
                 </select>
