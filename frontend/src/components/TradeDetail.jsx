@@ -2,6 +2,7 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { deleteEntry, getEntry, updateEntry } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import TextEditor from "./TextEditor";
 
 const TradeDetail = () => {
   const { id } = useParams();
@@ -107,7 +108,6 @@ const TradeDetail = () => {
       minute: "2-digit",
     });
 
-  // Convert ISO datetime to value compatible with datetime-local input
   const toDatetimeLocal = (isoString) => {
     if (!isoString) return "";
     const date = new Date(isoString);
@@ -116,9 +116,9 @@ const TradeDetail = () => {
     return local.toISOString().slice(0, 16);
   };
 
-  const handleSave = (value = tempValue) => {
-    if (activeField) {
-      updateTradeMutation.mutate({ id, [activeField]: value });
+  const handleSave = (value = tempValue, field = activeField) => {
+    if (field) {
+      updateTradeMutation.mutate({ id, [field]: value });
       setActiveField(null);
       setTempValue("");
     }
@@ -148,7 +148,6 @@ const TradeDetail = () => {
   return (
     <div className="entry-container">
       <div className="nd-journal">
-        {/* Header */}
         <div className="nd-header">
           <div className="nd-header-top">
             <div>
@@ -165,10 +164,7 @@ const TradeDetail = () => {
             Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
           </div>
         </div>
-
-        {/* Property List */}
         <div className="nd-properties">
-          {/* Contract */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("contract", contract)}
@@ -187,8 +183,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Direction */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("direction", direction)}
@@ -214,8 +208,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Contracts */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("contracts", contracts)}
@@ -229,8 +221,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Entry Price */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("entryPrice", entryPrice)}
@@ -244,8 +234,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Exit Price */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("exitPrice", exitPrice)}
@@ -259,8 +247,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Stop Loss */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("stopLoss", stopLoss)}
@@ -274,8 +260,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Target */}
           <div
             className="nd-row"
             onClick={() => !activeField && activate("target", target)}
@@ -289,8 +273,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Entry Time */}
           <div
             className="nd-row"
             onClick={() =>
@@ -306,8 +288,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Exit Time */}
           <div
             className="nd-row"
             onClick={() =>
@@ -323,8 +303,6 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Setup */}
           <div
             className="nd-row nd-row-tall"
             onClick={() => !activeField && activate("setup", setup || "")}
@@ -340,31 +318,7 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-
-          {/* Notes */}
-          <div
-            className="nd-row nd-row-tall"
-            onClick={() => !activeField && activate("notes", notes || "")}
-          >
-            <span className="nd-label">Notes</span>
-            <div className="nd-value">
-              {activeField === "notes" ? (
-                <input
-                  value={tempValue}
-                  onChange={(e) => setTempValue(e.target.value)}
-                  onBlur={handleSave}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) handleSave();
-                  }}
-                  autoFocus
-                />
-              ) : (
-                <span className={!notes ? "nd-empty" : ""}>
-                  {notes || "Empty"}
-                </span>
-              )}
-            </div>
-          </div>
+          <TextEditor onSave={handleSave} content={notes} />
         </div>
       </div>
     </div>
