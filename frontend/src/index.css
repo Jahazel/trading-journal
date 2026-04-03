@@ -1,18 +1,18 @@
-/* ── CSS Variables ── */
+/* ── CSS Variables (GitHub Dark Theme) ── */
 :root {
-  --bg-base: #0f1117;
-  --bg-surface: #1a1d27;
-  --bg-elevated: #222535;
-  --border: #2e3347;
-  --text-primary: #e8eaf0;
-  --text-secondary: #8b90a7;
-  --text-muted: #555c75;
-  --accent: #6c63ff;
-  --accent-hover: #574fd6;
-  --win: #22c55e;
-  --win-bg: rgba(34, 197, 94, 0.1);
-  --loss: #ef4444;
-  --loss-bg: rgba(239, 68, 68, 0.1);
+  --bg-base: #0d1117; /* GitHub main background */
+  --bg-surface: #161b22; /* GitHub surface background */
+  --bg-elevated: #21262d; /* GitHub elevated/card background */
+  --border: #30363d; /* GitHub border color */
+  --text-primary: #c9d1d9; /* GitHub primary text */
+  --text-secondary: #8b949e; /* GitHub secondary text */
+  --text-muted: #6e7681; /* GitHub muted text */
+  --accent: #2f81f7; /* GitHub accent blue */
+  --accent-hover: #1f6feb; /* GitHub accent hover */
+  --win: #3fb950; /* GitHub success green */
+  --win-bg: rgba(63, 185, 80, 0.1); /* GitHub success bg */
+  --loss: #f85149; /* GitHub danger red */
+  --loss-bg: rgba(248, 81, 73, 0.1); /* GitHub danger bg */
 }
 
 * {
@@ -22,7 +22,9 @@
 }
 
 body {
-  font-family: sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
 }
@@ -52,7 +54,7 @@ body {
 
 .auth-header h1 {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -95,7 +97,7 @@ body {
   font-size: 13px;
   color: var(--loss);
   background: var(--loss-bg);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(248, 81, 73, 0.3);
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 12px;
@@ -275,7 +277,7 @@ body {
 
 .trade-card:hover {
   border-color: var(--accent);
-  background: #272a3a;
+  background: #292e36;
 }
 
 .direction-badge {
@@ -811,8 +813,8 @@ body {
 }
 
 .ProseMirror mark {
-  background-color: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
+  background-color: rgba(210, 153, 34, 0.2);
+  color: #d29922;
   padding: 0 0.2em;
   border-radius: 3px;
 }
@@ -893,7 +895,7 @@ body {
 
 /* Selection */
 .ProseMirror ::selection {
-  background-color: rgba(108, 99, 255, 0.3);
+  background-color: rgba(47, 129, 247, 0.3);
   color: var(--text-primary);
 }
 
