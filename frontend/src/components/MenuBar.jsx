@@ -42,42 +42,36 @@ const MenuBar = ({ editor }) => {
         >
           Paragraph
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "is-active" : ""}
         >
           Bold
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={editor.isActive("italic") ? "is-active" : ""}
         >
           Italic
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           className={editor.isActive("strike") ? "is-active" : ""}
         >
           Strike
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           className={editor.isActive("highlight") ? "is-active" : ""}
         >
           Highlight
         </button>
-
         <button
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           className={editor.isActive({ textAlign: "left" }) ? "is-active" : ""}
         >
           Left
         </button>
-
         <button
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
           className={
@@ -86,35 +80,23 @@ const MenuBar = ({ editor }) => {
         >
           Center
         </button>
-
         <button
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
           className={editor.isActive({ textAlign: "right" }) ? "is-active" : ""}
         >
           Right
         </button>
-
-        <button
-          onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-          className={
-            editor.isActive({ textAlign: "justify" }) ? "is-active" : ""
-          }
-        >
-          Justify
-        </button>
-
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive("bulletList") ? "is-active" : ""}
         >
           Bullet list
         </button>
-
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editor.isActive("orderedList") ? "is-active" : ""}
         >
-          Numbered list
+          Ordered list
         </button>
       </div>
     </div>
