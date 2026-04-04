@@ -307,7 +307,7 @@ const TradeDetail = () => {
             </div>
           </div>
 
-          <TextEditor onSave={handleSave} content={notes} />
+          <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>
     </div>

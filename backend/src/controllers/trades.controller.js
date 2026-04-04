@@ -54,7 +54,6 @@ async function createTrade(req, res) {
       target,
       entryTime,
       exitTime,
-      setup,
       notes,
     } = req.body;
     const userId = req.userId;
@@ -71,7 +70,6 @@ async function createTrade(req, res) {
       entryTime: entryTime,
       exitTime: exitTime,
       pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
-      setup: setup,
       notes: notes,
     });
 
@@ -95,7 +93,6 @@ async function updateTrade(req, res) {
       target,
       entryTime,
       exitTime,
-      setup,
       notes,
     } = req.body;
     const tradeId = req.params.id;
@@ -127,7 +124,6 @@ async function updateTrade(req, res) {
       entryPrice ?? tradeEntry.entryPrice,
       direction ?? tradeEntry.direction,
     );
-    if (setup !== undefined) tradeEntry.setup = setup;
     if (notes !== undefined) tradeEntry.notes = notes;
 
     const savedTradeEntry = await tradeEntry.save();
