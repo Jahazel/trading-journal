@@ -82,7 +82,6 @@ const TradeDetail = () => {
     entryTime,
     exitTime,
     pnl,
-    // setup,
     notes,
   } = entry || {};
 
@@ -153,7 +152,11 @@ const TradeDetail = () => {
             <div>
               <div className="nd-pnl-label">Net P&L</div>
               <div className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
-                ${Math.abs(pnl)?.toLocaleString()}
+                $
+                {Math.abs(pnl)?.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </div>
             </div>
             <button className="delete-btn" onClick={handleDelete}>

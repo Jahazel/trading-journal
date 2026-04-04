@@ -280,21 +280,12 @@ body {
   background: #292e36;
 }
 
-.direction-badge {
+.trade-card .profit,
+.trade-card .loss {
   font-size: 11px;
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 20px;
-}
-
-.direction-badge.long {
-  background-color: var(--win-bg);
-  color: var(--win);
-}
-
-.direction-badge.short {
-  background-color: var(--loss-bg);
-  color: var(--loss);
 }
 
 .trade-card-date {
