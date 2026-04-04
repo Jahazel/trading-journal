@@ -42,7 +42,6 @@ const NewEntry = () => {
           <h2>Log New Trade</h2>
           <p>Enter your trade details below</p>
         </div>
-
         <div className="form-group">
           <label>Contract</label>
           <select
@@ -58,7 +57,6 @@ const NewEntry = () => {
           </select>
           {errors.contract && <span>{errors.contract.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Direction</label>
           <select
@@ -72,7 +70,6 @@ const NewEntry = () => {
           </select>
           {errors.direction && <span>{errors.direction.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Number of Contracts</label>
           <input
@@ -87,7 +84,6 @@ const NewEntry = () => {
           />
           {errors.contracts && <span>{errors.contracts.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Entry Price</label>
           <input
@@ -108,7 +104,6 @@ const NewEntry = () => {
           />
           {errors.entryPrice && <span>{errors.entryPrice.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Exit Price</label>
           <input
@@ -129,7 +124,6 @@ const NewEntry = () => {
           />
           {errors.exitPrice && <span>{errors.exitPrice.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Stop Loss</label>
           <input
@@ -150,7 +144,6 @@ const NewEntry = () => {
           />
           {errors.stopLoss && <span>{errors.stopLoss.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Target</label>
           <input
@@ -171,7 +164,6 @@ const NewEntry = () => {
           />
           {errors.target && <span>{errors.target.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Entry Time</label>
           <input
@@ -182,7 +174,6 @@ const NewEntry = () => {
           />
           {errors.entryTime && <span>{errors.entryTime.message}</span>}
         </div>
-
         <div className="form-group">
           <label>Exit Time</label>
           <input
@@ -193,21 +184,9 @@ const NewEntry = () => {
           />
           {errors.exitTime && <span>{errors.exitTime.message}</span>}
         </div>
-
-        {/* <div className="form-group">
-          <label>Setup</label>
-          <input type="text" {...register("setup")} />
-        </div> */}
-
-        {/* <div className="form-group">
-          <label>Notes</label>
-          <textarea {...register("notes")} rows="4" />
-        </div> */}
-
         {addEntryMutation.error && (
           <span>{addEntryMutation.error.message}</span>
         )}
-
         <button
           type="submit"
           className="submit-entry-btn"

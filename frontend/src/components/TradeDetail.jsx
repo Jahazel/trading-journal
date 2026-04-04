@@ -303,21 +303,7 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-          {/* <div
-            className="nd-row nd-row-tall"
-            onClick={() => !activeField && activate("setup", setup || "")}
-          >
-            <span className="nd-label">Setup</span>
-            <div className="nd-value">
-              {activeField === "setup" ? (
-                <input {...sharedInputProps} />
-              ) : (
-                <span className={!setup ? "nd-empty" : ""}>
-                  {setup || "Empty"}
-                </span>
-              )}
-            </div>
-          </div> */}
+
           <TextEditor onSave={handleSave} content={notes} />
         </div>
       </div>
