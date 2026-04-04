@@ -194,15 +194,15 @@ const NewEntry = () => {
           {errors.exitTime && <span>{errors.exitTime.message}</span>}
         </div>
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Setup</label>
           <input type="text" {...register("setup")} />
-        </div>
+        </div> */}
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Notes</label>
           <textarea {...register("notes")} rows="4" />
-        </div>
+        </div> */}
 
         {addEntryMutation.error && (
           <span>{addEntryMutation.error.message}</span>

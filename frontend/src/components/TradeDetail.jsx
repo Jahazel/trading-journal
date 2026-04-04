@@ -82,7 +82,7 @@ const TradeDetail = () => {
     entryTime,
     exitTime,
     pnl,
-    setup,
+    // setup,
     notes,
   } = entry || {};
 
@@ -303,7 +303,7 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
-          <div
+          {/* <div
             className="nd-row nd-row-tall"
             onClick={() => !activeField && activate("setup", setup || "")}
           >
@@ -317,7 +317,7 @@ const TradeDetail = () => {
                 </span>
               )}
             </div>
-          </div>
+          </div> */}
           <TextEditor onSave={handleSave} content={notes} />
         </div>
       </div>
