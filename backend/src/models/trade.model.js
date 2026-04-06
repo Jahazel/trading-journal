@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const tradeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  result: { type: String, required: true, enum: ["Win", "Loss", "Break Even"] },
   contract: { type: String, required: true, enum: ["NQ", "MNQ", "ES", "MES"] },
   direction: { type: String, required: true, enum: ["Long", "Short"] },
   contracts: {
