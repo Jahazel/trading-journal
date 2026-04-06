@@ -3,14 +3,12 @@ import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
   return (
-    <>
-      <div className="dashboard-container">
-        <Sidebar />
-        <div className="entry-container">
-          <Outlet />
-        </div>
+    <div className="dashboard-container">
+      <Sidebar />
+      <div className="dashboard-content">
+        <Outlet />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -72,6 +72,7 @@ const TradeDetail = () => {
     );
 
   const {
+    result,
     contract,
     direction,
     contracts,
@@ -168,6 +169,23 @@ const TradeDetail = () => {
           </div>
         </div>
         <div className="nd-properties">
+          <div
+            className="nd-row"
+            onClick={() => !activeField && activate("result", result)}
+          >
+            <span className="nd-label">Result</span>
+            <div className="nd-value">
+              {activeField === "Result" ? (
+                <select {...sharedInputProps}>
+                  <option value="Win">Win</option>
+                  <option value="Lose">Lose</option>
+                  <option value="Break Even">Break Even</option>
+                </select>
+              ) : (
+                <span>{result}</span>
+              )}
+            </div>
+          </div>
           <div
             className="nd-row"
             onClick={() => !activeField && activate("contract", contract)}

@@ -88,6 +88,16 @@ const deleteEntry = async (id) => {
   }
 };
 
+const getStats = async () => {
+  try {
+    const response = await api.get(`/trades/stats`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching trading stats:", error);
+  }
+};
+
 export {
   login,
   signup,
@@ -96,4 +106,5 @@ export {
   createEntry,
   updateEntry,
   deleteEntry,
+  getStats,
 };

@@ -43,6 +43,20 @@ const NewEntry = () => {
           <p>Enter your trade details below</p>
         </div>
         <div className="form-group">
+          <label>Result</label>
+          <select
+            {...register("result", {
+              required: "Selecting a result is required.",
+            })}
+          >
+            <option value="">Select a result</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="Break Even">Break Even</option>
+          </select>
+          {errors.result && <span>{errors.result.message}</span>}
+        </div>
+        <div className="form-group">
           <label>Contract</label>
           <select
             {...register("contract", {

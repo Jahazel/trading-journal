@@ -196,6 +196,13 @@ body {
   height: calc(100vh - 52px);
 }
 
+/* ── Dashboard Content Area ── */
+.dashboard-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-base);
+}
+
 /* ── Sidebar ── */
 .sidebar-container {
   width: 240px;
@@ -458,61 +465,87 @@ body {
   color: var(--text-secondary);
 }
 
-/* ── Empty State ── */
-.empty-state {
-  height: 90%;
+/* ── Stats Dashboard ── */
+.stats-main {
+  padding: 32px 40px;
+}
+
+.stats-header {
+  margin-bottom: 32px;
+}
+
+.stats-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.stats-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 200px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: scale(1.02);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-value.profit {
+  color: var(--win);
+}
+
+.stat-value.loss {
+  color: var(--loss);
+}
+
+.stats-loading,
+.stats-error {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   justify-content: center;
-  background: var(--bg-base);
+  gap: 16px;
+  min-height: 400px;
 }
 
-.empty-state-icon {
-  width: 96px;
-  height: 96px;
-  margin-bottom: 24px;
-  color: var(--text-muted);
-}
-
-.empty-state h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-}
-
-.empty-state p {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-  max-width: 320px;
-  line-height: 1.5;
-}
-
-.empty-state-btn {
-  padding: 10px 20px;
-  background-color: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.empty-state-btn:hover {
-  background-color: var(--accent-hover);
-}
-
-.empty-state-btn svg {
-  width: 18px;
-  height: 18px;
+.stats-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--loss);
 }
 
 /* ── Trade Detail Journal ── */
@@ -881,5 +914,35 @@ body {
 @media (max-width: 768px) {
   .entry-container {
     padding: 20px;
+  }
+
+  .stats-main {
+    padding: 20px;
+  }
+
+  .stats-header h1 {
+    font-size: 24px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-card {
+    min-width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-card {
+    min-width: 100%;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stats-header h1 {
+    font-size: 22px;
   }
 }
