@@ -1,18 +1,17 @@
-/* ── CSS Variables (GitHub Dark Theme) ── */
 :root {
-  --bg-base: #0d1117; /* GitHub main background */
-  --bg-surface: #161b22; /* GitHub surface background */
-  --bg-elevated: #21262d; /* GitHub elevated/card background */
-  --border: #30363d; /* GitHub border color */
-  --text-primary: #c9d1d9; /* GitHub primary text */
-  --text-secondary: #8b949e; /* GitHub secondary text */
-  --text-muted: #6e7681; /* GitHub muted text */
-  --accent: #2f81f7; /* GitHub accent blue */
-  --accent-hover: #1f6feb; /* GitHub accent hover */
-  --win: #3fb950; /* GitHub success green */
-  --win-bg: rgba(63, 185, 80, 0.1); /* GitHub success bg */
-  --loss: #f85149; /* GitHub danger red */
-  --loss-bg: rgba(248, 81, 73, 0.1); /* GitHub danger bg */
+  --bg-base: #0d1117;
+  --bg-surface: #161b22;
+  --bg-elevated: #21262d;
+  --border: #30363d;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --accent: #2f81f7;
+  --accent-hover: #1f6feb;
+  --win: #3fb950;
+  --win-bg: rgba(63, 185, 80, 0.1);
+  --loss: #f85149;
+  --loss-bg: rgba(248, 81, 73, 0.1);
 }
 
 * {
@@ -196,7 +195,6 @@ body {
   height: calc(100vh - 52px);
 }
 
-/* ── Dashboard Content Area ── */
 .dashboard-content {
   flex: 1;
   overflow-y: auto;
