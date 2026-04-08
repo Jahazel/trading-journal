@@ -136,7 +136,7 @@ const TradeDetail = () => {
   };
 
   const sharedInputProps = {
-    onBlur: handleSave,
+    onBlur: () => handleSave(),
     onKeyDown: (e) => {
       if (e.key === "Enter") handleSave();
     },
@@ -175,7 +175,7 @@ const TradeDetail = () => {
           >
             <span className="nd-label">Result</span>
             <div className="nd-value">
-              {activeField === "Result" ? (
+              {activeField === "result" ? (
                 <select {...sharedInputProps}>
                   <option value="Win">Win</option>
                   <option value="Lose">Lose</option>

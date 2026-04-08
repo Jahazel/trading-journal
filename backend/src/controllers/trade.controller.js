@@ -60,25 +60,37 @@ async function createTrade(req, res) {
     } = req.body;
     const userId = req.userId;
 
-    const newTradeEntry = new Trade({
-      userId: userId,
-      result: result,
-      contract: contract.toUpperCase(),
-      direction: direction,
-      contracts: contracts,
-      entryPrice: entryPrice,
-      exitPrice: exitPrice,
-      stopLoss: stopLoss,
-      target: target,
-      entryTime: entryTime,
-      exitTime: exitTime,
-      pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
-      notes: notes,
-    });
+    if (result === "No Trade") {
+      const newTradeEntry = new Trade({
+        userId: userId,
+        result: result,
+        notes: notes,
+        pnl: 0,
+      });
 
-    const savedTradeEntry = await newTradeEntry.save();
+      const savedTradeEntry = await newTradeEntry.save();
+      return res.status(201).json(savedTradeEntry);
+    } else {
+      const newTradeEntry = new Trade({
+        userId: userId,
+        result: result,
+        contract: contract.toUpperCase(),
+        direction: direction,
+        contracts: contracts,
+        entryPrice: entryPrice,
+        exitPrice: exitPrice,
+        stopLoss: stopLoss,
+        target: target,
+        entryTime: entryTime,
+        exitTime: exitTime,
+        pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
+        notes: notes,
+      });
 
-    return res.status(201).json(savedTradeEntry);
+      const savedTradeEntry = await newTradeEntry.save();
+
+      return res.status(201).json(savedTradeEntry);
+    }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

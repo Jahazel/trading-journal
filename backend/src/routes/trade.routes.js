@@ -1,6 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middleware/auth.middleware");
-const tradesController = require("../controllers/trades.controller");
+const tradesController = require("../controllers/trade.controller");
 const {
   getAllTrades,
   getTrade,
