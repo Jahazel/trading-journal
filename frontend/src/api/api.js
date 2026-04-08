@@ -98,6 +98,60 @@ const getStats = async () => {
   }
 };
 
+const getNoTradeEntries = async () => {
+  try {
+    const response = await api.get(`/no-trade-entries`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching jountal entries:", error);
+    throw error;
+  }
+};
+
+const getNoTradeEntry = async (id) => {
+  try {
+    const response = await api.get(`/no-trade-entries/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching jountal entry:", error);
+    throw error;
+  }
+};
+
+const createNoTradeEntry = async (entryData) => {
+  try {
+    const response = await api.post(`/no-trade-entries`, entryData);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error saving jountal entry:", error);
+    throw error;
+  }
+};
+
+const updateNoTradeEntry = async ({ id, ...fields }) => {
+  try {
+    const response = await api.patch(`/no-trade-entries/${id}`, fields);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating journal entry:", error);
+    throw error;
+  }
+};
+
+const deleteNoTradeEntry = async (id) => {
+  try {
+    const response = await api.delete(`/no-trade-entries/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting journal entry:", error);
+  }
+};
+
 export {
   login,
   signup,
@@ -107,4 +161,9 @@ export {
   updateEntry,
   deleteEntry,
   getStats,
+  getNoTradeEntries,
+  getNoTradeEntry,
+  createNoTradeEntry,
+  updateNoTradeEntry,
+  deleteNoTradeEntry,
 };
