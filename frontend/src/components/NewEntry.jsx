@@ -22,7 +22,7 @@ const NewEntry = () => {
       }
 
       queryClient.setQueryData(["entry", data._id], data);
-      queryClient.invalidateQueries({ queryKey: ["entries"] });
+      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate(`/dashboard/trades/${data._id}`);
       reset();
     },

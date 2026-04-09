@@ -32,7 +32,7 @@ const Sidebar = () => {
       }));
 
       const sorted = [...tradeWithType, ...noTradeWithType].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.date),
+        (a, b) => new Date(b.entryTime) - new Date(a.date),
       );
       return sorted;
     },
@@ -101,7 +101,7 @@ const Sidebar = () => {
           allEntries.map((entry) =>
             entry.type === "trades" ? (
               <Link key={entry._id} to={`/dashboard/trades/${entry._id}`}>
-                <TradeCard createdAt={entry.createdAt} pnl={entry.pnl} />
+                <TradeCard createdAt={entry.entryTime} pnl={entry.pnl} />
               </Link>
             ) : (
               <Link
