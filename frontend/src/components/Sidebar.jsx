@@ -1,22 +1,54 @@
 import { useQuery } from "@tanstack/react-query";
-import { getEntries } from "../api/api";
+import { getEntries, getNoTradeEntries } from "../api/api";
 import TradeCard from "./TradeCard";
 import { Link, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import NoTradeEntryCard from "./NoTradeEntryCard";
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
   const {
-    data: entries,
+    data: allEntries,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["entries"],
-    queryFn: getEntries,
-  });
-  const navigate = useNavigate();
+    queryKey: ["allEntries"],
+    queryFn: async () => {
+      const [tradeEntries, noTradeEntries] = await Promise.all([
+        getEntries(),
+        getNoTradeEntries(),
+      ]);
 
-  const createEntry = () => {
-    navigate("trades/new-entry");
-  };
+      const tradeWithType = tradeEntries.map((entry) => ({
+        ...entry,
+        type: "trades",
+      }));
+      const noTradeWithType = noTradeEntries.map((entry) => ({
+        ...entry,
+        type: "noTrades",
+      }));
+
+      const sorted = [...tradeWithType, ...noTradeWithType].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+      );
+      return sorted;
+    },
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (isLoading)
     return (
@@ -36,23 +68,54 @@ const Sidebar = () => {
     <div className="sidebar-container">
       <div className="sidebar-header">
         <h2>Entries</h2>
-        <button className="new-entry-btn" onClick={createEntry}>
-          +
-        </button>
+        <div className="dropdown-wrapper" ref={dropdownRef}>
+          <button className="new-entry-btn" onClick={() => setIsOpen(!isOpen)}>
+            +
+          </button>
+          {isOpen && (
+            <ul className="drop-down">
+              <li
+                onClick={() => {
+                  navigate("trades/new-entry");
+                  setIsOpen(!isOpen);
+                }}
+              >
+                Trade Entry
+              </li>
+              <li
+                onClick={() => {
+                  navigate("no-trade-entries/new-entry");
+                  setIsOpen(!isOpen);
+                }}
+              >
+                No Trade Entry
+              </li>
+            </ul>
+          )}
+        </div>
       </div>
       <div className="entries-container">
-        {entries?.length === 0 ? (
+        {allEntries?.length === 0 ? (
           <p className="no-entries">No entries yet.</p>
         ) : (
-          entries.map(({ direction, _id, createdAt, pnl }) => (
-            <Link key={_id} to={`/dashboard/trades/${_id}`}>
-              <TradeCard
-                direction={direction}
-                createdAt={createdAt}
-                pnl={pnl}
-              />
-            </Link>
-          ))
+          allEntries.map((entry) =>
+            entry.type === "trades" ? (
+              <Link key={entry._id} to={`/dashboard/trades/${entry._id}`}>
+                <TradeCard
+                  direction={entry.direction}
+                  createdAt={entry.createdAt}
+                  pnl={entry.pnl}
+                />
+              </Link>
+            ) : (
+              <Link
+                key={entry._id}
+                to={`/dashboard/no-trade-entries/${entry._id}`}
+              >
+                <NoTradeEntryCard date={entry.date} />
+              </Link>
+            ),
+          )
         )}
       </div>
     </div>

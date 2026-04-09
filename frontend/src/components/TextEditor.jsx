@@ -4,7 +4,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
 import MenuBar from "./MenuBar";
 
-const TextEditor = ({ onSave, content }) => {
+const TextEditor = ({ onSave, onChange, content }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -15,7 +15,10 @@ const TextEditor = ({ onSave, content }) => {
     ],
     content: content || "<p>Start your trading journal entry here...</p>",
     onBlur({ editor }) {
-      onSave(editor.getHTML(), "notes");
+      if (onSave) onSave(editor.getHTML(), "notes");
+    },
+    onUpdate({ editor }) {
+      if (onChange) onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {

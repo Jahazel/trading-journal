@@ -9,6 +9,8 @@ import Navbar from "./components/Navbar";
 import TradeDetail from "./components/TradeDetail";
 import NewEntry from "./components/NewEntry";
 import StatsDashboard from "./components/StatsDashboard";
+import NewNoTradeEntry from "./components/NewNoTradeEntry";
+import NoTradeEntryDetail from "./components/NoTradeEntryDetail";
 
 function App() {
   return (
@@ -23,8 +25,16 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<StatsDashboard />} />
-              <Route path="trades/:id" element={<TradeDetail />} />
               <Route path="trades/new-entry" element={<NewEntry />}></Route>
+              <Route path="trades/:id" element={<TradeDetail />} />
+              <Route
+                path="no-trade-entries/new-entry"
+                element={<NewNoTradeEntry />}
+              ></Route>
+              <Route
+                path="no-trade-entries/:id"
+                element={<NoTradeEntryDetail />}
+              />
             </Route>
           </Route>
         </Routes>

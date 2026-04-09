@@ -25,7 +25,7 @@ const TradeDetail = () => {
     mutationFn: updateEntry,
     onSuccess: (data) => {
       queryClient.setQueryData(["entry", id], data);
-      queryClient.invalidateQueries({ queryKey: ["entries"] });
+      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
     },
     onError: (error) => {
       console.error("Failed to update trade entry", error);
@@ -35,7 +35,7 @@ const TradeDetail = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteEntry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entries"] });
+      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate("/dashboard");
     },
     onError: (error) => {
