@@ -1,9 +1,11 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
+import type { ITradeEntry } from "../types/models.types.js";
+import { POINT_VALUES } from "../config/constants.js";
 
-const tradeSchema = new mongoose.Schema(
+const tradeEntrySchema = new Schema<ITradeEntry>(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -15,7 +17,7 @@ const tradeSchema = new mongoose.Schema(
     contract: {
       type: String,
       required: true,
-      enum: ["NQ", "MNQ", "ES", "MES"],
+      enum: Object.keys(POINT_VALUES),
     },
     direction: { type: String, required: true, enum: ["Long", "Short"] },
     contracts: {
@@ -38,6 +40,6 @@ const tradeSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const Trade = mongoose.model("Trade", tradeSchema);
+const TradeEntry = model<ITradeEntry>("Trade", tradeEntrySchema);
 
-module.exports = Trade;
+export default TradeEntry;

@@ -1,8 +1,15 @@
-const jsonwebtoken = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const User = require("../models/user.model");
+import type { Request, Response } from "express";
+import jsonwebtoken from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import type { SignupBody, LoginBody, LoginRes } from "../types/auth.types.js";
+import User from "../models/user.model.js";
+import type { IUser } from "../types/models.types.js";
+import type { ApiResponse } from "../types/common.types.js";
 
-async function signUp(req, res) {
+export async function signUp(
+  req: Request<{}, {}, SignupBody>,
+  res: Response<ApiResponse<IUser>>,
+) {
   try {
     const { username, email, password } = req.body;
 
@@ -37,26 +44,27 @@ async function signUp(req, res) {
       password: hashedPassword,
     });
 
-    const savedUser = await newUser.save();
+    await newUser.save();
 
-    const token = jsonwebtoken.sign(
-      { id: savedUser.id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
+    return res
+      .status(201)
+      .json({ message: "User has successfully signed up." });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(500).json({ message: error.message });
+    }
 
-    return res.status(201).json({
-      token: token,
-      username: savedUser.username,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "An unknown error occurred" });
   }
 }
 
-async function login(req, res) {
+export async function login(
+  req: Request<{}, {}, LoginBody>,
+  res: Response<ApiResponse<LoginRes>>,
+) {
   try {
     const { email, password } = req.body;
+    const secret = process.env.JWT_SECRET;
 
     if (!email || !password) {
       return res.status(400).json({ message: "Please enter all fields." });
@@ -64,7 +72,7 @@ async function login(req, res) {
 
     const existingUser = await User.findOne({
       email: email,
-    });
+    }).select("+password");
 
     if (!existingUser) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -76,19 +84,23 @@ async function login(req, res) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = jsonwebtoken.sign(
-      { id: existingUser.id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
+    if (!secret) {
+      throw new Error("JWT_SECRET is missing from environment variables");
+    }
+
+    const token = jsonwebtoken.sign({ id: existingUser.id }, secret, {
+      expiresIn: "7d",
+    });
 
     return res.status(200).json({
       token: token,
       username: existingUser.username,
     });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(500).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: "An unknown error occurred" });
   }
 }
-
-module.exports = { signUp, login };
