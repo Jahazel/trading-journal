@@ -1,4 +1,20 @@
+import {
+  LoginCredentials,
+  AuthResponse,
+  SignupData,
+  SignupResponse,
+} from "../types/auth.types";
 import axios from "axios";
+import {
+  CreateTradeEntryData,
+  Stats,
+  TradeEntry,
+} from "../types/tradeEntry.types";
+import {
+  CreateNoTradeEntryData,
+  NoTradeEntry,
+} from "../types/noTradeEntry.types";
+import { Message } from "../types/common.types";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
@@ -12,7 +28,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-const login = async (credentials) => {
+export const login = async (
+  credentials: LoginCredentials,
+): Promise<AuthResponse> => {
   try {
     const response = await api.post("/auth/login", credentials);
 
@@ -23,7 +41,7 @@ const login = async (credentials) => {
   }
 };
 
-const signup = async (userData) => {
+export const signup = async (userData: SignupData): Promise<SignupResponse> => {
   try {
     const response = await api.post("/auth/signup", userData);
 
@@ -34,7 +52,7 @@ const signup = async (userData) => {
   }
 };
 
-const getEntries = async () => {
+export const getTradeEntries = async (): Promise<TradeEntry[]> => {
   try {
     const response = await api.get("/trades");
 
@@ -45,7 +63,7 @@ const getEntries = async () => {
   }
 };
 
-const getEntry = async (id) => {
+export const getTradeEntry = async (id: string): Promise<TradeEntry> => {
   try {
     const response = await api.get(`/trades/${id}`);
 
@@ -56,7 +74,9 @@ const getEntry = async (id) => {
   }
 };
 
-const createEntry = async (tradeData) => {
+export const createTradeEntry = async (
+  tradeData: CreateTradeEntryData,
+): Promise<TradeEntry> => {
   try {
     const response = await api.post("/trades", tradeData);
 
@@ -67,7 +87,10 @@ const createEntry = async (tradeData) => {
   }
 };
 
-const updateEntry = async ({ id, ...fields }) => {
+export const updateTradeEntry = async ({
+  id,
+  ...fields
+}: { id: string } & Partial<CreateTradeEntryData>): Promise<TradeEntry> => {
   try {
     const response = await api.patch(`/trades/${id}`, fields);
 
@@ -78,27 +101,29 @@ const updateEntry = async ({ id, ...fields }) => {
   }
 };
 
-const deleteEntry = async (id) => {
+export const deleteTradeEntry = async (id: string): Promise<Message> => {
   try {
     const response = await api.delete(`/trades/${id}`);
 
     return response.data;
   } catch (error) {
     console.error("Error deleting trade entry:", error);
+    throw error;
   }
 };
 
-const getStats = async () => {
+export const getStats = async (): Promise<Stats> => {
   try {
     const response = await api.get(`/trades/stats`);
 
     return response.data;
   } catch (error) {
     console.error("Error fetching trading stats:", error);
+    throw error;
   }
 };
 
-const getNoTradeEntries = async () => {
+export const getNoTradeEntries = async (): Promise<NoTradeEntry[]> => {
   try {
     const response = await api.get(`/no-trade-entries`);
 
@@ -109,7 +134,7 @@ const getNoTradeEntries = async () => {
   }
 };
 
-const getNoTradeEntry = async (id) => {
+export const getNoTradeEntry = async (id: string): Promise<NoTradeEntry> => {
   try {
     const response = await api.get(`/no-trade-entries/${id}`);
 
@@ -120,7 +145,9 @@ const getNoTradeEntry = async (id) => {
   }
 };
 
-const createNoTradeEntry = async (entryData) => {
+export const createNoTradeEntry = async (
+  entryData: CreateNoTradeEntryData,
+): Promise<NoTradeEntry> => {
   try {
     const response = await api.post(`/no-trade-entries`, entryData);
 
@@ -131,7 +158,10 @@ const createNoTradeEntry = async (entryData) => {
   }
 };
 
-const updateNoTradeEntry = async ({ id, ...fields }) => {
+export const updateNoTradeEntry = async ({
+  id,
+  ...fields
+}: { id: string } & Partial<CreateNoTradeEntryData>): Promise<NoTradeEntry> => {
   try {
     const response = await api.patch(`/no-trade-entries/${id}`, fields);
 
@@ -142,28 +172,13 @@ const updateNoTradeEntry = async ({ id, ...fields }) => {
   }
 };
 
-const deleteNoTradeEntry = async (id) => {
+export const deleteNoTradeEntry = async (id: string): Promise<Message> => {
   try {
     const response = await api.delete(`/no-trade-entries/${id}`);
 
     return response.data;
   } catch (error) {
     console.error("Error deleting journal entry:", error);
+    throw error;
   }
-};
-
-export {
-  login,
-  signup,
-  getEntries,
-  getEntry,
-  createEntry,
-  updateEntry,
-  deleteEntry,
-  getStats,
-  getNoTradeEntries,
-  getNoTradeEntry,
-  createNoTradeEntry,
-  updateNoTradeEntry,
-  deleteNoTradeEntry,
 };
