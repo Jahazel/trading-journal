@@ -17,3 +17,10 @@ export interface SignupData {
 export interface SignupResponse {
   message: string;
 }
+
+export interface AuthState {
+  user: string | null;
+  setAuth: (authValue: AuthResponse) => void;
+  logout: () => void;
+  loading: boolean;
+}

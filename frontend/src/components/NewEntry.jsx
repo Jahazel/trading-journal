@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { createEntry } from "../api/api";
+import { createTradeEntry } from "../api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const NewEntry = () => {
   const navigate = useNavigate();
 
   const addEntryMutation = useMutation({
-    mutationFn: createEntry,
+    mutationFn: createTradeEntry,
     onSuccess: (data) => {
       if (!data?._id) {
         console.error("No ID returned from the server.");

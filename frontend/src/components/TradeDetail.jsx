@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { deleteEntry, getEntry, updateEntry } from "../api/api";
+import { deleteTradeEntry, getTradeEntry, updateTradeEntry } from "../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import TextEditor from "./TextEditor";
@@ -17,12 +17,12 @@ const TradeDetail = () => {
     error,
   } = useQuery({
     queryKey: ["entry", id],
-    queryFn: () => getEntry(id),
+    queryFn: () => getTradeEntry(id),
     enabled: !!id,
   });
 
   const updateTradeMutation = useMutation({
-    mutationFn: updateEntry,
+    mutationFn: updateTradeEntry,
     onSuccess: (data) => {
       queryClient.setQueryData(["entry", id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
@@ -33,7 +33,7 @@ const TradeDetail = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteEntry,
+    mutationFn: deleteTradeEntry,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate("/dashboard");

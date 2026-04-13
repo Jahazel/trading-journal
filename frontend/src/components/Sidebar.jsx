@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getEntries, getNoTradeEntries } from "../api/api";
+import { getTradeEntries, getNoTradeEntries } from "../api/api";
 import TradeCard from "./TradeCard";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -18,7 +18,7 @@ const Sidebar = () => {
     queryKey: ["allEntries"],
     queryFn: async () => {
       const [tradeEntries, noTradeEntries] = await Promise.all([
-        getEntries(),
+        getTradeEntries(),
         getNoTradeEntries(),
       ]);
 

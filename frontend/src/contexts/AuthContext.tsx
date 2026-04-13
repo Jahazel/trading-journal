@@ -1,10 +1,17 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import { AuthResponse, AuthState } from "../types/auth.types";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext<AuthState | null>(null);
 
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     try {
@@ -22,7 +29,7 @@ const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const setAuth = ({ token, username }) => {
+  const setAuth = ({ token, username }: AuthResponse) => {
     localStorage.setItem("token", token);
     localStorage.setItem("username", username);
     setUser(username);

@@ -1,31 +1,38 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { signup } from "../api/api";
+import { login } from "../api/api";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { LoginCredentials } from "../types/auth.types";
+import { AxiosError } from "axios";
 
-const SignupPage = () => {
+const LoginPage = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onTouched" });
+  } = useForm<LoginCredentials>({ mode: "onTouched" });
 
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const { setAuth } = useAuth();
 
-  const onSubmit = async (userData) => {
+  const onSubmit = async (credentials: LoginCredentials): Promise<void> => {
     try {
-      const data = await signup(userData);
+      const data = await login(credentials);
 
       setAuth({ token: data.token, username: data.username });
 
       navigate("/dashboard");
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Signup failed. Please try again.",
-      );
+      if (error instanceof AxiosError) {
+        setError(
+          error.response?.data?.message ||
+            "Login failed. Please check your credentials.",
+        );
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
@@ -34,21 +41,9 @@ const SignupPage = () => {
       <div className="auth-page">
         <div className="auth-card">
           <div className="auth-header">
-            <h1>Create Account</h1>
+            <h1>Login</h1>
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input
-                id="username"
-                type="text"
-                placeholder="John"
-                {...register("username", {
-                  required: "Username is required.",
-                })}
-              />
-              {errors.username && <span>{errors.username.message}</span>}
-            </div>
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
@@ -83,11 +78,11 @@ const SignupPage = () => {
             </div>
             {error && <p className="error-msg">{error}</p>}
             <button type="submit" className="auth-btn">
-              Create Account
+              Sign In
             </button>
           </form>
           <p className="auth-switch">
-            Already have an account? <Link to="/login">Log in</Link>
+            Don't have an account? <Link to="/signup">Sign up</Link>
           </p>
         </div>
       </div>
@@ -95,4 +90,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default LoginPage;
