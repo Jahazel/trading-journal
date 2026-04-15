@@ -54,7 +54,7 @@ export const signup = async (userData: SignupData): Promise<SignupResponse> => {
 
 export const getTradeEntries = async (): Promise<TradeEntry[]> => {
   try {
-    const response = await api.get("/trades");
+    const response = await api.get("/trades-entry");
 
     return response.data;
   } catch (error) {
@@ -65,7 +65,7 @@ export const getTradeEntries = async (): Promise<TradeEntry[]> => {
 
 export const getTradeEntry = async (id: string): Promise<TradeEntry> => {
   try {
-    const response = await api.get(`/trades/${id}`);
+    const response = await api.get(`/trades-entry/${id}`);
 
     return response.data;
   } catch (error) {
@@ -78,7 +78,7 @@ export const createTradeEntry = async (
   tradeData: CreateTradeEntryData,
 ): Promise<TradeEntry> => {
   try {
-    const response = await api.post("/trades", tradeData);
+    const response = await api.post("/trades-entry", tradeData);
 
     return response.data;
   } catch (error) {
@@ -92,7 +92,7 @@ export const updateTradeEntry = async ({
   ...fields
 }: { id: string } & Partial<CreateTradeEntryData>): Promise<TradeEntry> => {
   try {
-    const response = await api.patch(`/trades/${id}`, fields);
+    const response = await api.patch(`/trades-entry/${id}`, fields);
 
     return response.data;
   } catch (error) {
@@ -103,7 +103,7 @@ export const updateTradeEntry = async ({
 
 export const deleteTradeEntry = async (id: string): Promise<Message> => {
   try {
-    const response = await api.delete(`/trades/${id}`);
+    const response = await api.delete(`/trades-entry/${id}`);
 
     return response.data;
   } catch (error) {
@@ -114,7 +114,7 @@ export const deleteTradeEntry = async (id: string): Promise<Message> => {
 
 export const getStats = async (): Promise<Stats> => {
   try {
-    const response = await api.get(`/trades/stats`);
+    const response = await api.get(`/trades-entry/stats`);
 
     return response.data;
   } catch (error) {
