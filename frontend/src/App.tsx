@@ -1,16 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage.js";
 import SignupPage from "./pages/SignupPage.js";
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./contexts/AuthContext";
-import RootRedirect from "./components/RootRedirect";
-import Navbar from "./components/Navbar";
-import TradeDetail from "./components/TradeDetail";
-import NewEntry from "./components/NewEntry";
-import StatsDashboard from "./components/StatsDashboard";
-import NewNoTradeEntry from "./components/NewNoTradeEntry";
-import NoTradeEntryDetail from "./components/NoTradeEntryDetail";
+import Dashboard from "./pages/Dashboard.js";
+import ProtectedRoute from "./components/ProtectedRoute.js";
+import { AuthProvider } from "./contexts/AuthContext.js";
+import RootRedirect from "./components/RootRedirect.js";
+import Navbar from "./components/Navbar.js";
+import TradeEntryDetail from "./components/TradeEntryDetail.js";
+import NewTradeEntry from "./components/NewTradeEntry.js";
+import StatsDashboard from "./components/StatsDashboard.js";
+import NewNoTradeEntry from "./components/NewNoTradeEntry.js";
+import NoTradeEntryDetail from "./components/NoTradeEntryDetail.js";
 
 function App() {
   return (
@@ -25,8 +25,11 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />}>
               <Route index element={<StatsDashboard />} />
-              <Route path="trades/new-entry" element={<NewEntry />}></Route>
-              <Route path="trades/:id" element={<TradeDetail />} />
+              <Route
+                path="trade-entries/new-entry"
+                element={<NewTradeEntry />}
+              ></Route>
+              <Route path="trade-entries/:id" element={<TradeEntryDetail />} />
               <Route
                 path="no-trade-entries/new-entry"
                 element={<NewNoTradeEntry />}

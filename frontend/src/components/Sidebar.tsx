@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTradeEntries, getNoTradeEntries } from "../api/api";
-import TradeCard from "./TradeCard";
+import NoTradeEntryCard from "./NoTradeEntryCard.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
-import NoTradeEntryCard from "./NoTradeEntryCard";
+import { SidebarEntry } from "../types/common.types";
+import TradeEntryCard from "./TradeEntryCard.js";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     data: allEntries,
@@ -24,23 +25,31 @@ const Sidebar = () => {
 
       const tradeWithType = tradeEntries.map((entry) => ({
         ...entry,
-        type: "trades",
+        type: "trades" as const,
+        entryDate: entry.entryTime,
       }));
       const noTradeWithType = noTradeEntries.map((entry) => ({
         ...entry,
-        type: "noTrades",
+        type: "noTrades" as const,
+        entryDate: entry.date,
       }));
 
-      const sorted = [...tradeWithType, ...noTradeWithType].sort(
-        (a, b) => new Date(b.entryTime) - new Date(a.date),
+      const sorted: SidebarEntry[] = [
+        ...tradeWithType,
+        ...noTradeWithType,
+      ].sort(
+        (a, b) =>
+          new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime(),
       );
       return sorted;
     },
   });
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setIsOpen(false);
       }
     };
@@ -76,7 +85,7 @@ const Sidebar = () => {
             <ul className="drop-down">
               <li
                 onClick={() => {
-                  navigate("trades/new-entry");
+                  navigate("trade-entries/new-entry");
                   setIsOpen(!isOpen);
                 }}
               >
@@ -98,10 +107,13 @@ const Sidebar = () => {
         {allEntries?.length === 0 ? (
           <p className="no-entries">No entries yet.</p>
         ) : (
-          allEntries.map((entry) =>
+          allEntries?.map((entry) =>
             entry.type === "trades" ? (
-              <Link key={entry._id} to={`/dashboard/trades/${entry._id}`}>
-                <TradeCard createdAt={entry.entryTime} pnl={entry.pnl} />
+              <Link
+                key={entry._id}
+                to={`/dashboard/trade-entries/${entry._id}`}
+              >
+                <TradeEntryCard createdAt={entry.entryTime} pnl={entry.pnl} />
               </Link>
             ) : (
               <Link

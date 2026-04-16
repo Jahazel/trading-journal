@@ -1,13 +1,18 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { deleteTradeEntry, getTradeEntry, updateTradeEntry } from "../api/api";
+import {
+  deleteTradeEntry,
+  getTradeEntry,
+  updateTradeEntry,
+} from "../api/api.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import TextEditor from "./TextEditor";
+import { useState, ChangeEvent, KeyboardEvent } from "react";
+import TextEditor from "./TextEditor.js";
+import { TradeEntry } from "../types/tradeEntry.types.js";
 
 const TradeDetail = () => {
-  const { id } = useParams();
-  const [activeField, setActiveField] = useState(null);
-  const [tempValue, setTempValue] = useState("");
+  const { id } = useParams<{ id: string }>();
+  const [activeField, setActiveField] = useState<string | null>(null);
+  const [tempValue, setTempValue] = useState<string | number>("");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -15,9 +20,13 @@ const TradeDetail = () => {
     data: entry,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<TradeEntry>({
     queryKey: ["entry", id],
-    queryFn: () => getTradeEntry(id),
+    queryFn: () => {
+      if (!id) throw new Error("No id provided");
+
+      return getTradeEntry(id);
+    },
     enabled: !!id,
   });
 
@@ -71,6 +80,8 @@ const TradeDetail = () => {
       </div>
     );
 
+  if (!entry) return null;
+
   const {
     result,
     contract,
@@ -84,7 +95,7 @@ const TradeDetail = () => {
     exitTime,
     pnl,
     notes,
-  } = entry || {};
+  } = entry;
 
   const isProfit = pnl > 0;
 
@@ -108,7 +119,7 @@ const TradeDetail = () => {
       minute: "2-digit",
     });
 
-  const toDatetimeLocal = (isoString) => {
+  const toDatetimeLocal = (isoString: string) => {
     if (!isoString) return "";
     const date = new Date(isoString);
     const offset = date.getTimezoneOffset();
@@ -116,9 +127,23 @@ const TradeDetail = () => {
     return local.toISOString().slice(0, 16);
   };
 
-  const handleSave = (value = tempValue, field = activeField) => {
+  const handleSave = (value = tempValue, field = activeField): void => {
     if (field) {
-      updateTradeMutation.mutate({ id, [field]: value });
+      if (!id) throw new Error("No id provided");
+
+      let finalValue = value;
+
+      if (
+        field === "contracts" ||
+        field === "entryPrice" ||
+        field === "exitPrice" ||
+        field === "stopLoss" ||
+        field === "target"
+      ) {
+        finalValue = Number(value);
+      }
+
+      updateTradeMutation.mutate({ id, [field]: finalValue });
       setActiveField(null);
       setTempValue("");
     }
@@ -126,22 +151,26 @@ const TradeDetail = () => {
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this trade?")) {
+      if (!id) throw new Error("No id provided");
+
       deleteMutation.mutate(id);
     }
   };
 
-  const activate = (field, value) => {
+  const activate = (field: string, value: string | number) => {
     setActiveField(field);
     setTempValue(value);
   };
 
   const sharedInputProps = {
     onBlur: () => handleSave(),
-    onKeyDown: (e) => {
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
       if (e.key === "Enter") handleSave();
     },
     autoFocus: true,
-    onChange: (e) => setTempValue(e.target.value),
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setTempValue(e.target.value);
+    },
     value: tempValue,
   };
 
@@ -178,7 +207,7 @@ const TradeDetail = () => {
               {activeField === "result" ? (
                 <select {...sharedInputProps}>
                   <option value="Win">Win</option>
-                  <option value="Lose">Lose</option>
+                  <option value="Loss">Loss</option>
                   <option value="Break Even">Break Even</option>
                 </select>
               ) : (

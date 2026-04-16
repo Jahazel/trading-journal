@@ -2,9 +2,10 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
-import MenuBar from "./MenuBar";
+import MenuBar from "./MenuBar.js";
+import { TextEditorProps } from "../types/common.types";
 
-const TextEditor = ({ onSave, onChange, content }) => {
+const TextEditor = ({ onSave, onChange, content }: TextEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,

@@ -32,7 +32,7 @@ export const login = async (
   credentials: LoginCredentials,
 ): Promise<AuthResponse> => {
   try {
-    const response = await api.post("/auth/login", credentials);
+    const response = await api.post<AuthResponse>("/auth/login", credentials);
 
     return response.data;
   } catch (error) {
@@ -43,7 +43,7 @@ export const login = async (
 
 export const signup = async (userData: SignupData): Promise<SignupResponse> => {
   try {
-    const response = await api.post("/auth/signup", userData);
+    const response = await api.post<SignupResponse>("/auth/signup", userData);
 
     return response.data;
   } catch (error) {
@@ -54,7 +54,7 @@ export const signup = async (userData: SignupData): Promise<SignupResponse> => {
 
 export const getTradeEntries = async (): Promise<TradeEntry[]> => {
   try {
-    const response = await api.get("/trades-entry");
+    const response = await api.get<TradeEntry[]>("/trades-entry");
 
     return response.data;
   } catch (error) {
@@ -65,7 +65,7 @@ export const getTradeEntries = async (): Promise<TradeEntry[]> => {
 
 export const getTradeEntry = async (id: string): Promise<TradeEntry> => {
   try {
-    const response = await api.get(`/trades-entry/${id}`);
+    const response = await api.get<TradeEntry>(`/trades-entry/${id}`);
 
     return response.data;
   } catch (error) {
@@ -78,7 +78,7 @@ export const createTradeEntry = async (
   tradeData: CreateTradeEntryData,
 ): Promise<TradeEntry> => {
   try {
-    const response = await api.post("/trades-entry", tradeData);
+    const response = await api.post<TradeEntry>("/trades-entry", tradeData);
 
     return response.data;
   } catch (error) {
@@ -92,7 +92,7 @@ export const updateTradeEntry = async ({
   ...fields
 }: { id: string } & Partial<CreateTradeEntryData>): Promise<TradeEntry> => {
   try {
-    const response = await api.patch(`/trades-entry/${id}`, fields);
+    const response = await api.patch<TradeEntry>(`/trades-entry/${id}`, fields);
 
     return response.data;
   } catch (error) {
@@ -103,7 +103,7 @@ export const updateTradeEntry = async ({
 
 export const deleteTradeEntry = async (id: string): Promise<Message> => {
   try {
-    const response = await api.delete(`/trades-entry/${id}`);
+    const response = await api.delete<Message>(`/trades-entry/${id}`);
 
     return response.data;
   } catch (error) {
@@ -114,7 +114,7 @@ export const deleteTradeEntry = async (id: string): Promise<Message> => {
 
 export const getStats = async (): Promise<Stats> => {
   try {
-    const response = await api.get(`/trades-entry/stats`);
+    const response = await api.get<Stats>(`/trades-entry/stats`);
 
     return response.data;
   } catch (error) {
@@ -125,7 +125,7 @@ export const getStats = async (): Promise<Stats> => {
 
 export const getNoTradeEntries = async (): Promise<NoTradeEntry[]> => {
   try {
-    const response = await api.get(`/no-trade-entries`);
+    const response = await api.get<NoTradeEntry[]>(`/no-trade-entries`);
 
     return response.data;
   } catch (error) {
@@ -136,7 +136,7 @@ export const getNoTradeEntries = async (): Promise<NoTradeEntry[]> => {
 
 export const getNoTradeEntry = async (id: string): Promise<NoTradeEntry> => {
   try {
-    const response = await api.get(`/no-trade-entries/${id}`);
+    const response = await api.get<NoTradeEntry>(`/no-trade-entries/${id}`);
 
     return response.data;
   } catch (error) {
@@ -149,7 +149,10 @@ export const createNoTradeEntry = async (
   entryData: CreateNoTradeEntryData,
 ): Promise<NoTradeEntry> => {
   try {
-    const response = await api.post(`/no-trade-entries`, entryData);
+    const response = await api.post<NoTradeEntry>(
+      `/no-trade-entries`,
+      entryData,
+    );
 
     return response.data;
   } catch (error) {
@@ -163,7 +166,10 @@ export const updateNoTradeEntry = async ({
   ...fields
 }: { id: string } & Partial<CreateNoTradeEntryData>): Promise<NoTradeEntry> => {
   try {
-    const response = await api.patch(`/no-trade-entries/${id}`, fields);
+    const response = await api.patch<NoTradeEntry>(
+      `/no-trade-entries/${id}`,
+      fields,
+    );
 
     return response.data;
   } catch (error) {
@@ -174,7 +180,7 @@ export const updateNoTradeEntry = async ({
 
 export const deleteNoTradeEntry = async (id: string): Promise<Message> => {
   try {
-    const response = await api.delete(`/no-trade-entries/${id}`);
+    const response = await api.delete<Message>(`/no-trade-entries/${id}`);
 
     return response.data;
   } catch (error) {

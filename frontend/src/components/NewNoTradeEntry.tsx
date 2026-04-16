@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { createNoTradeEntry } from "../api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import TextEditor from "./TextEditor";
+import TextEditor from "./TextEditor.js";
 import { useState } from "react";
+import { CreateNoTradeEntryData } from "../types/noTradeEntry.types";
 
 const NewNoTradeEntry = () => {
   const {
@@ -11,10 +12,10 @@ const NewNoTradeEntry = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ mode: "onTouched" });
+  } = useForm<CreateNoTradeEntryData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState<string>("");
 
   const addEntryMutation = useMutation({
     mutationFn: createNoTradeEntry,
@@ -34,7 +35,7 @@ const NewNoTradeEntry = () => {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: CreateNoTradeEntryData) => {
     addEntryMutation.mutate({ ...data, notes });
   };
 

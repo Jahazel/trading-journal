@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { createTradeEntry } from "../api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { CreateTradeEntryData } from "../types/tradeEntry.types";
 
 const NewEntry = () => {
   const {
@@ -9,7 +10,7 @@ const NewEntry = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ mode: "onTouched" });
+  } = useForm<CreateTradeEntryData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ const NewEntry = () => {
 
       queryClient.setQueryData(["entry", data._id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
-      navigate(`/dashboard/trades/${data._id}`);
+      navigate(`/dashboard/trade-entries/${data._id}`);
       reset();
     },
     onError: (error) => {
@@ -31,7 +32,7 @@ const NewEntry = () => {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: CreateTradeEntryData): Promise<void> => {
     addEntryMutation.mutate(data);
   };
 

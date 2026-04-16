@@ -1,4 +1,10 @@
-const MenuBar = ({ editor }) => {
+import { Editor } from "@tiptap/react";
+
+interface MenuBarProps {
+  editor: Editor | null;
+}
+
+const MenuBar = ({ editor }: MenuBarProps) => {
   if (!editor) {
     return null;
   }

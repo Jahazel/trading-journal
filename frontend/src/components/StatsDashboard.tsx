@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStats } from "../api/api";
+import { Stats } from "../types/tradeEntry.types";
 
 const StatsDashboard = () => {
   const {
     data: stats,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<Stats>({
     queryKey: ["stats"],
     queryFn: getStats,
   });
@@ -39,9 +40,11 @@ const StatsDashboard = () => {
       </div>
     );
 
-  const { totalPnl, winRate, avgWin, avgLoss } = stats || {};
+  if (!stats) return null;
 
-  const formatCurrency = (value) => {
+  const { totalPnl, winRate, avgWin, avgLoss } = stats;
+
+  const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -50,7 +53,7 @@ const StatsDashboard = () => {
     }).format(value || 0);
   };
 
-  const formatPercent = (value) => {
+  const formatPercent = (value: number) => {
     return `${(value || 0).toFixed(2)}%`;
   };
 

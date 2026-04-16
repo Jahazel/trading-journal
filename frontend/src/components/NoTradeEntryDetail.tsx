@@ -3,14 +3,15 @@ import {
   deleteNoTradeEntry,
   getNoTradeEntry,
   updateNoTradeEntry,
-} from "../api/api";
+} from "../api/api.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import TextEditor from "./TextEditor";
+import { useState, KeyboardEvent, ChangeEvent } from "react";
+import TextEditor from "./TextEditor.js";
+import { NoTradeEntry } from "../types/noTradeEntry.types.js";
 
 const NoTradeEntryDetail = () => {
-  const { id } = useParams();
-  const [activeField, setActiveField] = useState(null);
+  const { id } = useParams<{ id: string }>();
+  const [activeField, setActiveField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState("");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -19,9 +20,13 @@ const NoTradeEntryDetail = () => {
     data: entry,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<NoTradeEntry>({
     queryKey: ["noTradeEntry", id],
-    queryFn: () => getNoTradeEntry(id),
+    queryFn: () => {
+      if (!id) throw new Error("No id provided");
+
+      return getNoTradeEntry(id);
+    },
     enabled: !!id,
   });
 
@@ -75,7 +80,9 @@ const NoTradeEntryDetail = () => {
       </div>
     );
 
-  const { date, notes } = entry || {};
+  if (!entry) return null;
+
+  const { date, notes } = entry;
 
   const formattedDate =
     date &&
@@ -89,6 +96,8 @@ const NoTradeEntryDetail = () => {
 
   const handleSave = (value = tempValue, field = activeField) => {
     if (field) {
+      if (!id) throw new Error("No id provided");
+
       updateTradeMutation.mutate({ id, [field]: value });
       setActiveField(null);
       setTempValue("");
@@ -97,22 +106,26 @@ const NoTradeEntryDetail = () => {
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this entry?")) {
+      if (!id) throw new Error("No id provided");
+
       deleteMutation.mutate(id);
     }
   };
 
-  const activate = (field, value) => {
+  const activate = (field: string, value: string) => {
     setActiveField(field);
     setTempValue(value);
   };
 
   const sharedInputProps = {
     onBlur: () => handleSave(),
-    onKeyDown: (e) => {
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
       if (e.key === "Enter") handleSave();
     },
     autoFocus: true,
-    onChange: (e) => setTempValue(e.target.value),
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setTempValue(e.target.value);
+    },
     value: tempValue,
   };
 
