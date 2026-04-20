@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStats } from "../api/api";
+import { getStats, getTradeEntries } from "../api/api";
 import { Stats } from "../types/tradeEntry.types";
+import TradeCalendar from "./TradeCalendar";
 
 const StatsDashboard = () => {
   const {
@@ -10,6 +11,11 @@ const StatsDashboard = () => {
   } = useQuery<Stats>({
     queryKey: ["stats"],
     queryFn: getStats,
+  });
+
+  const { data: trades = [] } = useQuery({
+    queryKey: ["trades"],
+    queryFn: getTradeEntries,
   });
 
   if (isLoading)
@@ -63,7 +69,6 @@ const StatsDashboard = () => {
         <h1>Dashboard</h1>
         <p>Your trading performance overview</p>
       </div>
-
       <div className="stats-grid">
         <div className="stat-card">
           <h3>Total P&L</h3>
@@ -89,6 +94,7 @@ const StatsDashboard = () => {
           </div>
         </div>
       </div>
+      <TradeCalendar trades={trades} />
     </div>
   );
 };

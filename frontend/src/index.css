@@ -989,3 +989,151 @@ body {
     font-size: 22px;
   }
 }
+
+/* ── Trade Calendar ── */
+.calendar-wrapper {
+  margin-top: 32px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 700px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-header span {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calendar-nav-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.calendar-nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.calendar-day-headers {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr) 80px;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-day-header {
+  padding: 8px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.calendar-day-header.week-label {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr) 80px;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-week:last-child {
+  border-bottom: none;
+}
+
+.calendar-day {
+  padding: 8px 10px;
+  min-height: 64px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.calendar-day:hover {
+  background: var(--bg-elevated);
+}
+
+.calendar-day.faded {
+  opacity: 0.35;
+}
+
+.day-number {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.day-pnl {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.day-pnl.positive {
+  color: var(--win);
+}
+
+.day-pnl.negative {
+  color: var(--loss);
+}
+
+.weekly-total {
+  padding: 8px 10px;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.weekly-total-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.weekly-total-value {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.weekly-total-value.positive {
+  color: var(--win);
+}
+
+.weekly-total-value.negative {
+  color: var(--loss);
+}
