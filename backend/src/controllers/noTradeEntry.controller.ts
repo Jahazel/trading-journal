@@ -71,11 +71,11 @@ export async function createNoTradeEntry(
 ) {
   try {
     const userId = req.userId;
-    const { date, notes } = req.body;
+    const { entryTime, notes } = req.body;
 
     const newNoTradeEntry = new NoTradeEntry({
       userId,
-      date,
+      entryTime,
       notes,
     });
 
@@ -98,7 +98,7 @@ export async function updateNoTradeEntry(
   try {
     const userId = req.userId;
     const noTradeEntryId = req.params.id;
-    const { date, notes } = req.body;
+    const { entryTime, notes } = req.body;
 
     if (!noTradeEntryId) {
       return res.status(400).json({ message: "Trade ID is required." });
@@ -117,7 +117,7 @@ export async function updateNoTradeEntry(
     }
 
     if (notes !== undefined) noTradeEntry.notes = notes;
-    if (date !== undefined) noTradeEntry.date = new Date(date);
+    if (entryTime !== undefined) noTradeEntry.entryTime = new Date(entryTime);
 
     const savedNoTradeEntry = await noTradeEntry.save();
 

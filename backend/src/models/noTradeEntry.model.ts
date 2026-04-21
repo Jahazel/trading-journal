@@ -8,7 +8,7 @@ const noTradeEntrySchema = new Schema<INoTradeEntry>(
       ref: "User",
       required: true,
     },
-    date: { type: Date, required: true },
+    entryTime: { type: Date, required: true },
     notes: { type: String },
   },
   { timestamps: true, collection: "no_trade_entries" },

@@ -28,6 +28,6 @@ export interface ITradeEntry extends Document {
 
 export interface INoTradeEntry extends Document {
   userId: Types.ObjectId;
-  date: Date;
+  entryTime: Date;
   notes?: string;
 }

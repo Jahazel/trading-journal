@@ -82,11 +82,11 @@ const NoTradeEntryDetail = () => {
 
   if (!entry) return null;
 
-  const { date, notes } = entry;
+  const { entryTime, notes } = entry;
 
   const formattedDate =
-    date &&
-    new Date(date).toLocaleString("en-US", {
+  entryTime &&
+    new Date(entryTime).toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -146,11 +146,11 @@ const NoTradeEntryDetail = () => {
         <div className="nd-properties">
           <div
             className="nd-row"
-            onClick={() => !activeField && activate("date", date)}
+            onClick={() => !activeField && activate("entryTime", entryTime)}
           >
             <span className="nd-label">Date</span>
             <div className="nd-value">
-              {activeField === "date" ? (
+              {activeField === "entryTime" ? (
                 <input type="datetime-local" {...sharedInputProps} />
               ) : (
                 <span>{formattedDate}</span>

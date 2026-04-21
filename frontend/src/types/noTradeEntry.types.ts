@@ -1,5 +1,5 @@
 export interface CreateNoTradeEntryData {
-  date: string;
+  entryTime: string;
   notes?: string;
 }
 

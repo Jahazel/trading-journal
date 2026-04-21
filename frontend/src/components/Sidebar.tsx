@@ -23,23 +23,9 @@ const Sidebar = () => {
         getNoTradeEntries(),
       ]);
 
-      const tradeWithType = tradeEntries.map((entry) => ({
-        ...entry,
-        type: "trades" as const,
-        entryDate: entry.entryTime,
-      }));
-      const noTradeWithType = noTradeEntries.map((entry) => ({
-        ...entry,
-        type: "noTrades" as const,
-        entryDate: entry.date,
-      }));
-
-      const sorted: SidebarEntry[] = [
-        ...tradeWithType,
-        ...noTradeWithType,
-      ].sort(
+      const sorted: SidebarEntry[] = [...tradeEntries, ...noTradeEntries].sort(
         (a, b) =>
-          new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime(),
+          new Date(b.entryTime).getTime() - new Date(a.entryTime).getTime(),
       );
       return sorted;
     },
@@ -108,7 +94,7 @@ const Sidebar = () => {
           <p className="no-entries">No entries yet.</p>
         ) : (
           allEntries?.map((entry) =>
-            entry.type === "trades" ? (
+            "result" in entry ? (
               <Link
                 key={entry._id}
                 to={`/dashboard/trade-entries/${entry._id}`}
@@ -120,7 +106,7 @@ const Sidebar = () => {
                 key={entry._id}
                 to={`/dashboard/no-trade-entries/${entry._id}`}
               >
-                <NoTradeEntryCard date={entry.date} />
+                <NoTradeEntryCard entryTime={entry.entryTime} />
               </Link>
             ),
           )

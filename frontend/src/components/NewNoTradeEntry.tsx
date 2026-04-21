@@ -52,9 +52,9 @@ const NewNoTradeEntry = () => {
         <label>Date</label>
         <input
           type="datetime-local"
-          {...register("date", { required: "Date is required" })}
+          {...register("entryTime", { required: "Date is required" })}
         />
-        {errors.date && <span>{errors.date.message}</span>}
+        {errors.entryTime && <span>{errors.entryTime.message}</span>}
       </div>
       <div className="form-group">
         <label>Notes</label>

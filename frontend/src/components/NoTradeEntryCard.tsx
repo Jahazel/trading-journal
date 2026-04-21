@@ -1,9 +1,9 @@
 export interface NoTradeEntryCardProps {
-  date: string;
+  entryTime: string;
 }
 
-const NoTradeEntryCard = ({ date }: NoTradeEntryCardProps) => {
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+const NoTradeEntryCard = ({ entryTime }: NoTradeEntryCardProps) => {
+  const formattedDate = new Date(entryTime).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
