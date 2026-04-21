@@ -1,13 +1,10 @@
+import { formatDate } from "../utils/formatUtils";
 export interface NoTradeEntryCardProps {
   entryTime: string;
 }
 
 const NoTradeEntryCard = ({ entryTime }: NoTradeEntryCardProps) => {
-  const formattedDate = new Date(entryTime).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = formatDate(entryTime);
 
   return (
     <div className="trade-card no-trade-card">

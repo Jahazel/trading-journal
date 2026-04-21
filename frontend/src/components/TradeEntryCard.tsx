@@ -1,14 +1,11 @@
+import { formatDate } from "../utils/formatUtils";
 export interface TradeCardProps {
   createdAt: string;
   pnl: number;
 }
 
 const TradeCard = ({ createdAt, pnl }: TradeCardProps) => {
-  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = formatDate(createdAt);
 
   const isProfit = pnl > 0;
 
