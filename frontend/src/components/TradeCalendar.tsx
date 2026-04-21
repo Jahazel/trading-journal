@@ -1,17 +1,11 @@
 import { TradeEntry } from "../types/tradeEntry.types";
-import { groupTradesByDate, getMonthRange } from "../utils/tradeUtils";
 import {
-  eachDayOfInterval,
-  subMonths,
-  format,
-  addMonths,
-  isSameMonth,
-  getDay,
-  subDays,
-  addDays,
-} from "date-fns";
+  groupTradesByDate,
+  buildCalendarDays,
+  chunkIntoWeeks,
+} from "../utils/calendarUtils";
+import { subMonths, format, addMonths, isSameMonth } from "date-fns";
 import { useState } from "react";
-
 interface TradeCalendarProps {
   trades: TradeEntry[];
 }
@@ -19,30 +13,6 @@ interface TradeCalendarProps {
 const TradeCalendar = ({ trades }: TradeCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const tradesObj = groupTradesByDate(trades);
-
-  const buildCalendarDays = (date: Date): Date[] => {
-    const { start, end } = getMonthRange(date);
-    const prefixDays = getDay(start);
-    const suffixDays = 6 - getDay(end);
-
-    const prefix = Array.from({ length: prefixDays }, (_, i) =>
-      subDays(start, prefixDays - i),
-    );
-    const monthDays = eachDayOfInterval({ start, end });
-    const suffix = Array.from({ length: suffixDays }, (_, i) =>
-      addDays(end, i + 1),
-    );
-
-    return [...prefix, ...monthDays, ...suffix];
-  };
-
-  const chunkIntoWeeks = (days: Date[]): Date[][] => {
-    const numOfWeeks = Math.ceil(days.length / 7);
-    return Array.from({ length: numOfWeeks }, (_, i) =>
-      days.slice(i * 7, i * 7 + 7),
-    );
-  };
-
   const calendarMonth = chunkIntoWeeks(buildCalendarDays(currentMonth));
 
   return (
