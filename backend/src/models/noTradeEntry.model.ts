@@ -8,6 +8,11 @@ const noTradeEntrySchema = new Schema<INoTradeEntry>(
       ref: "User",
       required: true,
     },
+    accountId: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
+      required: true,
+    },
     entryTime: { type: Date, required: true },
     notes: { type: String },
   },

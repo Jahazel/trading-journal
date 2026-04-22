@@ -9,6 +9,11 @@ const tradeEntrySchema = new Schema<ITradeEntry>(
       ref: "User",
       required: true,
     },
+    accountId: {
+      type: Schema.Types.ObjectId,
+      ref: "Account",
+      required: true,
+    },
     result: {
       type: String,
       required: true,

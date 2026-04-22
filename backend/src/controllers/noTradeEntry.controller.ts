@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { Types } from "mongoose";
 import NoTradeEntry from "../models/noTradeEntry.model.js";
 import type { INoTradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
@@ -71,10 +72,11 @@ export async function createNoTradeEntry(
 ) {
   try {
     const userId = req.userId;
-    const { entryTime, notes } = req.body;
+    const { accountId, entryTime, notes } = req.body;
 
     const newNoTradeEntry = new NoTradeEntry({
       userId,
+      accountId,
       entryTime,
       notes,
     });
@@ -98,7 +100,7 @@ export async function updateNoTradeEntry(
   try {
     const userId = req.userId;
     const noTradeEntryId = req.params.id;
-    const { entryTime, notes } = req.body;
+    const { accountId, entryTime, notes } = req.body;
 
     if (!noTradeEntryId) {
       return res.status(400).json({ message: "Trade ID is required." });
@@ -116,6 +118,8 @@ export async function updateNoTradeEntry(
         .json({ message: "You don't have permission to update this entry." });
     }
 
+    if (accountId !== undefined)
+      noTradeEntry.accountId = new Types.ObjectId(accountId);
     if (notes !== undefined) noTradeEntry.notes = notes;
     if (entryTime !== undefined) noTradeEntry.entryTime = new Date(entryTime);
 

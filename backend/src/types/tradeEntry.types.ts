@@ -5,6 +5,7 @@ export interface TradeEntryParams {
 }
 
 export interface CreateTradeEntryBody {
+  accountId: string;
   result: "Win" | "Loss" | "Break Even";
   contract: ContractType;
   direction: "Long" | "Short";
@@ -19,6 +20,7 @@ export interface CreateTradeEntryBody {
 }
 
 export interface UpdateEntryBody {
+  accountId: string;
   result?: "Win" | "Loss" | "Break Even";
   contract?: ContractType;
   direction?: "Long" | "Short";

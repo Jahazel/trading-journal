@@ -3,11 +3,13 @@ export interface EntryParams {
 }
 
 export interface CreateEntryBody {
+  accountId: string;
   entryTime: string;
   notes: string;
 }
 
 export interface UpdateEntryBody {
+  accountId: string;
   entryTime?: string;
   notes?: string;
 }

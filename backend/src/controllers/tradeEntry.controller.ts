@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import { Types } from "mongoose";
 import type { Request, Response } from "express";
 import { POINT_VALUES } from "../config/constants.js";
 import TradeEntry from "../models/tradeEntry.model.js";
 import type { ITradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
+import type { ErrorResponse } from "../types/common.types.js";
 import type {
   TradeEntryParams,
   CreateTradeEntryBody,
@@ -11,8 +13,6 @@ import type {
   TradeStatsInternal,
   TradeStatsResponse,
 } from "../types/tradeEntry.types.js";
-
-type ErrorResponse = { message: string };
 
 export async function getTradeEntries(
   req: Request,
@@ -93,6 +93,7 @@ export async function createTradeEntry(
   try {
     const userId = req.userId;
     const {
+      accountId,
       result,
       contract,
       direction,
@@ -108,6 +109,7 @@ export async function createTradeEntry(
 
     const newTradeEntry = new TradeEntry({
       userId,
+      accountId,
       result,
       contract,
       direction,
@@ -140,6 +142,7 @@ export async function updateTradeEntry(
 ) {
   try {
     const {
+      accountId,
       result,
       contract,
       direction,
@@ -171,6 +174,8 @@ export async function updateTradeEntry(
       });
     }
 
+    if (accountId !== undefined)
+      tradeEntry.accountId = new Types.ObjectId(accountId);
     if (result !== undefined) tradeEntry.result = result;
     if (contract !== undefined) tradeEntry.contract = contract;
     if (direction !== undefined) tradeEntry.direction = direction;

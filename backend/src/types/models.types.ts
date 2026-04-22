@@ -10,6 +10,7 @@ export interface IUser extends Document {
 
 export interface ITradeEntry extends Document {
   userId: Types.ObjectId;
+  accountId: Types.ObjectId;
   result: "Win" | "Loss" | "Break Even";
   contract: "NQ" | "MNQ" | "ES" | "MES";
   direction: "Long" | "Short";
@@ -28,6 +29,19 @@ export interface ITradeEntry extends Document {
 
 export interface INoTradeEntry extends Document {
   userId: Types.ObjectId;
+  accountId: Types.ObjectId;
   entryTime: Date;
   notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IAccount extends Document {
+  userId: Types.ObjectId;
+  accountName: string;
+  startingBalance: number;
+  status: "active" | "inactive" | "closed";
+  type: "personal" | "funded";
+  createdAt: Date;
+  updatedAt: Date;
 }
