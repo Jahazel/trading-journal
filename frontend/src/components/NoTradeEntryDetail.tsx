@@ -52,19 +52,26 @@ const NoTradeEntryDetail = () => {
     },
   });
 
+  const rowStyles =
+    "flex items-center min-h-[44px] border-b border-gray-200 cursor-pointer gap-4 hover:bg-gray-50 hover:mx-[-32px] hover:px-8";
+  const labelStyles = "text-sm text-gray-500 w-30 min-w-30 font-medium";
+  const valueStyles = "flex-1 text-sm text-gray-900";
+  const inlineInputStyles =
+    "font-inherit text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md outline-none transition-colors focus:border-blue-500 px-2 py-1 w-full";
+
   if (isLoading)
     return (
-      <div className="entry-loading">
-        <div className="loading-spinner"></div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-gray-500">
+        <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
         <p>Loading trade details...</p>
       </div>
     );
 
   if (error)
     return (
-      <div className="entry-error">
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-red-500 bg-red-50 rounded-2xl m-5">
         <svg
-          className="error-icon"
+          className="w-12 h-12"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -85,7 +92,7 @@ const NoTradeEntryDetail = () => {
   const { entryTime, notes } = entry;
 
   const formattedDate =
-  entryTime &&
+    entryTime &&
     new Date(entryTime).toLocaleString("en-US", {
       month: "short",
       day: "numeric",
@@ -130,28 +137,37 @@ const NoTradeEntryDetail = () => {
   };
 
   return (
-    <div className="entry-container">
-      <div className="nd-journal">
-        <div className="nd-header">
-          <div className="nd-header-top">
+    <div className="flex-1 p-8 overflow-y-auto">
+      <div className="max-w-[680px] mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-8 pt-7 pb-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-1.5">
             <div>
-              <p className="nd-pnl-label">No Trade Day</p>
-              <p className="nd-meta">{formattedDate}</p>
+              <p className="text-xs font-medium text-gray-400 tracking-wide uppercase mb-0.5">
+                No Trade Day
+              </p>
+              <p className="text-sm text-gray-400">{formattedDate}</p>
             </div>
-            <button className="delete-btn" onClick={handleDelete}>
+            <button
+              className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
+              onClick={handleDelete}
+            >
               Delete Entry
             </button>
           </div>
         </div>
-        <div className="nd-properties">
+        <div className="px-8">
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("entryTime", entryTime)}
           >
-            <span className="nd-label">Date</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Date</span>
+            <div className={valueStyles}>
               {activeField === "entryTime" ? (
-                <input type="datetime-local" {...sharedInputProps} />
+                <input
+                  type="datetime-local"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>{formattedDate}</span>
               )}

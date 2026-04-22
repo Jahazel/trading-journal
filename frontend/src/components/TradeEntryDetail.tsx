@@ -174,14 +174,25 @@ const TradeDetail = () => {
     value: tempValue,
   };
 
+  const rowStyles =
+    "flex items-center min-h-[44px] border-b border-gray-200 cursor-pointer gap-4 hover:bg-gray-50 hover:mx-[-32px] hover:px-8";
+  const labelStyles = "text-sm text-gray-500 w-30 min-w-30 font-medium";
+  const valueStyles = "flex-1 text-sm text-gray-900";
+  const inlineInputStyles =
+    "font-inherit text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md outline-none transition-colors focus:border-blue-500 px-2 py-1 w-full";
+
   return (
-    <div className="entry-container">
-      <div className="nd-journal">
-        <div className="nd-header">
-          <div className="nd-header-top">
+    <div className="flex-1 p-8 overflow-y-auto">
+      <div className="max-w-[680px] mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-8 pt-7 pb-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-1.5">
             <div>
-              <div className="nd-pnl-label">Net P&L</div>
-              <div className={`nd-pnl ${isProfit ? "profit" : "loss"}`}>
+              <div className="text-xs font-medium text-gray-400 tracking-wide uppercase mb-0.5">
+                Net P&L
+              </div>
+              <div
+                className={`text-2xl font-medium tabular-nums mb-1.5 ${isProfit ? "text-emerald-500" : "text-red-500"}`}
+              >
                 $
                 {Math.abs(pnl)?.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
@@ -189,23 +200,26 @@ const TradeDetail = () => {
                 })}
               </div>
             </div>
-            <button className="delete-btn" onClick={handleDelete}>
+            <button
+              className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
+              onClick={handleDelete}
+            >
               Delete Trade
             </button>
           </div>
-          <div className="nd-meta">
+          <div className="text-sm text-gray-400">
             Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
           </div>
         </div>
-        <div className="nd-properties">
+        <div className="px-8">
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("result", result)}
           >
-            <span className="nd-label">Result</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Result</span>
+            <div className={valueStyles}>
               {activeField === "result" ? (
-                <select {...sharedInputProps}>
+                <select className={inlineInputStyles} {...sharedInputProps}>
                   <option value="Win">Win</option>
                   <option value="Loss">Loss</option>
                   <option value="Break Even">Break Even</option>
@@ -216,13 +230,13 @@ const TradeDetail = () => {
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("contract", contract)}
           >
-            <span className="nd-label">Contract</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Contract</span>
+            <div className={valueStyles}>
               {activeField === "contract" ? (
-                <select {...sharedInputProps}>
+                <select className={inlineInputStyles} {...sharedInputProps}>
                   <option value="NQ">NQ</option>
                   <option value="MNQ">MNQ</option>
                   <option value="ES">ES</option>
@@ -234,15 +248,15 @@ const TradeDetail = () => {
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("direction", direction)}
           >
-            <span className="nd-label">Direction</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Direction</span>
+            <div className={valueStyles}>
               {activeField === "direction" ? (
                 <select
+                  className={inlineInputStyles}
                   {...sharedInputProps}
-                  className="direction-select"
                   onChange={(e) => {
                     setTempValue(e.target.value);
                     handleSave(e.target.value);
@@ -252,108 +266,141 @@ const TradeDetail = () => {
                   <option value="Short">Short</option>
                 </select>
               ) : (
-                <span className={`nd-badge ${direction?.toLowerCase()}`}>
+                <span
+                  className={`inline-block text-xs font-semibold px-2 py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-500" : "text-red-500"}`}
+                >
                   {direction}
                 </span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("contracts", contracts)}
           >
-            <span className="nd-label">Contracts</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Contracts</span>
+            <div className={valueStyles}>
               {activeField === "contracts" ? (
-                <input type="number" {...sharedInputProps} />
+                <input
+                  type="number"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>{contracts}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("entryPrice", entryPrice)}
           >
-            <span className="nd-label">Entry Price</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Entry Price</span>
+            <div className={valueStyles}>
               {activeField === "entryPrice" ? (
-                <input type="number" step="0.01" {...sharedInputProps} />
+                <input
+                  type="number"
+                  step="0.01"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>${entryPrice?.toLocaleString()}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("exitPrice", exitPrice)}
           >
-            <span className="nd-label">Exit Price</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Exit Price</span>
+            <div className={valueStyles}>
               {activeField === "exitPrice" ? (
-                <input type="number" step="0.01" {...sharedInputProps} />
+                <input
+                  type="number"
+                  step="0.01"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>${exitPrice?.toLocaleString()}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("stopLoss", stopLoss)}
           >
-            <span className="nd-label">Stop Loss</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Stop Loss</span>
+            <div className={valueStyles}>
               {activeField === "stopLoss" ? (
-                <input type="number" step="0.01" {...sharedInputProps} />
+                <input
+                  type="number"
+                  step="0.01"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>${stopLoss?.toLocaleString()}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() => !activeField && activate("target", target)}
           >
-            <span className="nd-label">Target</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Target</span>
+            <div className={valueStyles}>
               {activeField === "target" ? (
-                <input type="number" step="0.01" {...sharedInputProps} />
+                <input
+                  type="number"
+                  step="0.01"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>${target?.toLocaleString()}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={rowStyles}
             onClick={() =>
               !activeField && activate("entryTime", toDatetimeLocal(entryTime))
             }
           >
-            <span className="nd-label">Entry Time</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Entry Time</span>
+            <div className={valueStyles}>
               {activeField === "entryTime" ? (
-                <input type="datetime-local" {...sharedInputProps} />
+                <input
+                  type="datetime-local"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>{formattedEntry}</span>
               )}
             </div>
           </div>
           <div
-            className="nd-row"
+            className={`${rowStyles} border-b-0`}
             onClick={() =>
               !activeField && activate("exitTime", toDatetimeLocal(exitTime))
             }
           >
-            <span className="nd-label">Exit Time</span>
-            <div className="nd-value">
+            <span className={labelStyles}>Exit Time</span>
+            <div className={valueStyles}>
               {activeField === "exitTime" ? (
-                <input type="datetime-local" {...sharedInputProps} />
+                <input
+                  type="datetime-local"
+                  className={inlineInputStyles}
+                  {...sharedInputProps}
+                />
               ) : (
                 <span>{formattedExit}</span>
               )}
             </div>
           </div>
-
           <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>
