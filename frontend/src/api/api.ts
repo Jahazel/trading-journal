@@ -15,6 +15,7 @@ import {
   NoTradeEntry,
 } from "../types/noTradeEntry.types";
 import { Message } from "../types/common.types";
+import { Account, CreateAccountData } from "../types/account.types";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api",
@@ -185,6 +186,66 @@ export const deleteNoTradeEntry = async (id: string): Promise<Message> => {
     return response.data;
   } catch (error) {
     console.error("Error deleting journal entry:", error);
+    throw error;
+  }
+};
+
+export const getAccounts = async (): Promise<Account[]> => {
+  try {
+    const response = await api.get<Account[]>("/accounts");
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    throw error;
+  }
+};
+
+export const getAccount = async (id: string): Promise<Account> => {
+  try {
+    const response = await api.get<Account>(`/accounts/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    throw error;
+  }
+};
+
+export const createAccount = async (
+  accountData: CreateAccountData,
+): Promise<Account> => {
+  try {
+    const response = await api.post<Account>("/accounts", accountData);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error saving account:", error);
+    throw error;
+  }
+};
+
+export const updateAccount = async ({
+  id,
+  ...fields
+}: { id: string } & Partial<CreateAccountData>): Promise<Account> => {
+  try {
+    const response = await api.patch<Account>(`/accounts/${id}`, fields);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating account:", error);
+    throw error;
+  }
+};
+
+export const deleteAccount = async (id: string): Promise<Message> => {
+  try {
+    const response = await api.delete<Message>(`/accounts/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting account:", error);
     throw error;
   }
 };

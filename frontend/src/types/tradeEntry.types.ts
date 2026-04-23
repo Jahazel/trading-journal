@@ -1,4 +1,5 @@
 export interface CreateTradeEntryData {
+  accountId: string;
   result: "Win" | "Loss" | "Break Even";
   contract: "NQ" | "MNQ" | "ES" | "MES";
   direction: "Long" | "Short";
@@ -15,6 +16,7 @@ export interface CreateTradeEntryData {
 export interface TradeEntry extends CreateTradeEntryData {
   _id: string;
   userId: string;
+  accountId: string;
   pnl: number;
   createdAt: string;
   updatedAt: string;
