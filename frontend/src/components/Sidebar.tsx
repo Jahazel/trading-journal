@@ -107,7 +107,11 @@ const Sidebar = () => {
                 to={`/dashboard/trade-entries/${entry._id}`}
                 className="no-underline"
               >
-                <TradeEntryCard createdAt={entry.entryTime} pnl={entry.pnl} />
+                <TradeEntryCard
+                  createdAt={entry.entryTime}
+                  pnl={entry.pnl}
+                  result={entry.result}
+                />
               </Link>
             ) : (
               <Link

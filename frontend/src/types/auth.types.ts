@@ -6,6 +6,7 @@ export interface LoginCredentials {
 export interface AuthResponse {
   token: string;
   username: string;
+  userId: string;
 }
 
 export interface SignupData {
@@ -20,6 +21,7 @@ export interface SignupResponse {
 
 export interface AuthState {
   user: string | null;
+  userId: string | null;
   setAuth: (authValue: AuthResponse) => void;
   logout: () => void;
   loading: boolean;

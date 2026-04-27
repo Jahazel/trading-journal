@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
 import { createNoTradeEntry } from "../api/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import TextEditor from "./TextEditor.js";
 import { useState } from "react";
 import { CreateNoTradeEntryData } from "../types/noTradeEntry.types";
+import { getAccounts } from "@/api/api";
 
 const NewNoTradeEntry = () => {
   const {
@@ -35,12 +36,50 @@ const NewNoTradeEntry = () => {
     },
   });
 
+  const {
+    data: accounts,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
+  });
+
+  if (isLoading)
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
+        <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+        <p className="text-sm text-gray-500">Loading account details...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
+        <svg
+          className="w-12 h-12 text-red-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <p className="text-sm text-red-500">Error: {error.message}</p>
+      </div>
+    );
+
   const onSubmit = async (data: CreateNoTradeEntryData) => {
     addEntryMutation.mutate({ ...data, notes });
   };
 
   const inputStyles =
     "w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 outline-none transition-colors focus:border-blue-500 font-inherit";
+  const selectStyles = `${inputStyles} cursor-pointer`;
   const labelStyles = "block text-sm font-medium text-gray-600 mb-1.5";
   const errorStyles = "block text-xs text-red-500 mt-1";
 
@@ -56,6 +95,25 @@ const NewNoTradeEntry = () => {
         <p className="text-sm text-gray-500">
           Record a day you chose not to trade
         </p>
+      </div>
+      <div>
+        <label className={labelStyles}>Trading Account</label>
+        <select
+          className={selectStyles}
+          {...register("accountId", {
+            required: "Selecting a trading account is required.",
+          })}
+        >
+          <option value="">Select a trading account</option>
+          {accounts?.map((account) => (
+            <option value={account._id} key={account._id}>
+              {account.accountName}
+            </option>
+          ))}
+        </select>
+        {errors.accountId && (
+          <span className={errorStyles}>{errors.accountId.message}</span>
+        )}
       </div>
       <div>
         <label className={labelStyles}>Date</label>

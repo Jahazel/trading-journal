@@ -11,15 +11,18 @@ const AuthContext = createContext<AuthState | null>(null);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     try {
       const token = localStorage.getItem("token");
       const username = localStorage.getItem("username");
+      const userId = localStorage.getItem("userId");
 
-      if (token && username) {
+      if (token && username && userId) {
         setUser(username);
+        setUserId(userId);
       }
 
       setLoading(false);
@@ -29,20 +32,29 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const setAuth = ({ token, username }: AuthResponse) => {
+  const setAuth = ({ token, username, userId }: AuthResponse) => {
     localStorage.setItem("token", token);
     localStorage.setItem("username", username);
+    localStorage.setItem("userId", userId);
+
     setUser(username);
+    setUserId(userId);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+
+    // localStorage.removeItem("accountObj");
+
     setUser(null);
+    setUserId(null);
   };
 
   const value = {
     user,
+    userId,
     setAuth,
     logout,
     loading,

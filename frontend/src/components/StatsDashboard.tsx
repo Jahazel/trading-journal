@@ -81,11 +81,7 @@ const StatsDashboard = () => {
           <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
             Total P&L
           </h3>
-          <div
-            className={`text-sm font-bold ${totalPnl >= 0 ? "text-emerald-500" : "text-red-500"}`}
-          >
-            {formatCurrency(totalPnl)}
-          </div>
+          <div className={`text-sm font-bold`}>{formatCurrency(totalPnl)}</div>
         </div>
         <div className={statCardStyles}>
           <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
@@ -99,15 +95,13 @@ const StatsDashboard = () => {
           <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
             Avg Win
           </h3>
-          <div className="text-sm font-bold text-emerald-500">
-            {formatCurrency(avgWin)}
-          </div>
+          <div className="text-sm font-bold">{formatCurrency(avgWin)}</div>
         </div>
         <div className={statCardStyles}>
           <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
             Avg Loss
           </h3>
-          <div className="text-sm font-bold text-red-500">
+          <div className="text-sm font-bold">
             {formatCurrency(Math.abs(avgLoss))}
           </div>
         </div>

@@ -34,7 +34,7 @@ export const login = async (
 ): Promise<AuthResponse> => {
   try {
     const response = await api.post<AuthResponse>("/auth/login", credentials);
-
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);

@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, KeyboardEvent, ChangeEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import { NoTradeEntry } from "../types/noTradeEntry.types.js";
+import { getAccounts } from "../api/api.js";
 
 const NoTradeEntryDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,11 @@ const NoTradeEntryDetail = () => {
       return getNoTradeEntry(id);
     },
     enabled: !!id,
+  });
+
+  const { data: accounts } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
   });
 
   const updateTradeMutation = useMutation({
@@ -89,7 +95,7 @@ const NoTradeEntryDetail = () => {
 
   if (!entry) return null;
 
-  const { entryTime, notes } = entry;
+  const { accountId, entryTime, notes } = entry;
 
   const formattedDate =
     entryTime &&
@@ -156,6 +162,28 @@ const NoTradeEntryDetail = () => {
           </div>
         </div>
         <div className="px-8">
+          <div
+            className={rowStyles}
+            onClick={() => !activeField && activate("accountId", accountId)}
+          >
+            <span className={labelStyles}>Account</span>
+            <div className={valueStyles}>
+              {activeField === "accountId" ? (
+                <select className={inlineInputStyles} {...sharedInputProps}>
+                  {accounts?.map((account) => (
+                    <option value={account._id} key={account._id}>
+                      {account.accountName}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span>
+                  {accounts?.find((account) => account._id === accountId)
+                    ?.accountName ?? "No account"}
+                </span>
+              )}
+            </div>
+          </div>
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("entryTime", entryTime)}

@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, ChangeEvent, KeyboardEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import { TradeEntry } from "../types/tradeEntry.types.js";
+import { getAccounts } from "../api/api.js";
 
 const TradeDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,11 @@ const TradeDetail = () => {
       return getTradeEntry(id);
     },
     enabled: !!id,
+  });
+
+  const { data: accounts } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
   });
 
   const updateTradeMutation = useMutation({
@@ -83,6 +89,7 @@ const TradeDetail = () => {
   if (!entry) return null;
 
   const {
+    accountId,
     result,
     contract,
     direction,
@@ -174,6 +181,12 @@ const TradeDetail = () => {
     value: tempValue,
   };
 
+  const resultColors: Record<string, string> = {
+    Win: "text-emerald-500",
+    Loss: "text-red-500",
+    "Break Even": "text-blue-500",
+  };
+
   const rowStyles =
     "flex items-center min-h-[44px] border-b border-gray-200 cursor-pointer gap-4 hover:bg-gray-50 hover:mx-[-32px] hover:px-8";
   const labelStyles = "text-sm text-gray-500 w-30 min-w-30 font-medium";
@@ -191,7 +204,7 @@ const TradeDetail = () => {
                 Net P&L
               </div>
               <div
-                className={`text-2xl font-medium tabular-nums mb-1.5 ${isProfit ? "text-emerald-500" : "text-red-500"}`}
+                className={`text-2xl font-medium tabular-nums mb-1.5 ${resultColors[result]}`}
               >
                 $
                 {Math.abs(pnl)?.toLocaleString(undefined, {
@@ -212,6 +225,28 @@ const TradeDetail = () => {
           </div>
         </div>
         <div className="px-8">
+          <div
+            className={rowStyles}
+            onClick={() => !activeField && activate("accountId", accountId)}
+          >
+            <span className={labelStyles}>Account</span>
+            <div className={valueStyles}>
+              {activeField === "accountId" ? (
+                <select className={inlineInputStyles} {...sharedInputProps}>
+                  {accounts?.map((account) => (
+                    <option value={account._id} key={account._id}>
+                      {account.accountName}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span>
+                  {accounts?.find((account) => account._id === accountId)
+                    ?.accountName ?? "No account"}
+                </span>
+              )}
+            </div>
+          </div>
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("result", result)}
@@ -267,7 +302,7 @@ const TradeDetail = () => {
                 </select>
               ) : (
                 <span
-                  className={`inline-block text-xs font-semibold px-2 py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-500" : "text-red-500"}`}
+                  className={`inline-block text-xs font-semibold py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-500" : "text-red-500"}`}
                 >
                   {direction}
                 </span>

@@ -21,7 +21,11 @@ const LoginPage = () => {
     try {
       const data = await login(credentials);
 
-      setAuth({ token: data.token, username: data.username });
+      setAuth({
+        token: data.token,
+        username: data.username,
+        userId: data.userId,
+      });
 
       navigate("/dashboard");
     } catch (error) {
