@@ -3,7 +3,7 @@ import { createTradeEntry } from "../api/api";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { CreateTradeEntryData } from "../types/tradeEntry.types";
-import { getAccounts } from "@/api/api";
+import { getAccounts } from "../api/api";
 
 const NewEntry = () => {
   const {

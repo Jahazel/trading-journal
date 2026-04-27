@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import TextEditor from "./TextEditor.js";
 import { useState } from "react";
 import { CreateNoTradeEntryData } from "../types/noTradeEntry.types";
-import { getAccounts } from "@/api/api";
+import { getAccounts } from "../api/api";
 
 const NewNoTradeEntry = () => {
   const {
