@@ -104,8 +104,6 @@ const TradeDetail = () => {
     notes,
   } = entry;
 
-  const isProfit = pnl > 0;
-
   const formattedEntry =
     entryTime &&
     new Date(entryTime).toLocaleString("en-US", {

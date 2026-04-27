@@ -95,6 +95,7 @@ export async function login(
     return res.status(200).json({
       token: token,
       username: existingUser.username,
+      userId: existingUser.id,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
