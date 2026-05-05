@@ -21,8 +21,8 @@ const StatsDashboard = () => {
   if (isLoading)
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
-        <p className="text-sm text-gray-500">
+        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
+        <p className="text-sm text-ink-secondary">
           Loading trading stats details...
         </p>
       </div>
@@ -53,7 +53,7 @@ const StatsDashboard = () => {
   const { totalPnl, winRate, avgWin, avgLoss } = stats;
 
   const statCardStyles =
-    "flex-1 min-w-[160px] bg-white border border-gray-200 rounded-xl px-4 py-3.5 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:border-blue-500 hover:shadow-lg";
+    "flex-1 min-w-[160px] bg-surface border border-border rounded-xl px-4 py-3.5 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-lift";
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -71,37 +71,37 @@ const StatsDashboard = () => {
   return (
     <div className="p-8 px-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-sm text-gray-500">
+        <h1 className="text-2xl font-semibold text-ink-primary mb-2">Dashboard</h1>
+        <p className="text-sm text-ink-secondary">
           Your trading performance overview
         </p>
       </div>
       <div className="flex flex-wrap gap-5">
         <div className={statCardStyles}>
-          <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+          <h3 className="text-xs font-semibold uppercase text-ink-secondary tracking-wide mb-2">
             Total P&L
           </h3>
-          <div className={`text-sm font-bold`}>{formatCurrency(totalPnl)}</div>
+          <div className="text-sm font-bold tabular-nums text-ink-primary">{formatCurrency(totalPnl)}</div>
         </div>
         <div className={statCardStyles}>
-          <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+          <h3 className="text-xs font-semibold uppercase text-ink-secondary tracking-wide mb-2">
             Win Rate
           </h3>
-          <div className="text-sm font-bold text-gray-900">
+          <div className="text-sm font-bold tabular-nums text-ink-primary">
             {formatPercent(winRate)}
           </div>
         </div>
         <div className={statCardStyles}>
-          <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+          <h3 className="text-xs font-semibold uppercase text-ink-secondary tracking-wide mb-2">
             Avg Win
           </h3>
-          <div className="text-sm font-bold">{formatCurrency(avgWin)}</div>
+          <div className="text-sm font-bold tabular-nums text-ink-primary">{formatCurrency(avgWin)}</div>
         </div>
         <div className={statCardStyles}>
-          <h3 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+          <h3 className="text-xs font-semibold uppercase text-ink-secondary tracking-wide mb-2">
             Avg Loss
           </h3>
-          <div className="text-sm font-bold">
+          <div className="text-sm font-bold tabular-nums text-ink-primary">
             {formatCurrency(Math.abs(avgLoss))}
           </div>
         </div>

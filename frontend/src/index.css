@@ -1,10 +1,25 @@
 @import "tailwindcss";
 
+@theme {
+  --color-sage: #7A8F5E;
+  --color-sage-hover: #6A7D4E;
+  --color-sage-light: #E0E9D8;
+  --color-surface: #FDFEFE;
+  --color-surface-alt: #F8F9F6;
+  --color-ink-primary: #1A1E18;
+  --color-ink-secondary: #6B7368;
+  --color-ink-muted: #9CA398;
+  --color-border: #E4E7E0;
+  --shadow-ambient: 0 1px 4px rgba(26,30,24,0.05), 0 2px 12px rgba(26,30,24,0.04);
+  --shadow-lift: 0 4px 16px rgba(26,30,24,0.08), 0 1px 4px rgba(26,30,24,0.05);
+  --shadow-dropdown: 0 8px 24px rgba(26,30,24,0.10), 0 2px 8px rgba(26,30,24,0.06);
+}
+
 .trading-editor-container .control-group {
   margin-bottom: 8px;
   padding: 8px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
@@ -17,70 +32,70 @@
 .trading-editor-container .button-group button {
   padding: 4px 10px;
   background: transparent;
-  color: #6b7280;
+  color: var(--color-ink-secondary);
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
-  transition: all 0.15s ease;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .trading-editor-container .button-group button:hover {
-  background: white;
-  border-color: #e5e7eb;
-  color: #111827;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-ink-primary);
 }
 
 .trading-editor-container .button-group button.is-active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
+  background: var(--color-sage);
+  color: var(--color-surface);
+  border-color: var(--color-sage);
 }
 
 .ProseMirror {
   min-height: 300px;
   padding: 10px;
-  background: #f9fafb;
-  color: #111827;
-  border: 1px solid #e5e7eb;
+  background: var(--color-surface-alt);
+  color: var(--color-ink-primary);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.6;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ProseMirror:focus {
-  border-color: #3b82f6;
+  border-color: var(--color-sage);
 }
 
 .ProseMirror h1 {
   font-size: 1.5em;
   font-weight: 700;
   margin: 0.5em 0;
-  color: #111827;
+  color: var(--color-ink-primary);
 }
 .ProseMirror h2 {
   font-size: 1.25em;
   font-weight: 600;
   margin: 0.5em 0;
-  color: #111827;
+  color: var(--color-ink-primary);
 }
 .ProseMirror h3 {
   font-size: 1.1em;
   font-weight: 600;
   margin: 0.5em 0;
-  color: #111827;
+  color: var(--color-ink-primary);
 }
 .ProseMirror p {
   margin: 0.25em 0;
-  color: #111827;
+  color: var(--color-ink-primary);
 }
 .ProseMirror strong {
   font-weight: 700;
-  color: #111827;
+  color: var(--color-ink-primary);
 }
 .ProseMirror em {
   font-style: italic;
@@ -107,7 +122,7 @@
   list-style-type: decimal;
 }
 .ProseMirror li {
-  color: #111827;
+  color: var(--color-ink-primary);
   margin: 0.15em 0;
 }
 .ProseMirror li p {

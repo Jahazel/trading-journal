@@ -5,7 +5,7 @@ import {
   updateTradeEntry,
 } from "../api/api.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, ChangeEvent, KeyboardEvent } from "react";
+import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import { TradeEntry } from "../types/tradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
@@ -14,8 +14,20 @@ const TradeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [activeField, setActiveField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState<string | number>("");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    };
+  }, []);
 
   const {
     data: entry,
@@ -25,7 +37,6 @@ const TradeDetail = () => {
     queryKey: ["entry", id],
     queryFn: () => {
       if (!id) throw new Error("No id provided");
-
       return getTradeEntry(id);
     },
     enabled: !!id,
@@ -41,9 +52,12 @@ const TradeDetail = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(["entry", id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      setSaveStatus("saved");
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
     },
-    onError: (error) => {
-      console.error("Failed to update trade entry", error);
+    onError: () => {
+      setSaveStatus("error");
     },
   });
 
@@ -53,24 +67,27 @@ const TradeDetail = () => {
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate("/dashboard");
     },
-    onError: (error) => {
-      console.error("Failed to delete trade entry", error);
+    onError: () => {
+      setDeleteConfirming(false);
+      setDeleteError("Could not delete. Try again.");
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setDeleteError(null), 4000);
     },
   });
 
   if (isLoading)
     return (
-      <div className="entry-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading trade details...</p>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
+        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
+        <p className="text-sm text-ink-secondary">Loading trade details...</p>
       </div>
     );
 
   if (error)
     return (
-      <div className="entry-error">
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
         <svg
-          className="error-icon"
+          className="w-12 h-12 text-red-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -82,7 +99,7 @@ const TradeDetail = () => {
             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p>Error: {error.message}</p>
+        <p className="text-sm text-red-500">Error: {error.message}</p>
       </div>
     );
 
@@ -154,12 +171,21 @@ const TradeDetail = () => {
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this trade?")) {
-      if (!id) throw new Error("No id provided");
+  const handleDeleteClick = () => {
+    setDeleteConfirming(true);
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    deleteTimerRef.current = setTimeout(() => setDeleteConfirming(false), 4000);
+  };
 
-      deleteMutation.mutate(id);
-    }
+  const handleDeleteCancel = () => {
+    setDeleteConfirming(false);
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!id) return;
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    deleteMutation.mutate(id);
   };
 
   const activate = (field: string, value: string | number) => {
@@ -171,6 +197,10 @@ const TradeDetail = () => {
     onBlur: () => handleSave(),
     onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
       if (e.key === "Enter") handleSave();
+      if (e.key === "Escape") {
+        setActiveField(null);
+        setTempValue("");
+      }
     },
     autoFocus: true,
     onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -180,25 +210,25 @@ const TradeDetail = () => {
   };
 
   const resultColors: Record<string, string> = {
-    Win: "text-emerald-500",
-    Loss: "text-red-500",
-    "Break Even": "text-blue-500",
+    Win: "text-emerald-600",
+    Loss: "text-red-600",
+    "Break Even": "text-ink-secondary",
   };
 
   const rowStyles =
-    "flex items-center min-h-[44px] border-b border-gray-200 cursor-pointer gap-4 hover:bg-gray-50 hover:mx-[-32px] hover:px-8";
-  const labelStyles = "text-sm text-gray-500 w-30 min-w-30 font-medium";
-  const valueStyles = "flex-1 text-sm text-gray-900";
+    "flex items-center min-h-[44px] border-b border-border cursor-pointer gap-4 hover:bg-surface-alt hover:mx-[-32px] hover:px-8";
+  const labelStyles = "text-sm text-ink-secondary w-30 min-w-30 font-medium";
+  const valueStyles = "flex-1 text-sm text-ink-primary";
   const inlineInputStyles =
-    "font-inherit text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md outline-none transition-colors focus:border-blue-500 px-2 py-1 w-full";
+    "font-inherit text-sm text-ink-primary bg-surface-alt border border-border rounded-md outline-none transition-colors focus:border-sage px-2 py-1 w-full";
 
   return (
     <div className="flex-1 p-8 overflow-y-auto">
-      <div className="max-w-[680px] mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-8 pt-7 pb-6 border-b border-gray-200">
+      <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+        <div className="px-8 pt-7 pb-6 border-b border-border">
           <div className="flex items-center justify-between mb-1.5">
             <div>
-              <div className="text-xs font-medium text-gray-400 tracking-wide uppercase mb-0.5">
+              <div className="text-xs font-medium text-ink-muted tracking-wide uppercase mb-0.5">
                 Net P&L
               </div>
               <div
@@ -211,17 +241,59 @@ const TradeDetail = () => {
                 })}
               </div>
             </div>
-            <button
-              className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
-              onClick={handleDelete}
-            >
-              Delete Trade
-            </button>
+
+            <div className="flex flex-col items-end gap-2">
+              {deleteConfirming ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-ink-secondary">Delete this trade?</span>
+                  <button
+                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleDeleteConfirm}
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  </button>
+                  <button
+                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors hover:bg-surface-alt"
+                    onClick={handleDeleteCancel}
+                    disabled={deleteMutation.isPending}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
+                  onClick={handleDeleteClick}
+                >
+                  Delete Trade
+                </button>
+              )}
+
+              {deleteError && (
+                <p className="text-xs text-red-500">{deleteError}</p>
+              )}
+            </div>
           </div>
-          <div className="text-sm text-gray-400">
-            Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
+
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-ink-muted">
+              Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
+            </div>
+            <div
+              aria-live="polite"
+              className="text-xs font-medium transition-opacity duration-300"
+            >
+              {saveStatus === "saved" && (
+                <span className="text-emerald-600">Saved</span>
+              )}
+              {saveStatus === "error" && (
+                <span className="text-red-500">Could not save</span>
+              )}
+            </div>
           </div>
         </div>
+
         <div className="px-8">
           <div
             className={rowStyles}
@@ -300,7 +372,7 @@ const TradeDetail = () => {
                 </select>
               ) : (
                 <span
-                  className={`inline-block text-xs font-semibold py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-500" : "text-red-500"}`}
+                  className={`inline-block text-xs font-semibold py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-600" : "text-red-600"}`}
                 >
                   {direction}
                 </span>

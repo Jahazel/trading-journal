@@ -47,33 +47,33 @@ const Sidebar = () => {
 
   if (isLoading)
     return (
-      <div className="w-60 p-4 text-sm text-gray-500">
+      <div className="w-60 p-4 text-sm text-ink-secondary">
         <p>Loading entries...</p>
       </div>
     );
 
   if (error)
     return (
-      <div className="w-60 p-4 text-sm text-gray-500">
+      <div className="w-60 p-4 text-sm text-ink-secondary">
         <p>Error: {error.message}</p>
       </div>
     );
 
   return (
-    <div className="w-60 min-w-60 bg-white border-r border-gray-200 flex flex-col h-full">
-      <div className="relative flex items-center justify-between px-5 py-3 border-b border-gray-200">
-        <h2 className="text-xs font-bold text-gray-900">Entries</h2>
+    <div className="w-60 min-w-60 bg-surface border-r border-border flex flex-col h-full">
+      <div className="relative flex items-center justify-between px-5 py-3 border-b border-border">
+        <h2 className="text-xs font-bold text-ink-primary uppercase tracking-wide">Entries</h2>
         <div ref={dropdownRef}>
           <button
-            className="w-6 h-6 rounded-full bg-blue-600 text-white border-none text-base cursor-pointer flex items-center justify-center transition-colors hover:bg-blue-700"
+            className="w-6 h-6 rounded-full bg-sage text-surface border-none text-base cursor-pointer flex items-center justify-center transition-colors hover:bg-sage-hover"
             onClick={() => setIsOpen(!isOpen)}
           >
             +
           </button>
           {isOpen && (
-            <ul className="absolute top-10 right-2 bg-white border border-gray-200 rounded-lg list-none z-50 min-w-[180px] shadow-lg overflow-hidden">
+            <ul className="absolute top-10 right-2 bg-surface border border-border rounded-lg list-none z-50 min-w-[180px] shadow-dropdown overflow-hidden">
               <li
-                className="px-3.5 py-2.5 text-sm text-gray-900 cursor-pointer border-b border-gray-200 transition-colors hover:bg-gray-50 hover:text-blue-600"
+                className="px-3.5 py-2.5 text-sm text-ink-primary cursor-pointer border-b border-border transition-colors hover:bg-surface-alt hover:text-sage"
                 onClick={() => {
                   navigate("trade-entries/new-entry");
                   setIsOpen(!isOpen);
@@ -82,7 +82,7 @@ const Sidebar = () => {
                 Trade Entry
               </li>
               <li
-                className="px-3.5 py-2.5 text-sm text-gray-900 cursor-pointer transition-colors hover:bg-gray-50 hover:text-blue-600"
+                className="px-3.5 py-2.5 text-sm text-ink-primary cursor-pointer transition-colors hover:bg-surface-alt hover:text-sage"
                 onClick={() => {
                   navigate("no-trade-entries/new-entry");
                   setIsOpen(!isOpen);
@@ -96,7 +96,7 @@ const Sidebar = () => {
       </div>
       <div className="flex-1 overflow-y-auto p-2">
         {allEntries?.length === 0 ? (
-          <p className="text-center text-gray-400 text-sm mt-5">
+          <p className="text-center text-ink-muted text-sm mt-5">
             No entries yet.
           </p>
         ) : (

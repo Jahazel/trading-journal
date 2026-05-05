@@ -14,20 +14,20 @@ const Navbar = () => {
   return (
     <>
       {user ? (
-        <nav className="flex items-center justify-between px-5 h-13 bg-white border-b border-gray-200">
+        <nav className="flex items-center justify-between px-5 h-13 bg-surface border-b border-border">
           <div>
             <Link to="/">
-              <span className="text-base font-bold text-blue-600 tracking-tight">
+              <span className="text-base font-bold text-ink-primary tracking-tight">
                 Trading Journal
               </span>
             </Link>
           </div>
           <div className="flex items-center gap-3.5">
-            <span className="text-sm font-medium text-gray-500">
+            <span className="text-sm font-medium text-ink-secondary">
               Welcome back, {user}
             </span>
             <button
-              className="px-3.5 py-1.5 bg-transparent text-blue-600 border border-blue-600 rounded-md text-sm font-medium cursor-pointer transition-all hover:bg-blue-600 hover:text-white"
+              className="px-3.5 py-1.5 bg-transparent text-sage border border-sage rounded-md text-sm font-medium cursor-pointer transition-all hover:bg-sage hover:text-surface"
               onClick={handleLogout}
             >
               Sign Out
@@ -35,9 +35,9 @@ const Navbar = () => {
           </div>
         </nav>
       ) : (
-        <nav className="flex items-center justify-between px-5 h-13 bg-white border-b border-gray-200">
+        <nav className="flex items-center justify-between px-5 h-13 bg-surface border-b border-border">
           <div>
-            <span className="text-base font-bold text-blue-600 tracking-tight">
+            <span className="text-base font-bold text-ink-primary tracking-tight">
               Trading Journal
             </span>
           </div>

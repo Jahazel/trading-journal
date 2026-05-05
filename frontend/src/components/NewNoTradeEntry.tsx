@@ -12,11 +12,20 @@ const NewNoTradeEntry = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateNoTradeEntryData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [notes, setNotes] = useState<string>("");
+  const [cancelConfirming, setCancelConfirming] = useState(false);
+
+  const handleCancel = () => {
+    if (!isDirty && !notes) {
+      navigate(-1);
+      return;
+    }
+    setCancelConfirming(true);
+  };
 
   const addEntryMutation = useMutation({
     mutationFn: createNoTradeEntry,
@@ -48,8 +57,8 @@ const NewNoTradeEntry = () => {
   if (isLoading)
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
-        <p className="text-sm text-gray-500">Loading account details...</p>
+        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
+        <p className="text-sm text-ink-secondary">Loading account details...</p>
       </div>
     );
 
@@ -78,23 +87,61 @@ const NewNoTradeEntry = () => {
   };
 
   const inputStyles =
-    "w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 outline-none transition-colors focus:border-blue-500 font-inherit";
+    "w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-sage font-inherit";
   const selectStyles = `${inputStyles} cursor-pointer`;
-  const labelStyles = "block text-sm font-medium text-gray-600 mb-1.5";
+  const labelStyles = "block text-sm font-medium text-ink-secondary mb-1.5";
   const errorStyles = "block text-xs text-red-500 mt-1";
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-[800px] mx-auto bg-white p-8 rounded-2xl border border-gray-200 grid grid-cols-1 gap-5"
+      className="max-w-[800px] mx-auto bg-surface p-8 rounded-2xl border border-border grid grid-cols-1 gap-5"
     >
-      <div className="mb-2 pb-4 border-b-2 border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-1">
-          Log No Trade Day
-        </h2>
-        <p className="text-sm text-gray-500">
-          Record a day you chose not to trade
-        </p>
+      <div className="mb-2 pb-4 border-b-2 border-border">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-ink-primary mb-1">
+              Log No Trade Day
+            </h2>
+            <p className="text-sm text-ink-secondary">
+              Record a day you chose not to trade
+            </p>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            {cancelConfirming ? (
+              <>
+                <span className="text-xs text-ink-secondary">Discard changes?</span>
+                <button
+                  type="button"
+                  className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-red-600"
+                  onClick={() => navigate(-1)}
+                >
+                  Discard
+                </button>
+                <button
+                  type="button"
+                  className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer hover:bg-surface-alt"
+                  onClick={() => setCancelConfirming(false)}
+                >
+                  Keep editing
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer hover:bg-surface-alt"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </div>
+        {addEntryMutation.error && (
+          <span className="block text-sm text-red-500 bg-red-50 border border-red-200 rounded-md px-3 py-2 mt-3">
+            {addEntryMutation.error.message}
+          </span>
+        )}
       </div>
       <div>
         <label className={labelStyles}>Trading Account</label>
@@ -118,7 +165,7 @@ const NewNoTradeEntry = () => {
       <div>
         <label className={labelStyles}>Date</label>
         <input
-          type="datetime-local"
+          type="date"
           className={inputStyles}
           {...register("entryTime", { required: "Date is required" })}
         />
@@ -130,14 +177,9 @@ const NewNoTradeEntry = () => {
         <label className={labelStyles}>Notes</label>
         <TextEditor onChange={setNotes} />
       </div>
-      {addEntryMutation.error && (
-        <span className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-          {addEntryMutation.error.message}
-        </span>
-      )}
       <button
         type="submit"
-        className="w-full py-3 bg-blue-600 text-white rounded-lg text-base font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-sage text-surface rounded-lg text-base font-semibold cursor-pointer transition-colors hover:bg-sage-hover mt-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
         disabled={addEntryMutation.isPending}
       >
         {addEntryMutation.isPending ? "Submitting..." : "Submit"}

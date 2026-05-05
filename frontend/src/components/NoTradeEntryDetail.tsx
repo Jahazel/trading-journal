@@ -59,16 +59,16 @@ const NoTradeEntryDetail = () => {
   });
 
   const rowStyles =
-    "flex items-center min-h-[44px] border-b border-gray-200 cursor-pointer gap-4 hover:bg-gray-50 hover:mx-[-32px] hover:px-8";
-  const labelStyles = "text-sm text-gray-500 w-30 min-w-30 font-medium";
-  const valueStyles = "flex-1 text-sm text-gray-900";
+    "flex items-center min-h-[44px] border-b border-border cursor-pointer gap-4 hover:bg-surface-alt hover:mx-[-32px] hover:px-8";
+  const labelStyles = "text-sm text-ink-secondary w-30 min-w-30 font-medium";
+  const valueStyles = "flex-1 text-sm text-ink-primary";
   const inlineInputStyles =
-    "font-inherit text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md outline-none transition-colors focus:border-blue-500 px-2 py-1 w-full";
+    "font-inherit text-sm text-ink-primary bg-surface-alt border border-border rounded-md outline-none transition-colors focus:border-sage px-2 py-1 w-full";
 
   if (isLoading)
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-gray-500">
-        <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-ink-secondary">
+        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
         <p>Loading trade details...</p>
       </div>
     );
@@ -144,14 +144,14 @@ const NoTradeEntryDetail = () => {
 
   return (
     <div className="flex-1 p-8 overflow-y-auto">
-      <div className="max-w-[680px] mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-8 pt-7 pb-6 border-b border-gray-200">
+      <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+        <div className="px-8 pt-7 pb-6 border-b border-border">
           <div className="flex items-center justify-between mb-1.5">
             <div>
-              <p className="text-xs font-medium text-gray-400 tracking-wide uppercase mb-0.5">
+              <p className="text-xs font-medium text-ink-muted tracking-wide uppercase mb-0.5">
                 No Trade Day
               </p>
-              <p className="text-sm text-gray-400">{formattedDate}</p>
+              <p className="text-sm text-ink-muted">{formattedDate}</p>
             </div>
             <button
               className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"

@@ -41,16 +41,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-[420px] border border-gray-200">
+    <div className="min-h-screen flex items-center justify-center bg-surface-alt">
+      <div className="bg-surface p-10 rounded-xl shadow-ambient w-full max-w-[420px] border border-border">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Login</h1>
+          <h1 className="text-2xl font-semibold text-ink-primary">Login</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-600 mb-1.5"
+              className="block text-sm font-medium text-ink-secondary mb-1.5"
             >
               Email
             </label>
@@ -58,7 +58,7 @@ const LoginPage = () => {
               id="email"
               type="email"
               placeholder="you@example.com"
-              className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 outline-none transition-colors focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-sage"
               {...register("email", {
                 required: "Email is required.",
                 pattern: {
@@ -76,7 +76,7 @@ const LoginPage = () => {
           <div className="mb-4">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-600 mb-1.5"
+              className="block text-sm font-medium text-ink-secondary mb-1.5"
             >
               Password
             </label>
@@ -84,7 +84,7 @@ const LoginPage = () => {
               id="password"
               type="password"
               placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 outline-none transition-colors focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-sage"
               {...register("password", {
                 required: "Password is required.",
                 minLength: {
@@ -106,16 +106,16 @@ const LoginPage = () => {
           )}
           <button
             type="submit"
-            className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-2"
+            className="w-full py-2.5 bg-sage text-surface rounded-lg text-sm font-semibold cursor-pointer transition-colors hover:bg-sage-hover mt-2"
           >
             Sign In
           </button>
         </form>
-        <p className="text-center mt-5 text-sm text-gray-600">
+        <p className="text-center mt-5 text-sm text-ink-secondary">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-blue-500 font-medium hover:underline"
+            className="text-sage font-medium hover:underline"
           >
             Sign up
           </Link>
