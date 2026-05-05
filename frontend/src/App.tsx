@@ -11,6 +11,7 @@ import NewTradeEntry from "./components/NewTradeEntry.js";
 import StatsDashboard from "./components/StatsDashboard.js";
 import NewNoTradeEntry from "./components/NewNoTradeEntry.js";
 import NoTradeEntryDetail from "./components/NoTradeEntryDetail.js";
+import JournalPage from "./pages/JournalPage.js";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                 path="no-trade-entries/:id"
                 element={<NoTradeEntryDetail />}
               />
+              <Route path="journal" element={<JournalPage />} />
             </Route>
           </Route>
         </Routes>

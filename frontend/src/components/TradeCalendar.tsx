@@ -3,6 +3,7 @@ import {
   groupTradesByDate,
   buildCalendarDays,
   chunkIntoWeeks,
+  getBreakEvenDates,
 } from "../utils/calendarUtils";
 import { subMonths, format, addMonths, isSameMonth } from "date-fns";
 import { useState } from "react";
@@ -13,6 +14,7 @@ interface TradeCalendarProps {
 const TradeCalendar = ({ trades }: TradeCalendarProps) => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const tradesObj = groupTradesByDate(trades);
+  const breakEvenDates = getBreakEvenDates(trades);
   const calendarMonth = chunkIntoWeeks(buildCalendarDays(currentMonth));
 
   const navBtnStyles =
@@ -68,11 +70,20 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                 const dateKey = format(day, "yyyy-MM-dd");
                 const dayPnl = tradesObj[dateKey];
                 const isCurrentMonth = isSameMonth(day, currentMonth);
+                const isBreakEven = breakEvenDates.has(dateKey);
+
+                const cellColor = isBreakEven
+                  ? "bg-pnl-breakeven-bg hover:brightness-[0.96]"
+                  : dayPnl !== undefined && dayPnl > 0
+                    ? "bg-pnl-positive-bg hover:brightness-[0.96]"
+                    : dayPnl !== undefined && dayPnl < 0
+                      ? "bg-pnl-negative-bg hover:brightness-[0.96]"
+                      : "hover:bg-surface-alt";
 
                 return (
                   <div
                     key={dateKey}
-                    className={`p-3 min-h-16 border-r border-border flex flex-col gap-1 transition-colors min-w-0 overflow-hidden ${!isCurrentMonth ? "opacity-35" : ""} ${dayPnl !== undefined ? (dayPnl >= 0 ? "bg-emerald-100 hover:bg-emerald-200" : "bg-red-100 hover:bg-red-200") : "hover:bg-surface-alt"}`}
+                    className={`p-3 min-h-16 border-r border-border flex flex-col gap-1 transition-colors min-w-0 overflow-hidden ${!isCurrentMonth ? "opacity-35" : ""} ${cellColor}`}
                   >
                     <span className="text-xs font-medium text-ink-primary">
                       {format(day, "d")}
@@ -90,7 +101,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                   Week
                 </span>
                 <span
-                  className={`text-xs tabular-nums ${weeklyPnl >= 0 ? "text-emerald-600" : "text-red-600"}`}
+                  className={`text-xs tabular-nums ${weeklyPnl >= 0 ? "text-pnl-positive" : "text-pnl-negative"}`}
                 >
                   {weeklyPnl !== 0 ? `$${weeklyPnl.toFixed(2)}` : "—"}
                 </span>

@@ -10,9 +10,9 @@ const TradeCard = ({ createdAt, pnl, result }: TradeCardProps) => {
   const formattedDate = formatDate(createdAt);
 
   const resultColors: Record<string, string> = {
-    Win: "text-emerald-600",
-    Loss: "text-red-600",
-    "Break Even": "text-blue-500",
+    Win: "text-pnl-positive",
+    Loss: "text-pnl-negative",
+    "Break Even": "text-ink-muted",
   };
 
   return (

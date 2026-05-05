@@ -49,6 +49,25 @@ export const buildCalendarDays = (date: Date): Date[] => {
   return [...prefix, ...monthDays, ...suffix];
 };
 
+export const getBreakEvenDates = (trades: TradeEntry[]): Set<string> => {
+  const dateMap: Record<string, boolean> = {};
+
+  for (const trade of trades) {
+    const date = trade.exitTime.split("T")[0];
+    if (!(date in dateMap)) {
+      dateMap[date] = trade.result === "Break Even";
+    } else if (trade.result !== "Break Even") {
+      dateMap[date] = false;
+    }
+  }
+
+  return new Set(
+    Object.entries(dateMap)
+      .filter(([, isBreakEven]) => isBreakEven)
+      .map(([date]) => date),
+  );
+};
+
 export const chunkIntoWeeks = (days: Date[]): Date[][] => {
   const numOfWeeks = Math.ceil(days.length / 7);
   return Array.from({ length: numOfWeeks }, (_, i) =>
