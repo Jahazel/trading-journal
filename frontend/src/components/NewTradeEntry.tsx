@@ -5,6 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { CreateTradeEntryData } from "../types/tradeEntry.types";
 import { getAccounts } from "../api/api";
 import { useState } from "react";
+import {
+  formInputStyles as inputStyles,
+  formSelectStyles as selectStyles,
+  formLabelStyles as labelStyles,
+  formErrorStyles as errorStyles,
+} from "../utils/styleConstants";
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorState from "./ErrorState";
 
 const NewEntry = () => {
   const {
@@ -44,33 +52,8 @@ const NewEntry = () => {
     queryFn: getAccounts,
   });
 
-  if (isLoading)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
-        <p className="text-sm text-ink-secondary">Loading account details...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <svg
-          className="w-12 h-12 text-red-500"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <p className="text-sm text-red-500">Error: {error.message}</p>
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner message="Loading account details..." />;
+  if (error) return <ErrorState message={`Error: ${error.message}`} />;
 
   const handleCancel = () => {
     if (!isDirty) {
@@ -83,12 +66,6 @@ const NewEntry = () => {
   const onSubmit = async (data: CreateTradeEntryData): Promise<void> => {
     addEntryMutation.mutate(data);
   };
-
-  const inputStyles =
-    "w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-sage font-inherit";
-  const selectStyles = `${inputStyles} cursor-pointer`;
-  const labelStyles = "block text-sm font-medium text-ink-secondary mb-1.5";
-  const errorStyles = "block text-xs text-red-500 mt-1";
 
   return (
     <form

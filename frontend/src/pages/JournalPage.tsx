@@ -5,6 +5,8 @@ import { useState, useRef, useEffect } from "react";
 import { SidebarEntry } from "../types/common.types";
 import { TradeEntry } from "../types/tradeEntry.types";
 import { format } from "date-fns";
+import { formatCurrency, resultColorClass, pnlColor } from "../utils/formatUtils";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const RECENT_COUNT = 6;
 
@@ -29,10 +31,9 @@ const ChevronIcon = () => (
 
 interface EntryCardProps {
   entry: SidebarEntry;
-  formatCurrency: (v: number) => string;
 }
 
-const EntryCard = ({ entry, formatCurrency }: EntryCardProps) => {
+const EntryCard = ({ entry }: EntryCardProps) => {
   const isTrade = isTradeEntry(entry);
   const date = format(new Date(entry.entryTime), "MMM d");
   const year = format(new Date(entry.entryTime), "yyyy");
@@ -50,15 +51,7 @@ const EntryCard = ({ entry, formatCurrency }: EntryCardProps) => {
           {isTrade ? "Trade" : "No Trade"}
         </span>
         {isTrade && (
-          <span
-            className={`text-xs font-medium ${
-              entry.result === "Win"
-                ? "text-pnl-positive"
-                : entry.result === "Loss"
-                  ? "text-pnl-negative"
-                  : "text-ink-muted"
-            }`}
-          >
+          <span className={`text-xs font-medium ${resultColorClass(entry.result)}`}>
             {entry.result}
           </span>
         )}
@@ -95,10 +88,9 @@ const EntryCard = ({ entry, formatCurrency }: EntryCardProps) => {
 
 interface EntryRowProps {
   entry: SidebarEntry;
-  formatCurrency: (v: number) => string;
 }
 
-const EntryRow = ({ entry, formatCurrency }: EntryRowProps) => {
+const EntryRow = ({ entry }: EntryRowProps) => {
   const isTrade = isTradeEntry(entry);
   const formattedDate = format(new Date(entry.entryTime), "MMM d, yyyy");
 
@@ -124,11 +116,7 @@ const EntryRow = ({ entry, formatCurrency }: EntryRowProps) => {
           <span className="w-14 shrink-0 text-sm text-ink-secondary">
             {entry.direction}
           </span>
-          <span
-            className={`ml-auto text-sm font-semibold tabular-nums ${
-              entry.pnl >= 0 ? "text-pnl-positive" : "text-pnl-negative"
-            }`}
-          >
+          <span className={`ml-auto text-sm font-semibold tabular-nums ${pnlColor(entry.pnl)}`}>
             {formatCurrency(entry.pnl)}
           </span>
         </>
@@ -217,26 +205,12 @@ const JournalPage = () => {
     },
   });
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-
   const entryPath = (entry: SidebarEntry) =>
     isTradeEntry(entry)
       ? `/dashboard/trade-entries/${entry._id}`
       : `/dashboard/no-trade-entries/${entry._id}`;
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-sage" />
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingSpinner />;
 
   if (allEntries.length === 0) {
     return (
@@ -288,7 +262,7 @@ const JournalPage = () => {
         >
           {recent.map((entry) => (
             <Link key={entry._id} to={entryPath(entry)} className="no-underline">
-              <EntryCard entry={entry} formatCurrency={formatCurrency} />
+              <EntryCard entry={entry} />
             </Link>
           ))}
         </div>
@@ -307,7 +281,7 @@ const JournalPage = () => {
                 to={entryPath(entry)}
                 className="no-underline"
               >
-                <EntryRow entry={entry} formatCurrency={formatCurrency} />
+                <EntryRow entry={entry} />
               </Link>
             ))}
           </div>

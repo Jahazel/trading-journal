@@ -4,28 +4,9 @@ import { Stats } from "../types/tradeEntry.types";
 import TradeCalendar from "./TradeCalendar";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-
-const currencyFmt = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-const pnlColor = (value: number) => {
-  if (value > 0) return "text-pnl-positive";
-  if (value < 0) return "text-pnl-negative";
-  return "text-blue-500";
-};
-
-// const resultColor = (result: string) => {
-//   if (result === "Win") return "text-pnl-positive";
-//   if (result === "Loss") return "text-pnl-negative";
-//   return "text-ink-muted";
-// };
-
+import { formatCurrency, pnlColor } from "../utils/formatUtils";
 interface RingChartProps {
-  value: number; // 0–100 percentage to fill
+  value: number;
 }
 
 const RingChart = ({ value }: RingChartProps) => {
@@ -167,11 +148,11 @@ const StatsDashboard = () => {
               <span
                 className={`text-3xl font-semibold tabular-nums leading-none ${pnlColor(totalPnl)}`}
               >
-                {currencyFmt.format(totalPnl)}
+                {formatCurrency(totalPnl)}
               </span>
               <span className="text-xs text-ink-muted tabular-nums">
                 {tradeCount > 0
-                  ? `avg ${currencyFmt.format(avgPerTrade)}/trade`
+                  ? `avg ${formatCurrency(avgPerTrade)}/trade`
                   : "No trades yet"}
               </span>
             </div>
@@ -205,7 +186,7 @@ const StatsDashboard = () => {
               </div>
               <span className="text-xs text-ink-muted tabular-nums">
                 {losses > 0
-                  ? `${currencyFmt.format(avgWin)} / ${currencyFmt.format(Math.abs(avgLoss))}`
+                  ? `${formatCurrency(avgWin)} / ${formatCurrency(Math.abs(avgLoss))}`
                   : "No losses"}
               </span>
             </div>
@@ -261,7 +242,7 @@ const StatsDashboard = () => {
                         <span
                           className={`font-semibold tabular-nums ${pnlColor(trade.pnl)}`}
                         >
-                          {currencyFmt.format(trade.pnl)}
+                          {formatCurrency(trade.pnl)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-2">

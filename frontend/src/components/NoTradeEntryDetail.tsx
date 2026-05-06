@@ -9,6 +9,15 @@ import { useState, KeyboardEvent, ChangeEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import { NoTradeEntry } from "../types/noTradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
+import { formatDateTime } from "../utils/formatUtils";
+import {
+  detailRowStyles as rowStyles,
+  detailLabelStyles as labelStyles,
+  detailValueStyles as valueStyles,
+  detailInputStyles as inlineInputStyles,
+} from "../utils/styleConstants";
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorState from "./ErrorState";
 
 const NoTradeEntryDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,54 +67,14 @@ const NoTradeEntryDetail = () => {
     },
   });
 
-  const rowStyles =
-    "flex items-center min-h-[44px] border-b border-border cursor-pointer gap-4 hover:bg-surface-alt hover:mx-[-32px] hover:px-8";
-  const labelStyles = "text-sm text-ink-secondary w-30 min-w-30 font-medium";
-  const valueStyles = "flex-1 text-sm text-ink-primary";
-  const inlineInputStyles =
-    "font-inherit text-sm text-ink-primary bg-surface-alt border border-border rounded-md outline-none transition-colors focus:border-sage px-2 py-1 w-full";
-
-  if (isLoading)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-ink-secondary">
-        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
-        <p>Loading trade details...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 h-[400px] text-red-500 bg-red-50 rounded-2xl m-5">
-        <svg
-          className="w-12 h-12"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <p>Error: {error.message}</p>
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner message="Loading trade details..." />;
+  if (error) return <ErrorState message={`Error: ${error.message}`} />;
 
   if (!entry) return null;
 
   const { accountId, entryTime, notes } = entry;
 
-  const formattedDate =
-    entryTime &&
-    new Date(entryTime).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
+  const formattedDate = entryTime && formatDateTime(entryTime);
 
   const handleSave = (value = tempValue, field = activeField) => {
     if (field) {

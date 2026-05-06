@@ -9,6 +9,15 @@ import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import { TradeEntry } from "../types/tradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
+import { formatCurrency, resultColorClass, toDatetimeLocal, formatDateTime } from "../utils/formatUtils";
+import {
+  detailRowStyles as rowStyles,
+  detailLabelStyles as labelStyles,
+  detailValueStyles as valueStyles,
+  detailInputStyles as inlineInputStyles,
+} from "../utils/styleConstants";
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorState from "./ErrorState";
 
 const TradeDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,33 +84,8 @@ const TradeDetail = () => {
     },
   });
 
-  if (isLoading)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <div className="w-10 h-10 border-3 border-border border-t-sage rounded-full animate-spin"></div>
-        <p className="text-sm text-ink-secondary">Loading trade details...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 min-h-[400px]">
-        <svg
-          className="w-12 h-12 text-red-500"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <p className="text-sm text-red-500">Error: {error.message}</p>
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner message="Loading trade details..." />;
+  if (error) return <ErrorState message={`Error: ${error.message}`} />;
 
   if (!entry) return null;
 
@@ -121,33 +105,8 @@ const TradeDetail = () => {
     notes,
   } = entry;
 
-  const formattedEntry =
-    entryTime &&
-    new Date(entryTime).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-
-  const formattedExit =
-    exitTime &&
-    new Date(exitTime).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-
-  const toDatetimeLocal = (isoString: string) => {
-    if (!isoString) return "";
-    const date = new Date(isoString);
-    const offset = date.getTimezoneOffset();
-    const local = new Date(date.getTime() - offset * 60000);
-    return local.toISOString().slice(0, 16);
-  };
+  const formattedEntry = entryTime && formatDateTime(entryTime);
+  const formattedExit = exitTime && formatDateTime(exitTime);
 
   const handleSave = (value = tempValue, field = activeField): void => {
     if (field) {
@@ -209,19 +168,6 @@ const TradeDetail = () => {
     value: tempValue,
   };
 
-  const resultColors: Record<string, string> = {
-    Win: "text-emerald-600",
-    Loss: "text-red-600",
-    "Break Even": "text-ink-secondary",
-  };
-
-  const rowStyles =
-    "flex items-center min-h-[44px] border-b border-border cursor-pointer gap-4 hover:bg-surface-alt hover:mx-[-32px] hover:px-8";
-  const labelStyles = "text-sm text-ink-secondary w-30 min-w-30 font-medium";
-  const valueStyles = "flex-1 text-sm text-ink-primary";
-  const inlineInputStyles =
-    "font-inherit text-sm text-ink-primary bg-surface-alt border border-border rounded-md outline-none transition-colors focus:border-sage px-2 py-1 w-full";
-
   return (
     <div className="flex-1 p-8 overflow-y-auto">
       <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
@@ -232,13 +178,9 @@ const TradeDetail = () => {
                 Net P&L
               </div>
               <div
-                className={`text-2xl font-medium tabular-nums mb-1.5 ${resultColors[result]}`}
+                className={`text-2xl font-medium tabular-nums mb-1.5 ${resultColorClass(result)}`}
               >
-                $
-                {Math.abs(pnl)?.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                {formatCurrency(Math.abs(pnl))}
               </div>
             </div>
 
