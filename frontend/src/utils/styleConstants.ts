@@ -6,6 +6,10 @@ export const formLabelStyles =
   "block text-sm font-medium text-ink-secondary mb-1.5";
 export const formErrorStyles = "block text-xs text-red-500 mt-1";
 
+// Calendar nav button
+export const calendarNavBtnStyles =
+  "bg-transparent border border-border text-ink-secondary rounded-md px-4 py-2.5 text-sm cursor-pointer transition-all hover:border-sage hover:text-sage min-h-[44px]";
+
 // Detail view row styles (TradeEntryDetail, NoTradeEntryDetail)
 export const detailRowStyles =
   "flex items-center min-h-[44px] border-b border-border cursor-pointer gap-4 hover:bg-surface-alt hover:mx-[-32px] hover:px-8";

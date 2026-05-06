@@ -241,7 +241,7 @@ const JournalPage = () => {
   const older = allEntries.slice(RECENT_COUNT);
 
   return (
-    <div className="p-10">
+      <div className="p-10">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-ink-primary">Journal</h1>
         <NewEntryDropdown
@@ -287,7 +287,9 @@ const JournalPage = () => {
           </div>
         </section>
       )}
-    </div>
+      </div>
+
+  );
   );
 };
 

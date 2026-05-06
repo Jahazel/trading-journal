@@ -6,7 +6,43 @@ import {
   getDay,
   subDays,
   addDays,
+  format,
 } from "date-fns";
+
+export const WEEKDAY_LABELS = [
+  "Sun",
+  "Mon",
+  "Tue",
+  "Wed",
+  "Thu",
+  "Fri",
+  "Sat",
+] as const;
+
+export const computeWeeklyPnl = (
+  week: Date[],
+  tradesObj: Record<string, number>,
+): number =>
+  week.reduce((total, day) => total + (tradesObj[format(day, "yyyy-MM-dd")] ?? 0), 0);
+
+export const getDayCellBg = (
+  isCurrentMonth: boolean,
+  isBreakEven: boolean,
+  dayPnl: number | undefined,
+): string => {
+  if (!isCurrentMonth) return "bg-surface-alt";
+  if (isBreakEven) return "bg-pnl-breakeven-bg";
+  if (dayPnl !== undefined && dayPnl > 0) return "bg-pnl-positive-bg";
+  if (dayPnl !== undefined && dayPnl < 0) return "bg-pnl-negative-bg";
+  return "";
+};
+
+export const getPnlAriaLabel = (dayPnl: number | undefined): string => {
+  if (dayPnl === undefined) return "";
+  if (dayPnl > 0) return `$${dayPnl.toFixed(2)} profit`;
+  if (dayPnl < 0) return `$${Math.abs(dayPnl).toFixed(2)} loss`;
+  return "break even";
+};
 
 export const groupTradesByDate = (
   trades: TradeEntry[],
