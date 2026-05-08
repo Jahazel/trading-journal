@@ -23,6 +23,7 @@ export interface ITradeEntry extends Document {
   exitTime: Date;
   pnl?: number;
   notes?: string;
+  images?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +33,7 @@ export interface INoTradeEntry extends Document {
   accountId: Types.ObjectId;
   entryTime: Date;
   notes?: string;
+  images?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

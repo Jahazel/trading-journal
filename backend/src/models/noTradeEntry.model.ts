@@ -15,6 +15,7 @@ const noTradeEntrySchema = new Schema<INoTradeEntry>(
     },
     entryTime: { type: Date, required: true },
     notes: { type: String },
+    images: [{ type: String }],
   },
   { timestamps: true, collection: "no_trade_entries" },
 );

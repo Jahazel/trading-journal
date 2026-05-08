@@ -13,6 +13,7 @@ import {
 } from "../utils/styleConstants";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
+import ImageUpload from "./ImageUpload";
 
 const NewEntry = () => {
   const {
@@ -24,6 +25,7 @@ const NewEntry = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [cancelConfirming, setCancelConfirming] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const addEntryMutation = useMutation({
     mutationFn: createTradeEntry,
@@ -64,7 +66,7 @@ const NewEntry = () => {
   };
 
   const onSubmit = async (data: CreateTradeEntryData): Promise<void> => {
-    addEntryMutation.mutate(data);
+    addEntryMutation.mutate({ ...data, images: uploadedImages });
   };
 
   return (
@@ -316,6 +318,10 @@ const NewEntry = () => {
           placeholder="Add any notes about this trade..."
           {...register("notes")}
         />
+      </div>
+      <div className="col-span-2">
+        <label className={labelStyles}>Images</label>
+        <ImageUpload onChange={setUploadedImages} maxImages={5} />
       </div>
       <button
         type="submit"

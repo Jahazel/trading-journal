@@ -11,6 +11,7 @@ export interface CreateTradeEntryData {
   entryTime: string;
   exitTime: string;
   notes?: string;
+  images?: string[];
 }
 
 export interface TradeEntry extends CreateTradeEntryData {

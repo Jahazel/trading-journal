@@ -3,6 +3,7 @@ import { createNoTradeEntry } from "../api/api";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import TextEditor from "./TextEditor.js";
+import ImageUpload from "./ImageUpload";
 import { useState } from "react";
 import { CreateNoTradeEntryData } from "../types/noTradeEntry.types";
 import { getAccounts } from "../api/api";
@@ -25,6 +26,7 @@ const NewNoTradeEntry = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [notes, setNotes] = useState<string>("");
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [cancelConfirming, setCancelConfirming] = useState(false);
 
   const handleCancel = () => {
@@ -66,7 +68,7 @@ const NewNoTradeEntry = () => {
   if (error) return <ErrorState message={`Error: ${error.message}`} />;
 
   const onSubmit = async (data: CreateNoTradeEntryData) => {
-    addEntryMutation.mutate({ ...data, notes });
+    addEntryMutation.mutate({ ...data, notes, images: uploadedImages });
   };
 
   return (
@@ -153,6 +155,10 @@ const NewNoTradeEntry = () => {
       <div>
         <label className={labelStyles}>Notes</label>
         <TextEditor onChange={setNotes} />
+      </div>
+      <div>
+        <label className={labelStyles}>Images</label>
+        <ImageUpload onChange={setUploadedImages} maxImages={5} />
       </div>
       <button
         type="submit"

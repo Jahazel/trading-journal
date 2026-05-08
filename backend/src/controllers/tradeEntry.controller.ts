@@ -105,6 +105,7 @@ export async function createTradeEntry(
       entryTime,
       exitTime,
       notes,
+      images,
     } = req.body;
 
     const newTradeEntry = new TradeEntry({
@@ -121,7 +122,8 @@ export async function createTradeEntry(
       entryTime,
       exitTime,
       pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
-      notes: notes,
+      notes,
+      images: images ?? [],
     });
 
     const savedTradeEntry = await newTradeEntry.save();
@@ -154,6 +156,7 @@ export async function updateTradeEntry(
       entryTime,
       exitTime,
       notes,
+      images,
     } = req.body;
     const userId = req.userId;
     const tradeId = req.params.id;
@@ -194,6 +197,7 @@ export async function updateTradeEntry(
       direction ?? tradeEntry.direction,
     );
     if (notes !== undefined) tradeEntry.notes = notes;
+    if (images !== undefined) tradeEntry.images = images;
 
     const savedTradeEntry = await tradeEntry.save();
 

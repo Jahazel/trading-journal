@@ -7,6 +7,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, KeyboardEvent, ChangeEvent } from "react";
 import TextEditor from "./TextEditor.js";
+import ImageUpload from "./ImageUpload";
 import { NoTradeEntry } from "../types/noTradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
 import { formatDateTime } from "../utils/formatUtils";
@@ -169,6 +170,18 @@ const NoTradeEntryDetail = () => {
                 <span>{formattedDate}</span>
               )}
             </div>
+          </div>
+          <div className="py-5 border-t border-border">
+            <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
+            <ImageUpload
+              key={id}
+              initialUrls={entry.images ?? []}
+              maxImages={5}
+              onChange={(urls) => {
+                if (!id) return;
+                updateTradeMutation.mutate({ id, images: urls });
+              }}
+            />
           </div>
           <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>

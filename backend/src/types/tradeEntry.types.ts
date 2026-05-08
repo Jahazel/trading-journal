@@ -17,6 +17,7 @@ export interface CreateTradeEntryBody {
   entryTime: string;
   exitTime: string;
   notes?: string;
+  images?: string[];
 }
 
 export interface UpdateEntryBody {
@@ -32,6 +33,7 @@ export interface UpdateEntryBody {
   entryTime?: string;
   exitTime?: string;
   notes?: string;
+  images?: string[];
 }
 
 export interface TradeStatsInternal {

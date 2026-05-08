@@ -7,6 +7,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import TextEditor from "./TextEditor.js";
+import ImageUpload from "./ImageUpload";
 import { TradeEntry } from "../types/tradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
 import { formatCurrency, resultColorClass, toDatetimeLocal, formatDateTime } from "../utils/formatUtils";
@@ -447,6 +448,18 @@ const TradeDetail = () => {
                 <span>{formattedExit}</span>
               )}
             </div>
+          </div>
+          <div className="py-5 border-t border-border">
+            <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
+            <ImageUpload
+              key={id}
+              initialUrls={entry.images ?? []}
+              maxImages={5}
+              onChange={(urls) => {
+                if (!id) return;
+                updateTradeMutation.mutate({ id, images: urls });
+              }}
+            />
           </div>
           <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>

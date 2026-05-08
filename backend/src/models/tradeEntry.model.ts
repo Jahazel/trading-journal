@@ -41,6 +41,7 @@ const tradeEntrySchema = new Schema<ITradeEntry>(
     exitTime: { type: Date, required: true },
     pnl: { type: Number },
     notes: { type: String },
+    images: [{ type: String }],
   },
   { timestamps: true },
 );
