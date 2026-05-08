@@ -5,7 +5,11 @@ import { useState, useRef, useEffect } from "react";
 import { SidebarEntry } from "../types/common.types";
 import { TradeEntry } from "../types/tradeEntry.types";
 import { format } from "date-fns";
-import { formatCurrency, resultColorClass, pnlColor } from "../utils/formatUtils";
+import {
+  formatCurrency,
+  resultColorClass,
+  pnlColor,
+} from "../utils/formatUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const RECENT_COUNT = 6;
@@ -51,7 +55,9 @@ const EntryCard = ({ entry }: EntryCardProps) => {
           {isTrade ? "Trade" : "No Trade"}
         </span>
         {isTrade && (
-          <span className={`text-xs font-medium ${resultColorClass(entry.result)}`}>
+          <span
+            className={`text-xs font-medium ${resultColorClass(entry.result)}`}
+          >
             {entry.result}
           </span>
         )}
@@ -116,7 +122,9 @@ const EntryRow = ({ entry }: EntryRowProps) => {
           <span className="w-14 shrink-0 text-sm text-ink-secondary">
             {entry.direction}
           </span>
-          <span className={`ml-auto text-sm font-semibold tabular-nums ${pnlColor(entry.pnl)}`}>
+          <span
+            className={`ml-auto text-sm font-semibold tabular-nums ${pnlColor(entry.pnl)}`}
+          >
             {formatCurrency(entry.pnl)}
           </span>
         </>
@@ -241,7 +249,7 @@ const JournalPage = () => {
   const older = allEntries.slice(RECENT_COUNT);
 
   return (
-      <div className="p-10">
+    <div className="p-10">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-ink-primary">Journal</h1>
         <NewEntryDropdown
@@ -258,10 +266,16 @@ const JournalPage = () => {
         </h2>
         <div
           className="grid gap-4"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          }}
         >
           {recent.map((entry) => (
-            <Link key={entry._id} to={entryPath(entry)} className="no-underline">
+            <Link
+              key={entry._id}
+              to={entryPath(entry)}
+              className="no-underline"
+            >
               <EntryCard entry={entry} />
             </Link>
           ))}
@@ -287,9 +301,7 @@ const JournalPage = () => {
           </div>
         </section>
       )}
-      </div>
-
-  );
+    </div>
   );
 };
 

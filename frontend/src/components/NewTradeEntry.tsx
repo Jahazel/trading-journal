@@ -309,6 +309,14 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.exitTime.message}</span>
         )}
       </div>
+      <div className="col-span-2">
+        <label className={labelStyles}>Notes</label>
+        <textarea
+          className={`${inputStyles} resize-none min-h-[100px]`}
+          placeholder="Add any notes about this trade..."
+          {...register("notes")}
+        />
+      </div>
       <button
         type="submit"
         className="col-span-2 w-full py-3 bg-sage text-surface rounded-lg text-base font-semibold cursor-pointer transition-colors hover:bg-sage-hover mt-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
