@@ -208,10 +208,10 @@ const StatsDashboard = () => {
         )}
       </div>
 
-      <div className="flex gap-8 items-start">
+      <div className="flex flex-col gap-8 items-start lg:flex-row">
         <TradeCalendar trades={trades} />
 
-        <div className="mt-8 flex-1 min-w-0">
+        <div className="flex-1 min-w-0">
           <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
             Recent
           </h2>
