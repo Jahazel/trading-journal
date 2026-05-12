@@ -5,6 +5,7 @@ import type { SignupBody, LoginBody, LoginRes } from "../types/auth.types.js";
 import User from "../models/user.model.js";
 import type { IUser } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
+import { handleServerError } from "../utils/handleError.js";
 
 export async function signUp(
   req: Request<{}, {}, SignupBody>,
@@ -50,11 +51,7 @@ export async function signUp(
       .status(201)
       .json({ message: "User has successfully signed up." });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -98,10 +95,6 @@ export async function login(
       userId: existingUser.id,
     });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }

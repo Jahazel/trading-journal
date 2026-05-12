@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import cloudinary from "../config/cloudinary.js";
+import { handleServerError } from "../utils/handleError.js";
 
 export async function uploadImage(req: Request, res: Response) {
   try {
@@ -20,9 +21,6 @@ export async function uploadImage(req: Request, res: Response) {
 
     return res.status(200).json({ url: result.secure_url });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }

@@ -5,6 +5,7 @@ import NoTradeEntry from "../models/noTradeEntry.model.js";
 import type { IAccount } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import type { ErrorResponse } from "../types/common.types.js";
+import { handleServerError } from "../utils/handleError.js";
 import type {
   AccountParams,
   CreateAccountBody,
@@ -24,11 +25,7 @@ export async function getAccounts(
 
     return res.status(200).json(accounts);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -58,11 +55,7 @@ export async function getAccount(
 
     return res.status(200).json(account);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -101,11 +94,7 @@ export async function createAccount(
 
     return res.status(201).json(savedNewAccount);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -156,11 +145,7 @@ export async function updateAccount(
 
     return res.status(200).json(savedAccount);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -207,10 +192,6 @@ export async function deleteAccount(
       .status(200)
       .json({ message: "Account was successfully deleted." });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }

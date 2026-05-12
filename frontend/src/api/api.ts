@@ -18,7 +18,7 @@ import { Message } from "../types/common.types";
 import { Account, CreateAccountData } from "../types/account.types";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -34,7 +34,6 @@ export const login = async (
 ): Promise<AuthResponse> => {
   try {
     const response = await api.post<AuthResponse>("/auth/login", credentials);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);

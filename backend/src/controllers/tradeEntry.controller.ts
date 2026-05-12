@@ -6,6 +6,7 @@ import TradeEntry from "../models/tradeEntry.model.js";
 import type { ITradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import type { ErrorResponse } from "../types/common.types.js";
+import { handleServerError } from "../utils/handleError.js";
 import type {
   TradeEntryParams,
   CreateTradeEntryBody,
@@ -27,11 +28,7 @@ export async function getTradeEntries(
 
     return res.status(200).json(tradeEntries);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -61,11 +58,7 @@ export async function getTradeEntry(
 
     return res.status(200).json(tradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -130,11 +123,7 @@ export async function createTradeEntry(
 
     return res.status(201).json(savedTradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -203,11 +192,7 @@ export async function updateTradeEntry(
 
     return res.status(200).json(savedTradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -241,11 +226,7 @@ export async function deleteTradeEntry(
       .status(200)
       .json({ message: "Trade entry was successfully deleted." });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -300,10 +281,6 @@ export async function getStats(
 
     return res.status(200).json({ totalPnl, winRate, avgWin, avgLoss });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }

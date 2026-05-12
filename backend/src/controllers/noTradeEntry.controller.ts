@@ -8,6 +8,7 @@ import type {
   CreateEntryBody,
   UpdateEntryBody,
 } from "../types/noTradeEntry.types.js";
+import { handleServerError } from "../utils/handleError.js";
 
 type ErrorResponse = { message: string };
 
@@ -24,11 +25,7 @@ export async function getNoTradeEntries(
 
     return res.status(200).json(noTradeEntries);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -58,11 +55,7 @@ export async function getNoTradeEntry(
 
     return res.status(200).json(noTradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -86,11 +79,7 @@ export async function createNoTradeEntry(
 
     return res.status(201).json(savedNewNoTradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -129,11 +118,7 @@ export async function updateNoTradeEntry(
 
     return res.status(200).json(savedNoTradeEntry);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
 
@@ -165,10 +150,6 @@ export async function deleteNoTradeEntry(
 
     return res.status(200).json({ message: "Entry was successfully deleted." });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
-    }
-
-    return res.status(500).json({ message: "An unknown error occurred" });
+    return handleServerError(res, error);
   }
 }
