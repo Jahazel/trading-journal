@@ -19,11 +19,6 @@
   /* Border */
   --color-border: #D8E0ED;
 
-  /* Sage — kept for login/signup and editor backward compat */
-  --color-sage: #7A8F5E;
-  --color-sage-hover: #6A7D4E;
-  --color-sage-light: #E0E9D8;
-
   /* Financial P&L — reserved exclusively for financial values */
   --color-pnl-positive: #059669;
   --color-pnl-positive-bg: #D1FAE5;

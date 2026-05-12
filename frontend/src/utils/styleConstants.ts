@@ -4,7 +4,7 @@ export const formInputStyles =
 export const formSelectStyles = `${formInputStyles} cursor-pointer`;
 export const formLabelStyles =
   "block text-sm font-medium text-ink-secondary mb-1.5";
-export const formErrorStyles = "block text-xs text-red-500 mt-1";
+export const formErrorStyles = "block text-xs text-pnl-negative mt-1";
 
 // Calendar nav button
 export const calendarNavBtnStyles =

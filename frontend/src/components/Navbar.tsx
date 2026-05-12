@@ -27,7 +27,7 @@ const Navbar = () => {
               Welcome back, {user}
             </span>
             <button
-              className="px-3.5 py-1.5 bg-transparent text-sage border border-sage rounded-md text-sm font-medium cursor-pointer transition-all hover:bg-sage hover:text-surface"
+              className="px-3.5 py-1.5 bg-transparent text-accent border border-accent rounded-md text-sm font-medium cursor-pointer transition-colors hover:bg-accent hover:text-surface"
               onClick={handleLogout}
             >
               Sign Out

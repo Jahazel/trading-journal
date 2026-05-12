@@ -61,7 +61,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
           {!isViewingCurrentMonth && (
             <button
               onClick={() => setCurrentMonth(new Date())}
-              className="text-xs text-sage hover:text-sage-hover transition-colors cursor-pointer"
+              className="text-xs text-accent hover:text-accent-hover transition-colors cursor-pointer"
             >
               Today
             </button>
@@ -131,7 +131,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                         role="gridcell"
                         aria-label={`${format(day, "MMMM d, yyyy")}${pnlLabel ? `, ${pnlLabel}` : ""}`}
                         aria-current={todayCell ? "date" : undefined}
-                        className={`p-3 w-full border-r border-border flex flex-col gap-1 min-w-0 overflow-hidden ${cellBg}${todayCell ? " ring-1 ring-inset ring-sage" : ""}`}
+                        className={`p-3 w-full border-r border-border flex flex-col gap-1 min-w-0 overflow-hidden ${cellBg}${todayCell ? " ring-1 ring-inset ring-accent" : ""}`}
                       >
                         <span
                           className={`text-xs font-medium ${isCurrentMonth ? "text-ink-primary" : "text-ink-muted"}`}

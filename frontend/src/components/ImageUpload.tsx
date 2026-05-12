@@ -165,8 +165,8 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
             }}
             className={`aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors ${
               dragging
-                ? "border-sage bg-sage/5"
-                : "border-border hover:border-sage hover:bg-surface-alt"
+                ? "border-accent bg-accent-light"
+                : "border-border hover:border-accent hover:bg-surface-alt"
             }`}
           >
             <span className="text-xl text-ink-muted">+</span>
