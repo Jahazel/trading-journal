@@ -4,12 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { SidebarEntry } from "../types/common.types";
 import { TradeEntry } from "../types/tradeEntry.types";
+import { NoTradeEntry } from "../types/noTradeEntry.types";
 import { format } from "date-fns";
-import {
-  formatCurrency,
-  resultColorClass,
-  pnlColor,
-} from "../utils/formatUtils";
+import { formatCurrency, pnlColor, resultColorClass } from "../utils/formatUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const RECENT_COUNT = 6;
@@ -17,7 +14,14 @@ const RECENT_COUNT = 6;
 const isTradeEntry = (entry: SidebarEntry): entry is TradeEntry =>
   "result" in entry;
 
-const ChevronIcon = () => (
+const entryPath = (entry: SidebarEntry) =>
+  isTradeEntry(entry)
+    ? `/dashboard/trade-entries/${entry._id}`
+    : `/dashboard/no-trade-entries/${entry._id}`;
+
+// --- Icons ---
+
+const ChevronDownIcon = () => (
   <svg
     width="12"
     height="12"
@@ -33,107 +37,59 @@ const ChevronIcon = () => (
   </svg>
 );
 
-interface EntryCardProps {
-  entry: SidebarEntry;
-}
+const BookIcon = () => (
+  <svg
+    width="36"
+    height="36"
+    viewBox="0 0 36 36"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.25"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="8" y="4" width="20" height="28" rx="3" />
+    <line x1="8" y1="4" x2="8" y2="32" strokeWidth="3" />
+    <line x1="14" y1="13" x2="22" y2="13" />
+    <line x1="14" y1="18" x2="22" y2="18" />
+    <line x1="14" y1="23" x2="18" y2="23" />
+  </svg>
+);
 
-const EntryCard = ({ entry }: EntryCardProps) => {
-  const isTrade = isTradeEntry(entry);
-  const date = format(new Date(entry.entryTime), "MMM d");
-  const year = format(new Date(entry.entryTime), "yyyy");
+// --- Empty State ---
 
-  return (
-    <div className="flex h-40 cursor-pointer flex-col justify-between rounded-lg border border-border bg-surface p-4 transition-all hover:border-sage hover:shadow-lift">
-      <div className="flex items-start justify-between gap-2">
-        <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-            isTrade
-              ? "bg-sage-light text-sage"
-              : "border border-border bg-surface-alt text-ink-secondary"
-          }`}
-        >
-          {isTrade ? "Trade" : "No Trade"}
-        </span>
-        {isTrade && (
-          <span
-            className={`text-xs font-medium ${resultColorClass(entry.result)}`}
-          >
-            {entry.result}
-          </span>
-        )}
-      </div>
-
-      <div>
-        <div className="text-xl font-semibold leading-tight text-ink-primary">
-          {date}
-        </div>
-        <div className="mt-0.5 text-xs text-ink-muted">{year}</div>
-      </div>
-
-      <div className="flex items-center justify-between gap-2">
-        {isTrade ? (
-          <>
-            <span className="text-xs text-ink-secondary">
-              {entry.contract} · {entry.direction}
-            </span>
-            <span
-              className={`text-sm font-semibold tabular-nums ${
-                entry.pnl >= 0 ? "text-pnl-positive" : "text-pnl-negative"
-              }`}
-            >
-              {formatCurrency(entry.pnl)}
-            </span>
-          </>
-        ) : (
-          <span className="text-xs text-ink-muted">No trade taken</span>
-        )}
-      </div>
+const EmptyState = ({ onNavigate }: { onNavigate: (path: string) => void }) => (
+  <div className="flex flex-col items-center justify-center gap-5 py-32 text-center">
+    <div className="text-ink-muted opacity-40">
+      <BookIcon />
     </div>
-  );
-};
-
-interface EntryRowProps {
-  entry: SidebarEntry;
-}
-
-const EntryRow = ({ entry }: EntryRowProps) => {
-  const isTrade = isTradeEntry(entry);
-  const formattedDate = format(new Date(entry.entryTime), "MMM d, yyyy");
-
-  return (
-    <div className="flex cursor-pointer items-center gap-4 border-b border-border px-1 py-3 last:border-b-0 transition-colors hover:bg-surface-alt">
-      <span className="w-28 shrink-0 text-sm text-ink-secondary">
-        {formattedDate}
-      </span>
-      <span
-        className={`w-20 shrink-0 rounded-full px-2 py-0.5 text-center text-[10px] font-semibold uppercase tracking-wide ${
-          isTrade
-            ? "bg-sage-light text-sage"
-            : "border border-border bg-surface-alt text-ink-secondary"
-        }`}
+    <div className="flex flex-col gap-1.5">
+      <h2 className="text-lg font-semibold text-ink-primary">
+        Your journal is empty
+      </h2>
+      <p className="max-w-[38ch] text-sm leading-relaxed text-ink-secondary">
+        Log a trade or a deliberate pass to start building your record.
+      </p>
+    </div>
+    <div className="mt-1 flex flex-col items-center gap-2.5">
+      <button
+        onClick={() => onNavigate("/dashboard/trade-entries/new-entry")}
+        className="cursor-pointer rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent-hover"
       >
-        {isTrade ? "Trade" : "No Trade"}
-      </span>
-      {isTrade ? (
-        <>
-          <span className="w-16 shrink-0 text-sm font-medium text-ink-primary">
-            {entry.contract}
-          </span>
-          <span className="w-14 shrink-0 text-sm text-ink-secondary">
-            {entry.direction}
-          </span>
-          <span
-            className={`ml-auto text-sm font-semibold tabular-nums ${pnlColor(entry.pnl)}`}
-          >
-            {formatCurrency(entry.pnl)}
-          </span>
-        </>
-      ) : (
-        <span className="ml-auto text-sm text-ink-muted">No trade taken</span>
-      )}
+        Log your first trade
+      </button>
+      <button
+        onClick={() => onNavigate("/dashboard/no-trade-entries/new-entry")}
+        className="cursor-pointer text-sm text-ink-muted transition-colors duration-100 hover:text-ink-secondary"
+      >
+        Or log a no-trade →
+      </button>
     </div>
-  );
-};
+  </div>
+);
+
+// --- New Entry Dropdown ---
 
 interface NewEntryDropdownProps {
   isOpen: boolean;
@@ -151,15 +107,21 @@ const NewEntryDropdown = ({
   <div className="relative" ref={containerRef}>
     <button
       onClick={() => setIsOpen(!isOpen)}
-      className="flex cursor-pointer items-center gap-1.5 rounded-md bg-sage px-4 py-2 text-sm font-medium text-surface transition-colors hover:bg-sage-hover"
+      aria-haspopup="true"
+      aria-expanded={isOpen}
+      className="flex cursor-pointer items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-accent-hover"
     >
       New Entry
-      <ChevronIcon />
+      <ChevronDownIcon />
     </button>
     {isOpen && (
-      <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[160px] overflow-hidden rounded-lg border border-border bg-surface shadow-dropdown">
+      <div
+        role="menu"
+        className="absolute right-0 top-full z-50 mt-1.5 min-w-[160px] overflow-hidden rounded-lg border border-border bg-surface shadow-dropdown"
+      >
         <button
-          className="w-full cursor-pointer border-b border-border px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors hover:bg-surface-alt hover:text-sage"
+          role="menuitem"
+          className="w-full cursor-pointer border-b border-border px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors duration-100 hover:bg-surface-alt"
           onClick={() => {
             onNavigate("/dashboard/trade-entries/new-entry");
             setIsOpen(false);
@@ -168,7 +130,8 @@ const NewEntryDropdown = ({
           Trade Entry
         </button>
         <button
-          className="w-full cursor-pointer px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors hover:bg-surface-alt hover:text-sage"
+          role="menuitem"
+          className="w-full cursor-pointer px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors duration-100 hover:bg-surface-alt"
           onClick={() => {
             onNavigate("/dashboard/no-trade-entries/new-entry");
             setIsOpen(false);
@@ -180,6 +143,113 @@ const NewEntryDropdown = ({
     )}
   </div>
 );
+
+// --- Recent Entry Cards ---
+
+const TradeCard = ({ entry }: { entry: TradeEntry }) => {
+  const date = format(new Date(entry.entryTime), "MMM d");
+  const year = format(new Date(entry.entryTime), "yyyy");
+
+  return (
+    <div className="flex h-40 flex-col justify-between rounded-xl border border-border bg-surface p-4 transition-shadow duration-150 ease-out hover:shadow-ambient">
+      <div className="flex items-start justify-between gap-2">
+        <span className="rounded-full bg-accent-light px-2 py-0.5 text-[10px] font-medium text-accent">
+          Trade
+        </span>
+        <span className={`text-xs font-medium ${resultColorClass(entry.result)}`}>
+          {entry.result}
+        </span>
+      </div>
+      <div>
+        <div className="text-xl font-semibold leading-none text-ink-primary">
+          {date}
+        </div>
+        <div className="mt-0.5 text-xs text-ink-muted">{year}</div>
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs text-ink-muted">
+          {entry.contract} · {entry.direction}
+        </span>
+        <span className={`text-sm font-semibold tabular-nums ${pnlColor(entry.pnl)}`}>
+          {entry.pnl > 0 ? "+" : ""}
+          {formatCurrency(entry.pnl)}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const NoTradeCard = ({ entry }: { entry: NoTradeEntry }) => {
+  const date = format(new Date(entry.entryTime), "MMM d");
+  const year = format(new Date(entry.entryTime), "yyyy");
+
+  return (
+    <div className="flex h-40 flex-col justify-between rounded-xl border border-border bg-surface p-4 transition-shadow duration-150 ease-out hover:shadow-ambient">
+      <div>
+        <span className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] font-medium text-ink-muted">
+          No Trade
+        </span>
+      </div>
+      <div>
+        <div className="text-xl font-semibold leading-none text-ink-secondary">
+          {date}
+        </div>
+        <div className="mt-0.5 text-xs text-ink-muted">{year}</div>
+      </div>
+      <div>
+        <span className="text-xs text-ink-muted">No trade taken</span>
+      </div>
+    </div>
+  );
+};
+
+const RecentCard = ({ entry }: { entry: SidebarEntry }) =>
+  isTradeEntry(entry) ? (
+    <TradeCard entry={entry} />
+  ) : (
+    <NoTradeCard entry={entry as NoTradeEntry} />
+  );
+
+// --- Earlier Entry Rows ---
+
+const EntryRow = ({ entry }: { entry: SidebarEntry }) => {
+  const isTrade = isTradeEntry(entry);
+  const formattedDate = format(new Date(entry.entryTime), "MMM d, yyyy");
+  const trade = isTrade ? (entry as TradeEntry) : null;
+
+  return (
+    <div className="flex items-center gap-4 px-5 py-3.5 transition-colors duration-100 hover:bg-surface-alt">
+      <span className="w-28 shrink-0 tabular-nums text-sm text-ink-secondary">
+        {formattedDate}
+      </span>
+      <div className="w-20 shrink-0">
+        <span
+          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${
+            isTrade
+              ? "bg-accent-light text-accent"
+              : "border border-border bg-surface-alt text-ink-muted"
+          }`}
+        >
+          {isTrade ? "Trade" : "No Trade"}
+        </span>
+      </div>
+      <span className="flex-1 text-sm text-ink-secondary">
+        {trade ? `${trade.contract} · ${trade.direction}` : "—"}
+      </span>
+      <span
+        className={`text-sm font-medium tabular-nums ${
+          trade ? pnlColor(trade.pnl) : "text-ink-muted"
+        }`}
+      >
+        {trade
+          ? `${trade.pnl > 0 ? "+" : ""}${formatCurrency(trade.pnl)}`
+          : "—"}
+      </span>
+    </div>
+  );
+};
+
+// --- Page ---
 
 const JournalPage = () => {
   const navigate = useNavigate();
@@ -213,45 +283,17 @@ const JournalPage = () => {
     },
   });
 
-  const entryPath = (entry: SidebarEntry) =>
-    isTradeEntry(entry)
-      ? `/dashboard/trade-entries/${entry._id}`
-      : `/dashboard/no-trade-entries/${entry._id}`;
-
   if (isLoading) return <LoadingSpinner />;
-
-  if (allEntries.length === 0) {
-    return (
-      <div className="p-10">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-ink-primary">Journal</h1>
-          <NewEntryDropdown
-            isOpen={newEntryOpen}
-            setIsOpen={setNewEntryOpen}
-            containerRef={newEntryRef}
-            onNavigate={navigate}
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center gap-3 py-24">
-          <p className="text-sm text-ink-secondary">No entries yet.</p>
-          <button
-            onClick={() => navigate("/dashboard/trade-entries/new-entry")}
-            className="cursor-pointer text-sm font-medium text-sage hover:underline"
-          >
-            Log your first trade →
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const recent = allEntries.slice(0, RECENT_COUNT);
   const older = allEntries.slice(RECENT_COUNT);
 
   return (
-    <div className="p-10">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-ink-primary">Journal</h1>
+    <div className="mx-auto max-w-5xl px-10 py-10">
+      <div className="mb-10 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink-primary">
+          Journal
+        </h1>
         <NewEntryDropdown
           isOpen={newEntryOpen}
           setIsOpen={setNewEntryOpen}
@@ -260,46 +302,62 @@ const JournalPage = () => {
         />
       </div>
 
-      <section className="mb-10">
-        <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-          Recent
-        </h2>
-        <div
-          className="grid gap-4"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          }}
-        >
-          {recent.map((entry) => (
-            <Link
-              key={entry._id}
-              to={entryPath(entry)}
-              className="no-underline"
-            >
-              <EntryCard entry={entry} />
-            </Link>
-          ))}
-        </div>
-      </section>
+      {allEntries.length === 0 ? (
+        <EmptyState onNavigate={navigate} />
+      ) : (
+        <>
+          <section aria-label="Recent entries">
+            <h2 className="mb-4 text-xs font-medium text-ink-muted">Recent</h2>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {recent.map((entry) => (
+                <Link
+                  key={entry._id}
+                  to={entryPath(entry)}
+                  className="no-underline"
+                  aria-label={`${isTradeEntry(entry) ? "Trade" : "No trade"} entry from ${format(new Date(entry.entryTime), "MMMM d, yyyy")}`}
+                >
+                  <RecentCard entry={entry} />
+                </Link>
+              ))}
+            </div>
+          </section>
 
-      {older.length > 0 && (
-        <section>
-          <div className="mb-4 border-t border-border" />
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-            Earlier
-          </h2>
-          <div>
-            {older.map((entry) => (
-              <Link
-                key={entry._id}
-                to={entryPath(entry)}
-                className="no-underline"
-              >
-                <EntryRow entry={entry} />
-              </Link>
-            ))}
-          </div>
-        </section>
+          {older.length > 0 && (
+            <section aria-label="Earlier entries" className="mt-12">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-xs font-medium text-ink-muted">Earlier</h2>
+                <span className="text-xs text-ink-muted">
+                  {older.length} {older.length === 1 ? "entry" : "entries"}
+                </span>
+              </div>
+              <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                <div className="flex items-center gap-4 border-b border-border px-5 py-3">
+                  <span className="w-28 shrink-0 text-xs font-medium text-ink-muted">
+                    Date
+                  </span>
+                  <span className="w-20 shrink-0 text-xs font-medium text-ink-muted">
+                    Type
+                  </span>
+                  <span className="flex-1 text-xs font-medium text-ink-muted">
+                    Details
+                  </span>
+                  <span className="text-xs font-medium text-ink-muted">
+                    P&amp;L
+                  </span>
+                </div>
+                {older.map((entry) => (
+                  <Link
+                    key={entry._id}
+                    to={entryPath(entry)}
+                    className="block border-b border-border no-underline last:border-b-0"
+                  >
+                    <EntryRow entry={entry} />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+        </>
       )}
     </div>
   );

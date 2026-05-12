@@ -44,14 +44,13 @@ const NewNoTradeEntry = () => {
         console.error("No ID returned from the server.");
         return;
       }
-
       queryClient.setQueryData(["noTradeEntry", data._id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate(`/dashboard/no-trade-entries/${data._id}`);
       reset();
     },
     onError: (error) => {
-      console.error("Failed to create trade entry:", error);
+      console.error("Failed to create no-trade entry:", error);
     },
   });
 
@@ -72,34 +71,29 @@ const NewNoTradeEntry = () => {
   };
 
   return (
+    <div className="px-8 py-10">
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-[800px] mx-auto bg-surface p-8 rounded-2xl border border-border grid grid-cols-1 gap-5"
     >
-      <div className="mb-2 pb-4 border-b-2 border-border">
+      {/* Header */}
+      <div className="mb-2 pb-4 border-b border-border">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-ink-primary mb-1">
-              Log No Trade Day
-            </h2>
-            <p className="text-sm text-ink-secondary">
-              Record a day you chose not to trade
-            </p>
-          </div>
-          <div className="flex items-center gap-2 pt-1">
+          <h2 className="text-2xl font-semibold text-ink-primary">Log No Trade Day</h2>
+          <div className="flex items-center gap-2 pt-0.5">
             {cancelConfirming ? (
               <>
                 <span className="text-xs text-ink-secondary">Discard changes?</span>
                 <button
                   type="button"
-                  className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-red-600"
+                  className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-red-600 transition-colors duration-100"
                   onClick={() => navigate(-1)}
                 >
                   Discard
                 </button>
                 <button
                   type="button"
-                  className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer hover:bg-surface-alt"
+                  className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer hover:bg-surface-alt transition-colors duration-100"
                   onClick={() => setCancelConfirming(false)}
                 >
                   Keep editing
@@ -108,7 +102,7 @@ const NewNoTradeEntry = () => {
             ) : (
               <button
                 type="button"
-                className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer hover:bg-surface-alt"
+                className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer hover:bg-surface-alt transition-colors duration-100"
                 onClick={handleCancel}
               >
                 Cancel
@@ -117,11 +111,13 @@ const NewNoTradeEntry = () => {
           </div>
         </div>
         {addEntryMutation.error && (
-          <span className="block text-sm text-red-500 bg-red-50 border border-red-200 rounded-md px-3 py-2 mt-3">
+          <p className="mt-3 text-sm text-ink-secondary bg-surface-alt border border-border rounded-md px-3 py-2">
             {addEntryMutation.error.message}
-          </span>
+          </p>
         )}
       </div>
+
+      {/* Account */}
       <div>
         <label className={labelStyles}>Trading Account</label>
         <select
@@ -141,6 +137,8 @@ const NewNoTradeEntry = () => {
           <span className={errorStyles}>{errors.accountId.message}</span>
         )}
       </div>
+
+      {/* Date */}
       <div>
         <label className={labelStyles}>Date</label>
         <input
@@ -152,22 +150,29 @@ const NewNoTradeEntry = () => {
           <span className={errorStyles}>{errors.entryTime.message}</span>
         )}
       </div>
+
+      {/* Notes */}
       <div>
         <label className={labelStyles}>Notes</label>
         <TextEditor onChange={setNotes} />
       </div>
+
+      {/* Images */}
       <div>
         <label className={labelStyles}>Images</label>
         <ImageUpload onChange={setUploadedImages} maxImages={5} />
       </div>
+
+      {/* Submit */}
       <button
         type="submit"
-        className="w-full py-3 bg-sage text-surface rounded-lg text-base font-semibold cursor-pointer transition-colors hover:bg-sage-hover mt-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-accent text-white rounded-lg text-sm font-semibold cursor-pointer transition-colors duration-150 hover:bg-accent-hover mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={addEntryMutation.isPending}
       >
         {addEntryMutation.isPending ? "Submitting..." : "Submit"}
       </button>
     </form>
+    </div>
   );
 };
 

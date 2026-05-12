@@ -10,7 +10,7 @@ import TextEditor from "./TextEditor.js";
 import ImageUpload from "./ImageUpload";
 import { TradeEntry } from "../types/tradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
-import { formatCurrency, resultColorClass, toDatetimeLocal, formatDateTime } from "../utils/formatUtils";
+import { formatCurrency, pnlColor, toDatetimeLocal, formatDateTime } from "../utils/formatUtils";
 import {
   detailRowStyles as rowStyles,
   detailLabelStyles as labelStyles,
@@ -87,7 +87,6 @@ const TradeDetail = () => {
 
   if (isLoading) return <LoadingSpinner message="Loading trade details..." />;
   if (error) return <ErrorState message={`Error: ${error.message}`} />;
-
   if (!entry) return null;
 
   const {
@@ -112,9 +111,7 @@ const TradeDetail = () => {
   const handleSave = (value = tempValue, field = activeField): void => {
     if (field) {
       if (!id) throw new Error("No id provided");
-
       let finalValue = value;
-
       if (
         field === "contracts" ||
         field === "entryPrice" ||
@@ -124,7 +121,6 @@ const TradeDetail = () => {
       ) {
         finalValue = Number(value);
       }
-
       updateTradeMutation.mutate({ id, [field]: finalValue });
       setActiveField(null);
       setTempValue("");
@@ -170,18 +166,18 @@ const TradeDetail = () => {
   };
 
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
+    <div className="px-8 py-10">
       <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+
+        {/* Header */}
         <div className="px-8 pt-7 pb-6 border-b border-border">
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-start justify-between mb-1.5">
             <div>
-              <div className="text-xs font-medium text-ink-muted tracking-wide uppercase mb-0.5">
+              <div className="text-xs font-medium text-ink-muted mb-0.5">
                 Net P&L
               </div>
-              <div
-                className={`text-2xl font-medium tabular-nums mb-1.5 ${resultColorClass(result)}`}
-              >
-                {formatCurrency(Math.abs(pnl))}
+              <div className={`text-2xl font-semibold tabular-nums mb-1.5 ${pnlColor(pnl)}`}>
+                {pnl > 0 ? "+" : ""}{formatCurrency(pnl)}
               </div>
             </div>
 
@@ -190,14 +186,14 @@ const TradeDetail = () => {
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-ink-secondary">Delete this trade?</span>
                   <button
-                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleDeleteConfirm}
                     disabled={deleteMutation.isPending}
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete"}
                   </button>
                   <button
-                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors hover:bg-surface-alt"
+                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-surface-alt"
                     onClick={handleDeleteCancel}
                     disabled={deleteMutation.isPending}
                   >
@@ -206,15 +202,14 @@ const TradeDetail = () => {
                 </div>
               ) : (
                 <button
-                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
+                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors duration-100 hover:bg-red-500 hover:text-white"
                   onClick={handleDeleteClick}
                 >
                   Delete Trade
                 </button>
               )}
-
               {deleteError && (
-                <p className="text-xs text-red-500">{deleteError}</p>
+                <p className="text-xs text-ink-muted">{deleteError}</p>
               )}
             </div>
           </div>
@@ -223,20 +218,18 @@ const TradeDetail = () => {
             <div className="text-sm text-ink-muted">
               Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
             </div>
-            <div
-              aria-live="polite"
-              className="text-xs font-medium transition-opacity duration-300"
-            >
+            <div aria-live="polite" className="text-xs font-medium transition-opacity duration-300">
               {saveStatus === "saved" && (
-                <span className="text-emerald-600">Saved</span>
+                <span className="text-accent">Saved</span>
               )}
               {saveStatus === "error" && (
-                <span className="text-red-500">Could not save</span>
+                <span className="text-ink-muted">Could not save</span>
               )}
             </div>
           </div>
         </div>
 
+        {/* Fields */}
         <div className="px-8">
           <div
             className={rowStyles}
@@ -254,12 +247,12 @@ const TradeDetail = () => {
                 </select>
               ) : (
                 <span>
-                  {accounts?.find((account) => account._id === accountId)
-                    ?.accountName ?? "No account"}
+                  {accounts?.find((a) => a._id === accountId)?.accountName ?? "No account"}
                 </span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("result", result)}
@@ -277,6 +270,7 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("contract", contract)}
@@ -295,6 +289,7 @@ const TradeDetail = () => {
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("direction", direction)}
@@ -307,21 +302,18 @@ const TradeDetail = () => {
                   {...sharedInputProps}
                   onChange={(e) => {
                     setTempValue(e.target.value);
-                    handleSave(e.target.value);
+                    handleSave(e.target.value, "direction");
                   }}
                 >
                   <option value="Long">Long</option>
                   <option value="Short">Short</option>
                 </select>
               ) : (
-                <span
-                  className={`inline-block text-xs font-semibold py-0.5 rounded tracking-wide ${direction?.toLowerCase() === "long" ? "text-emerald-600" : "text-red-600"}`}
-                >
-                  {direction}
-                </span>
+                <span className="text-sm text-ink-primary">{direction}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("contracts", contracts)}
@@ -329,16 +321,13 @@ const TradeDetail = () => {
             <span className={labelStyles}>Contracts</span>
             <div className={valueStyles}>
               {activeField === "contracts" ? (
-                <input
-                  type="number"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="number" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
                 <span>{contracts}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("entryPrice", entryPrice)}
@@ -346,17 +335,13 @@ const TradeDetail = () => {
             <span className={labelStyles}>Entry Price</span>
             <div className={valueStyles}>
               {activeField === "entryPrice" ? (
-                <input
-                  type="number"
-                  step="0.01"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
-                <span>${entryPrice?.toLocaleString()}</span>
+                <span className="tabular-nums">${entryPrice?.toLocaleString()}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("exitPrice", exitPrice)}
@@ -364,17 +349,13 @@ const TradeDetail = () => {
             <span className={labelStyles}>Exit Price</span>
             <div className={valueStyles}>
               {activeField === "exitPrice" ? (
-                <input
-                  type="number"
-                  step="0.01"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
-                <span>${exitPrice?.toLocaleString()}</span>
+                <span className="tabular-nums">${exitPrice?.toLocaleString()}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("stopLoss", stopLoss)}
@@ -382,17 +363,13 @@ const TradeDetail = () => {
             <span className={labelStyles}>Stop Loss</span>
             <div className={valueStyles}>
               {activeField === "stopLoss" ? (
-                <input
-                  type="number"
-                  step="0.01"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
-                <span>${stopLoss?.toLocaleString()}</span>
+                <span className="tabular-nums">${stopLoss?.toLocaleString()}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
             onClick={() => !activeField && activate("target", target)}
@@ -400,55 +377,41 @@ const TradeDetail = () => {
             <span className={labelStyles}>Target</span>
             <div className={valueStyles}>
               {activeField === "target" ? (
-                <input
-                  type="number"
-                  step="0.01"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
-                <span>${target?.toLocaleString()}</span>
+                <span className="tabular-nums">${target?.toLocaleString()}</span>
               )}
             </div>
           </div>
+
           <div
             className={rowStyles}
-            onClick={() =>
-              !activeField && activate("entryTime", toDatetimeLocal(entryTime))
-            }
+            onClick={() => !activeField && activate("entryTime", toDatetimeLocal(entryTime))}
           >
             <span className={labelStyles}>Entry Time</span>
             <div className={valueStyles}>
               {activeField === "entryTime" ? (
-                <input
-                  type="datetime-local"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="datetime-local" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
                 <span>{formattedEntry}</span>
               )}
             </div>
           </div>
+
           <div
             className={`${rowStyles} border-b-0`}
-            onClick={() =>
-              !activeField && activate("exitTime", toDatetimeLocal(exitTime))
-            }
+            onClick={() => !activeField && activate("exitTime", toDatetimeLocal(exitTime))}
           >
             <span className={labelStyles}>Exit Time</span>
             <div className={valueStyles}>
               {activeField === "exitTime" ? (
-                <input
-                  type="datetime-local"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
+                <input type="datetime-local" className={inlineInputStyles} {...sharedInputProps} />
               ) : (
                 <span>{formattedExit}</span>
               )}
             </div>
           </div>
+
           <div className="py-5 border-t border-border">
             <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
             <ImageUpload
@@ -461,6 +424,7 @@ const TradeDetail = () => {
               }}
             />
           </div>
+
           <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>

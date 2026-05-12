@@ -1,80 +1,112 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStats, getTradeEntries } from "../api/api";
-import { Stats } from "../types/tradeEntry.types";
+import { Stats, TradeEntry } from "../types/tradeEntry.types";
 import TradeCalendar from "./TradeCalendar";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { formatCurrency, pnlColor } from "../utils/formatUtils";
-interface RingChartProps {
+import { useAuth } from "../contexts/AuthContext";
+
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function computeStreak(trades: TradeEntry[]): { count: number; type: "win" | "loss" } | null {
+  if (trades.length === 0) return null;
+  const sorted = [...trades].sort(
+    (a, b) => new Date(b.exitTime).getTime() - new Date(a.exitTime).getTime()
+  );
+  const latest = sorted[0].result;
+  if (latest === "Break Even") return null;
+  const type = latest === "Win" ? "win" : "loss";
+  let count = 0;
+  for (const t of sorted) {
+    if (t.result === latest) count++;
+    else break;
+  }
+  return { count, type };
+}
+
+const ActivityDots = ({ trades }: { trades: TradeEntry[] }) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayDate = now.getDate();
+
+  const tradedDays = new Set(
+    trades
+      .filter((t) => {
+        const d = new Date(t.exitTime);
+        return d.getFullYear() === year && d.getMonth() === month;
+      })
+      .map((t) => new Date(t.exitTime).getDate())
+  );
+
+  return (
+    <div className="flex flex-wrap gap-[3px]" aria-hidden="true">
+      {Array.from({ length: daysInMonth }, (_, i) => {
+        const day = i + 1;
+        const future = day > todayDate;
+        const traded = tradedDays.has(day);
+        return (
+          <div
+            key={day}
+            className={`w-[7px] h-[7px] rounded-[2px] transition-opacity ${
+              future
+                ? "bg-border opacity-25"
+                : traded
+                ? "bg-accent"
+                : "bg-border"
+            }`}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+interface ArcGaugeProps {
   value: number;
 }
 
-const RingChart = ({ value }: RingChartProps) => {
-  const size = 52;
-  const strokeWidth = 5;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const fillLength = (Math.min(Math.max(value, 0), 100) / 100) * circumference;
+const ArcGauge = ({ value }: ArcGaugeProps) => {
+  const r = 26;
+  const cx = 32;
+  const cy = 34;
+  const total = Math.PI * r;
+  const fill = (Math.min(Math.max(value, 0), 100) / 100) * total;
+  const d = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
 
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      className="shrink-0"
-    >
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
+    <svg width="64" height="36" viewBox="0 0 64 36" className="shrink-0" aria-hidden="true">
+      <path d={d} fill="none" stroke="var(--color-border)" strokeWidth="5" strokeLinecap="round" />
+      <path
+        d={d}
         fill="none"
-        stroke="var(--color-border)"
-        strokeWidth={strokeWidth}
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="var(--color-sage)"
-        strokeWidth={strokeWidth}
+        stroke="var(--color-accent)"
+        strokeWidth="5"
         strokeLinecap="round"
-        strokeDasharray={`${fillLength} ${circumference - fillLength}`}
-        strokeDashoffset={circumference * 0.25}
+        strokeDasharray={`${fill} ${total}`}
       />
     </svg>
   );
 };
 
-interface TradePipsProps {
-  count: number;
-}
-
-const TradePips = ({ count }: TradePipsProps) => {
-  const displayCount = Math.min(count, 10);
-  const extra = count > 10 ? count - 10 : 0;
-
-  return (
-    <div className="flex items-center gap-1 flex-wrap">
-      {Array.from({ length: displayCount }).map((_, i) => (
-        <div key={i} className="w-1.5 h-1.5 rounded-full bg-sage" />
-      ))}
-      {extra > 0 && (
-        <span className="text-[10px] text-ink-muted">+{extra} more</span>
-      )}
-    </div>
-  );
-};
-
 const CardSkeleton = () => (
-  <div className="flex-1 min-w-[180px] bg-surface border border-border rounded-xl p-5 animate-pulse">
-    <div className="h-2.5 w-16 rounded bg-border mb-4" />
+  <div className="bg-surface rounded-xl p-6 animate-pulse">
+    <div className="h-3 w-16 rounded bg-border mb-5" />
     <div className="h-8 w-24 rounded bg-border mb-3" />
     <div className="h-2.5 w-20 rounded bg-border" />
   </div>
 );
 
 const StatsDashboard = () => {
+  const { user } = useAuth();
+
   const {
     data: stats,
     isLoading: statsLoading,
@@ -104,124 +136,115 @@ const StatsDashboard = () => {
 
   const pf = losses > 0 && avgLoss !== 0 ? Math.abs(avgWin / avgLoss) : null;
   const pfDisplay = pf !== null ? pf.toFixed(2) : "—";
-  const pfRingValue = pf !== null ? Math.min(pf / 3, 1) * 100 : 0;
+  const pfArcValue = pf !== null ? Math.min(pf / 3, 1) * 100 : 0;
+
+  const streak = computeStreak(trades);
 
   const recentTrades = [...trades]
-    .sort(
-      (a, b) =>
-        new Date(b.entryTime).getTime() - new Date(a.entryTime).getTime(),
-    )
+    .sort((a, b) => new Date(b.entryTime).getTime() - new Date(a.entryTime).getTime())
     .slice(0, 5);
-
-  const periodLabel = format(new Date(), "MMMM yyyy").toUpperCase();
 
   if (error)
     return (
-      <div className="p-10">
+      <div className="px-8 py-10">
         <p className="text-sm text-ink-secondary">
-          Couldn't load your stats. Try refreshing.
+          Couldn't load stats. Try refreshing.
         </p>
       </div>
     );
 
   return (
-    <div className="p-10">
-      <p className="mb-5 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-        {periodLabel}
-      </p>
-
-      <div className="flex flex-wrap gap-4 mb-10">
-        {isLoading ? (
-          <>
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </>
-        ) : (
-          <>
-            {/* Total P&L */}
-            <div className="flex-1 min-w-[180px] bg-surface border border-border rounded-xl shadow-ambient p-5 flex flex-col gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-                Total P&L
-              </span>
-              <span
-                className={`text-3xl font-semibold tabular-nums leading-none ${pnlColor(totalPnl)}`}
-              >
-                {formatCurrency(totalPnl)}
-              </span>
-              <span className="text-xs text-ink-muted tabular-nums">
-                {tradeCount > 0
-                  ? `avg ${formatCurrency(avgPerTrade)}/trade`
-                  : "No trades yet"}
-              </span>
-            </div>
-
-            {/* Win Rate */}
-            <div className="flex-1 min-w-[180px] bg-surface border border-border rounded-xl shadow-ambient p-5 flex flex-col gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-                Win Rate
-              </span>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-3xl font-semibold tabular-nums leading-none text-ink-primary">
-                  {winRate.toFixed(1)}%
-                </span>
-                <RingChart value={winRate} />
-              </div>
-              <span className="text-xs text-ink-muted">
-                {wins}w · {losses}l
-              </span>
-            </div>
-
-            {/* Profit Factor */}
-            <div className="flex-1 min-w-[180px] bg-surface border border-border rounded-xl shadow-ambient p-5 flex flex-col gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-                Profit Factor
-              </span>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-3xl font-semibold tabular-nums leading-none text-ink-primary">
-                  {pfDisplay}
-                </span>
-                <RingChart value={pfRingValue} />
-              </div>
-              <span className="text-xs text-ink-muted tabular-nums">
-                {losses > 0
-                  ? `${formatCurrency(avgWin)} / ${formatCurrency(Math.abs(avgLoss))}`
-                  : "No losses"}
-              </span>
-            </div>
-
-            {/* Trades */}
-            <div className="flex-1 min-w-[180px] bg-surface border border-border rounded-xl shadow-ambient p-5 flex flex-col gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-                Trades
-              </span>
-              <span className="text-3xl font-semibold tabular-nums leading-none text-ink-primary">
-                {tradeCount}
-              </span>
-              <TradePips count={tradeCount} />
-              <span className="text-xs text-ink-muted">
-                {daysTraded} day{daysTraded !== 1 ? "s" : ""} traded
-              </span>
-            </div>
-          </>
-        )}
+    <div>
+      {/* Content header */}
+      <div className="px-8 py-5 border-b border-border">
+        <p className="text-xs font-medium text-ink-muted tracking-wide mb-0.5">
+          {format(new Date(), "MMMM yyyy")}
+        </p>
+        <h1 className="text-xl font-semibold text-ink-primary tracking-tight" style={{ textWrap: "balance" } as React.CSSProperties}>
+          {getGreeting()}{user ? `, ${user}` : ""}
+        </h1>
       </div>
 
-      <div className="flex flex-col gap-8 items-start lg:flex-row">
+      {/* KPI cards */}
+      <div className="px-8 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {isLoading ? (
+            <>
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </>
+          ) : (
+            <>
+              {/* Net P&L */}
+              <div className="bg-surface rounded-xl p-6 transition-shadow duration-150 hover:shadow-ambient flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-ink-muted tracking-wide">net p&l</span>
+                <span className={`text-[1.75rem] font-semibold tabular-nums leading-none ${pnlColor(totalPnl)}`}>
+                  {formatCurrency(totalPnl)}
+                </span>
+                <span className="text-xs text-ink-muted tabular-nums">
+                  {tradeCount > 0 ? `avg ${formatCurrency(avgPerTrade)} / trade` : "no trades yet"}
+                </span>
+              </div>
+
+              {/* Win Rate */}
+              <div className="bg-surface rounded-xl p-6 transition-shadow duration-150 hover:shadow-ambient flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-ink-muted tracking-wide">win rate</span>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[1.75rem] font-semibold tabular-nums leading-none text-ink-primary">
+                    {winRate.toFixed(1)}%
+                  </span>
+                  <ArcGauge value={winRate} />
+                </div>
+                <span className="text-xs text-ink-muted">
+                  {wins}w · {losses}l
+                </span>
+              </div>
+
+              {/* Profit Factor */}
+              <div className="bg-surface rounded-xl p-6 transition-shadow duration-150 hover:shadow-ambient flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-ink-muted tracking-wide">profit factor</span>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[1.75rem] font-semibold tabular-nums leading-none text-ink-primary">
+                    {pfDisplay}
+                  </span>
+                  <ArcGauge value={pfArcValue} />
+                </div>
+                <span className="text-xs text-ink-muted tabular-nums">
+                  {losses > 0
+                    ? `avg ${formatCurrency(avgWin)} / ${formatCurrency(Math.abs(avgLoss))}`
+                    : "no losses"}
+                </span>
+              </div>
+
+              {/* Trades */}
+              <div className="bg-surface rounded-xl p-6 transition-shadow duration-150 hover:shadow-ambient flex flex-col gap-2">
+                <span className="text-xs font-medium text-ink-muted tracking-wide">trades</span>
+                <span className="text-[1.75rem] font-semibold tabular-nums leading-none text-ink-primary">
+                  {tradeCount}
+                </span>
+                <ActivityDots trades={trades} />
+                <span className="text-xs text-ink-muted tabular-nums">
+                  {daysTraded} {daysTraded === 1 ? "day" : "days"} this month
+                  {streak ? ` · ${streak.count} in a row` : ""}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Calendar + Recent Trades */}
+      <div className="px-8 pt-2 pb-10 flex flex-col gap-8 items-start lg:flex-row lg:gap-6">
         <TradeCalendar trades={trades} />
 
         <div className="flex-1 min-w-0">
-          <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
-            Recent
-          </h2>
+          <h2 className="mb-4 text-[0.9375rem] font-semibold text-ink-primary">Recent Trades</h2>
           {trades.length === 0 ? (
-            <p className="py-3 text-sm text-ink-secondary">
-              No trades logged yet.{" "}
-              <Link
-                to="/dashboard/journal"
-                className="text-sage no-underline hover:underline"
-              >
+            <p className="text-sm text-ink-secondary">
+              No trades yet.{" "}
+              <Link to="/dashboard/journal" className="text-accent no-underline hover:underline">
                 Start in the Journal.
               </Link>
             </p>
@@ -234,27 +257,18 @@ const StatsDashboard = () => {
                     to={`/dashboard/trade-entries/${trade._id}`}
                     className="no-underline"
                   >
-                    <div className="flex flex-col gap-1 border-b border-border px-1 py-3 text-sm transition-colors last:border-b-0 hover:bg-surface-alt">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-ink-primary">
+                    <div className="flex items-center justify-between gap-4 border-b border-border -mx-2 px-2 py-3 text-sm transition-colors duration-[120ms] ease-out last:border-b-0 hover:bg-surface rounded-lg">
+                      <div className="flex flex-col gap-0.5 min-w-0">
+                        <span className="font-medium text-ink-primary truncate">
                           {trade.contract} · {trade.direction}
                         </span>
-                        <span
-                          className={`font-semibold tabular-nums ${pnlColor(trade.pnl)}`}
-                        >
-                          {formatCurrency(trade.pnl)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs text-ink-secondary">
+                        <span className="text-xs text-ink-muted">
                           {format(new Date(trade.entryTime), "MMM d, yyyy")}
                         </span>
-                        <span
-                          className={`text-xs font-semibold uppercase tracking-wide text-ink-muted`}
-                        >
-                          {trade.result}
-                        </span>
                       </div>
+                      <span className={`font-semibold tabular-nums shrink-0 ${pnlColor(trade.pnl)}`}>
+                        {formatCurrency(trade.pnl)}
+                      </span>
                     </div>
                   </Link>
                 ))}
@@ -262,7 +276,7 @@ const StatsDashboard = () => {
               <div className="pt-4">
                 <Link
                   to="/dashboard/journal"
-                  className="text-sm text-ink-secondary no-underline transition-colors hover:text-sage"
+                  className="text-sm text-ink-secondary no-underline transition-colors hover:text-accent"
                 >
                   View all in Journal →
                 </Link>

@@ -1,24 +1,57 @@
 @import "tailwindcss";
 
 @theme {
+  /* Accent — Composed Slate */
+  --color-accent: #4072B0;
+  --color-accent-hover: #3362A0;
+  --color-accent-light: #EBF0F9;
+
+  /* Surfaces */
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F4F6FA;
+  --color-surface-sidebar: #ECF0F8;
+
+  /* Ink */
+  --color-ink-primary: #1A2235;
+  --color-ink-secondary: #4B5875;
+  --color-ink-muted: #7C8BA4;
+
+  /* Border */
+  --color-border: #D8E0ED;
+
+  /* Sage — kept for login/signup and editor backward compat */
   --color-sage: #7A8F5E;
   --color-sage-hover: #6A7D4E;
   --color-sage-light: #E0E9D8;
-  --color-surface: #FDFEFE;
-  --color-surface-alt: #F8F9F6;
-  --color-ink-primary: #1A1E18;
-  --color-ink-secondary: #6B7368;
-  --color-ink-muted: #9CA398;
-  --color-border: #E4E7E0;
+
+  /* Financial P&L — reserved exclusively for financial values */
   --color-pnl-positive: #059669;
   --color-pnl-positive-bg: #D1FAE5;
   --color-pnl-negative: #DC2626;
   --color-pnl-negative-bg: #FEE2E2;
   --color-pnl-breakeven: #6B7FAA;
   --color-pnl-breakeven-bg: #E8EEFF;
-  --shadow-ambient: 0 1px 4px rgba(26,30,24,0.05), 0 2px 12px rgba(26,30,24,0.04);
-  --shadow-lift: 0 4px 16px rgba(26,30,24,0.08), 0 1px 4px rgba(26,30,24,0.05);
-  --shadow-dropdown: 0 8px 24px rgba(26,30,24,0.10), 0 2px 8px rgba(26,30,24,0.06);
+
+  /* Elevation — blue-ink tinted */
+  --shadow-ambient: 0 1px 3px rgba(26,34,53,0.06), 0 2px 10px rgba(26,34,53,0.04);
+  --shadow-lift: 0 4px 16px rgba(26,34,53,0.08), 0 1px 4px rgba(26,34,53,0.05);
+  --shadow-dropdown: 0 8px 32px rgba(26,34,53,0.12), 0 2px 8px rgba(26,34,53,0.06);
+}
+
+@layer base {
+  body {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
 }
 
 .trading-editor-container .control-group {
@@ -54,9 +87,9 @@
 }
 
 .trading-editor-container .button-group button.is-active {
-  background: var(--color-sage);
+  background: var(--color-accent);
   color: var(--color-surface);
-  border-color: var(--color-sage);
+  border-color: var(--color-accent);
 }
 
 .ProseMirror {
@@ -74,7 +107,7 @@
 }
 
 .ProseMirror:focus {
-  border-color: var(--color-sage);
+  border-color: var(--color-accent);
 }
 
 .ProseMirror h1 {

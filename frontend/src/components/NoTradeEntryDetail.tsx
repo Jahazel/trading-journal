@@ -5,7 +5,7 @@ import {
   updateNoTradeEntry,
 } from "../api/api.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, KeyboardEvent, ChangeEvent } from "react";
+import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from "react";
 import TextEditor from "./TextEditor.js";
 import ImageUpload from "./ImageUpload";
 import { NoTradeEntry } from "../types/noTradeEntry.types.js";
@@ -24,8 +24,20 @@ const NoTradeEntryDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [activeField, setActiveField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState("");
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    };
+  }, []);
 
   const {
     data: entry,
@@ -35,7 +47,6 @@ const NoTradeEntryDetail = () => {
     queryKey: ["noTradeEntry", id],
     queryFn: () => {
       if (!id) throw new Error("No id provided");
-
       return getNoTradeEntry(id);
     },
     enabled: !!id,
@@ -46,14 +57,17 @@ const NoTradeEntryDetail = () => {
     queryFn: getAccounts,
   });
 
-  const updateTradeMutation = useMutation({
+  const updateMutation = useMutation({
     mutationFn: updateNoTradeEntry,
     onSuccess: (data) => {
       queryClient.setQueryData(["noTradeEntry", id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      setSaveStatus("saved");
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
     },
-    onError: (error) => {
-      console.error("Failed to update trade entry", error);
+    onError: () => {
+      setSaveStatus("error");
     },
   });
 
@@ -63,36 +77,45 @@ const NoTradeEntryDetail = () => {
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate("/dashboard");
     },
-    onError: (error) => {
-      console.error("Failed to delete trade entry", error);
+    onError: () => {
+      setDeleteConfirming(false);
+      setDeleteError("Could not delete. Try again.");
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setDeleteError(null), 4000);
     },
   });
 
-  if (isLoading) return <LoadingSpinner message="Loading trade details..." />;
+  if (isLoading) return <LoadingSpinner message="Loading entry details..." />;
   if (error) return <ErrorState message={`Error: ${error.message}`} />;
-
   if (!entry) return null;
 
   const { accountId, entryTime, notes } = entry;
-
   const formattedDate = entryTime && formatDateTime(entryTime);
 
   const handleSave = (value = tempValue, field = activeField) => {
     if (field) {
       if (!id) throw new Error("No id provided");
-
-      updateTradeMutation.mutate({ id, [field]: value });
+      updateMutation.mutate({ id, [field]: value });
       setActiveField(null);
       setTempValue("");
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this entry?")) {
-      if (!id) throw new Error("No id provided");
+  const handleDeleteClick = () => {
+    setDeleteConfirming(true);
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    deleteTimerRef.current = setTimeout(() => setDeleteConfirming(false), 4000);
+  };
 
-      deleteMutation.mutate(id);
-    }
+  const handleDeleteCancel = () => {
+    setDeleteConfirming(false);
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!id) return;
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    deleteMutation.mutate(id);
   };
 
   const activate = (field: string, value: string) => {
@@ -104,6 +127,10 @@ const NoTradeEntryDetail = () => {
     onBlur: () => handleSave(),
     onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
       if (e.key === "Enter") handleSave();
+      if (e.key === "Escape") {
+        setActiveField(null);
+        setTempValue("");
+      }
     },
     autoFocus: true,
     onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -113,24 +140,61 @@ const NoTradeEntryDetail = () => {
   };
 
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
+    <div className="px-8 py-10">
       <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+
+        {/* Header */}
         <div className="px-8 pt-7 pb-6 border-b border-border">
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-start justify-between mb-1.5">
             <div>
-              <p className="text-xs font-medium text-ink-muted tracking-wide uppercase mb-0.5">
-                No Trade Day
-              </p>
-              <p className="text-sm text-ink-muted">{formattedDate}</p>
+              <p className="text-xs font-medium text-ink-muted mb-0.5">No Trade</p>
+              <p className="text-sm text-ink-secondary">{formattedDate}</p>
             </div>
-            <button
-              className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors hover:bg-red-500 hover:text-white"
-              onClick={handleDelete}
-            >
-              Delete Entry
-            </button>
+
+            <div className="flex flex-col items-end gap-2">
+              {deleteConfirming ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-ink-secondary">Delete this entry?</span>
+                  <button
+                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleDeleteConfirm}
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  </button>
+                  <button
+                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-surface-alt"
+                    onClick={handleDeleteCancel}
+                    disabled={deleteMutation.isPending}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors duration-100 hover:bg-red-500 hover:text-white"
+                  onClick={handleDeleteClick}
+                >
+                  Delete Entry
+                </button>
+              )}
+              {deleteError && (
+                <p className="text-xs text-ink-muted">{deleteError}</p>
+              )}
+            </div>
+          </div>
+
+          <div aria-live="polite" className="text-xs font-medium transition-opacity duration-300 text-right">
+            {saveStatus === "saved" && (
+              <span className="text-accent">Saved</span>
+            )}
+            {saveStatus === "error" && (
+              <span className="text-ink-muted">Could not save</span>
+            )}
           </div>
         </div>
+
+        {/* Fields */}
         <div className="px-8">
           <div
             className={rowStyles}
@@ -148,14 +212,14 @@ const NoTradeEntryDetail = () => {
                 </select>
               ) : (
                 <span>
-                  {accounts?.find((account) => account._id === accountId)
-                    ?.accountName ?? "No account"}
+                  {accounts?.find((a) => a._id === accountId)?.accountName ?? "No account"}
                 </span>
               )}
             </div>
           </div>
+
           <div
-            className={rowStyles}
+            className={`${rowStyles} border-b-0`}
             onClick={() => !activeField && activate("entryTime", entryTime)}
           >
             <span className={labelStyles}>Date</span>
@@ -171,6 +235,7 @@ const NoTradeEntryDetail = () => {
               )}
             </div>
           </div>
+
           <div className="py-5 border-t border-border">
             <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
             <ImageUpload
@@ -179,14 +244,16 @@ const NoTradeEntryDetail = () => {
               maxImages={5}
               onChange={(urls) => {
                 if (!id) return;
-                updateTradeMutation.mutate({ id, images: urls });
+                updateMutation.mutate({ id, images: urls });
               }}
             />
           </div>
+
           <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>
     </div>
   );
 };
+
 export default NoTradeEntryDetail;

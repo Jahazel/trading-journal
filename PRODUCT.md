@@ -6,31 +6,37 @@ product
 
 ## Users
 
-Solo active trader using this tool daily or weekly for personal use. Context: sitting down after a session (or at the start of one) to log a trade or a deliberate no-trade decision. Not a casual user — someone who takes their own performance seriously, reviews their entries regularly, and is looking for patterns they can't see in the moment.
+Solo active traders doing focused post-session reviews. Not rushed, not multitasking — deliberately sitting down after a session to log what happened and think about what it means. They trade regularly and want a record that reveals patterns over time, not just a data dump. They use this alone; there is no social surface, no sharing, no public-facing output.
 
 ## Product Purpose
 
-A personal trading journal for logging trades and no-trade decisions, then reviewing them over time to surface behavioral patterns. Success looks like: the trader notices something about their own habits they wouldn't have caught otherwise — and changes because of it.
+A personal trading journal for logging trades and deliberate no-trade decisions, then reviewing them to surface behavioral patterns. The core loop is: **log an entry → review the stats it surfaces → reflect on progress toward a personal goal**. The product succeeds when a trader notices something about their own habits they wouldn't have caught otherwise.
+
+The differentiator is restraint. Tools like Tradezella overwhelm users with features unrelated to journaling. This product does one thing — structured reflection — and does it well. Every screen has one job.
 
 ## Brand Personality
 
-Reflective, honest, precise. A well-designed notebook — not a Bloomberg terminal, not a fintech product. Inspired by SuperEar's aesthetic and Tradezella's feature depth. Clean and bright, light mode, generous whitespace. The color anchor is a muted sage green (#7A8F5E): grounded, not energized. The sidebar is a quiet presence on the left; content always takes focus.
+Focused, minimal, honest.
+
+The product feels closer to a well-designed notebook than a trading terminal. Serious without performing seriousness. The interface is the container; the data is the content. The UI never competes with what the numbers are saying.
 
 ## Anti-references
 
-- Bloomberg terminal: dense data walls, orange-on-black, intimidating complexity
-- Crypto neon dark mode: hype energy, aggressive branding, neon on black
-- Generic SaaS dashboard: white + blue/purple, hero metric cards with gradients, identical grids
-- Traditional finance: navy backgrounds, gold accents, serif formality
+- **Tradezella**: too many features, cluttered, leaves users overwhelmed — the product this is explicitly not
+- **Robinhood / Webull**: gamified, consumer-brokerage aesthetic, celebrates activity over reflection — the register this must never feel like
 
 ## Design Principles
 
-1. **The journal reflects, it does not judge.** Interface tone is neutral and honest — no gamification, no streak anxiety, no color-coded shame. Green/red only where it communicates data, never mood.
-2. **Quiet infrastructure.** Sidebar, nav, and chrome are secondary. The entry — text, numbers, tags — is always the visual star. Nothing competes for attention with what the user is writing or reading.
-3. **Breathe first.** Whitespace is not waste; it is the design. Tight layouts signal noise. Loose layouts signal clarity.
-4. **Patterns over precision.** Stats and calendar views exist to reveal behavior, not impress. Show fewer numbers with more meaning rather than every possible metric.
-5. **Notebook discipline.** Structured enough to be useful across time; open enough to feel like writing rather than form-filling.
+1. **The journal, not the terminal.** This is a reflective tool. It should feel closer to a thoughtful notebook than a data platform. Calm, deliberate, considered.
+
+2. **Clarity over completeness.** Every screen has one job. Features outside the log → review → reflect loop are secondary and don't compete for visual space. When in doubt, show less.
+
+3. **The data speaks.** The interface is the container, not the content. Never let chrome, decoration, or UI patterns compete with what the numbers are saying. Numbers are the product.
+
+4. **Earned confidence.** The design communicates trust and seriousness without performing it. No decoration, no gamification, no artificial celebration of streaks or metrics.
+
+5. **Restraint is the feature.** What this product doesn't include is part of its value. Every new element must justify itself against the core loop. If it doesn't serve log → review → reflect, it doesn't get visual weight.
 
 ## Accessibility & Inclusion
 
-WCAG AA compliance. Standard contrast ratios, keyboard navigation throughout. No hard requirements beyond that.
+Full accessibility focus: WCAG AA contrast ratios, complete keyboard navigation, screen reader support (semantic HTML, proper ARIA labels), prefers-reduced-motion respected for all animations, and a color-blind safe palette (P&L positive/negative communicated with more than color alone).

@@ -40,7 +40,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
   const isNextMonthFuture = startOfMonth(nextMonth) > startOfMonth(new Date());
 
   return (
-    <div className="mt-8 bg-surface border border-border rounded-xl overflow-hidden max-w-[700px]">
+    <div className="bg-surface border border-border rounded-xl overflow-hidden max-w-[700px]">
       <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <button
           className={calendarNavBtnStyles}

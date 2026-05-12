@@ -1,244 +1,297 @@
 ---
 name: Trading Journal
-description: A personal field notebook for logging and reviewing trading decisions.
+description: A focused trading journal for post-session reflection and behavioral pattern discovery
 colors:
-  sage: "#7A8F5E"
-  sage-hover: "#6A7D4E"
-  sage-light: "#E0E9D8"
-  surface: "#FDFEFE"
-  surface-alt: "#F8F9F6"
-  ink-primary: "#1A1E18"
-  ink-secondary: "#6B7368"
-  ink-muted: "#9CA398"
-  border: "#E4E7E0"
+  accent: "#4072B0"
+  accent-hover: "#3362A0"
+  accent-light: "#EBF0F9"
+  surface-page: "#F4F6FA"
+  surface-card: "#FFFFFF"
+  surface-sidebar: "#ECF0F8"
+  ink-primary: "#1A2235"
+  ink-secondary: "#4B5875"
+  ink-muted: "#7C8BA4"
+  border: "#D8E0ED"
   pnl-positive: "#059669"
   pnl-positive-bg: "#D1FAE5"
   pnl-negative: "#DC2626"
   pnl-negative-bg: "#FEE2E2"
+  pnl-breakeven: "#6B7FAA"
+  pnl-breakeven-bg: "#E8EEFF"
 typography:
   display:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "1.5rem"
+    fontFamily: "Manrope, system-ui, sans-serif"
+    fontSize: "1.75rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.01em"
-  title:
-    fontFamily: "Inter, system-ui, sans-serif"
-    fontSize: "1rem"
+  headline:
+    fontFamily: "Manrope, system-ui, sans-serif"
+    fontSize: "1.25rem"
     fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-0.005em"
+  title:
+    fontFamily: "Manrope, system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 500
     lineHeight: 1.4
   body:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.6
+    fontFeature: "\"tnum\" 1"
   label:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Manrope, system-ui, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.4
-    letterSpacing: "0.05em"
+    letterSpacing: "0.01em"
 rounded:
-  sm: "6px"
+  sm: "4px"
   md: "8px"
   lg: "12px"
+  pill: "9999px"
 spacing:
-  xs: "8px"
-  sm: "12px"
+  xs: "4px"
+  sm: "8px"
   md: "16px"
-  lg: "32px"
-  xl: "40px"
+  lg: "24px"
+  xl: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.sage}"
-    textColor: "{colors.surface}"
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.surface-card}"
     rounded: "{rounded.md}"
-    padding: "10px 20px"
+    padding: "8px 16px"
   button-primary-hover:
-    backgroundColor: "{colors.sage-hover}"
-    textColor: "{colors.surface}"
+    backgroundColor: "{colors.accent-hover}"
+    textColor: "{colors.surface-card}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+  button-secondary:
+    backgroundColor: "{colors.surface-card}"
+    textColor: "{colors.ink-primary}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
   button-ghost:
     backgroundColor: "transparent"
-    textColor: "{colors.sage}"
+    textColor: "{colors.ink-secondary}"
     rounded: "{rounded.md}"
-    padding: "6px 14px"
-  button-ghost-hover:
-    backgroundColor: "{colors.sage}"
-    textColor: "{colors.surface}"
-  input-default:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink-primary}"
-    rounded: "{rounded.md}"
-    padding: "10px 14px"
-  card-stat:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink-primary}"
+    padding: "8px 16px"
+  card:
+    backgroundColor: "{colors.surface-card}"
     rounded: "{rounded.lg}"
-    padding: "14px 16px"
-  entry-card:
-    backgroundColor: "{colors.surface-alt}"
+    padding: "{spacing.lg}"
+  input:
+    backgroundColor: "{colors.surface-card}"
     textColor: "{colors.ink-primary}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.md}"
     padding: "8px 12px"
+  nav-item:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-secondary}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+  nav-item-active:
+    backgroundColor: "{colors.accent-light}"
+    textColor: "{colors.accent}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+  status-pill:
+    backgroundColor: "{colors.accent-light}"
+    textColor: "{colors.accent}"
+    rounded: "{rounded.pill}"
+    padding: "2px 8px"
 ---
 
 # Design System: Trading Journal
 
 ## 1. Overview
 
-**Creative North Star: "The Field Notebook"**
+**Creative North Star: "The Honest Mirror"**
 
-A field notebook belongs to a practitioner who takes their work seriously. It is not decorated. It is not designed to impress. It is designed to be used, day after day, until the pages carry the weight of real history. This interface is that notebook: clean pages, honest data, no ornamentation competing with the record.
+This is a tool for traders who want to see themselves clearly. Every design decision serves that premise: the interface recedes, the data speaks, and nothing performs. The visual register is calm and deliberate — closer to a well-designed notebook than a trading terminal. When a trader opens this product after a session, they should feel like they're sitting down with a trusted record, not logging into a platform.
 
-The visual language is restrained light mode: near-white surfaces with a faint sage tint, sage as the single accent, data colors (emerald and red) reserved strictly for financial outcomes. Whitespace is not empty space but active space; it tells the eye where to look. The sidebar is quiet and present, like a table of contents on a notepad. The content area is where the work happens.
+The system is restrained by principle, not by laziness. The near-white page background, the single slate blue accent, and the strict tonal depth hierarchy all exist to keep the user's attention on the numbers. A cluttered or decorated interface would be a betrayal of the product's purpose: surfacing behavioral patterns honestly.
 
-This system explicitly rejects: Bloomberg-style data density and orange-on-black intimidation; crypto neon aggression; generic SaaS dashboard energy (white + blue-purple, hero metric cards with gradients, identical card grids); traditional finance formality (navy and gold, serif weight).
+This product explicitly rejects the register of consumer brokerage platforms (Robinhood, Webull) — no gamification, no celebration of activity, no visual excitement for its own sake. It also rejects the feature-bloat aesthetic of tools like Tradezella, where UI complexity signals capability. Restraint is the feature here.
 
 **Key Characteristics:**
-- Light mode, subtle sage tint on all neutral surfaces
-- Single accent color (sage) used sparingly; data colors are semantic only
-- Breathing room: consistent generous padding, sparse chrome
-- Flat-by-default surfaces with soft ambient shadows on hover and floating elements
-- Typography hierarchy through weight and scale contrast, not color
-- No decorative elements; every visual element earns its place
+- Light mode only, tonal depth, no decorative surfaces
+- Single slate blue accent covering ≤10% of any screen at rest
+- Manrope across all weights — the only typeface in the system
+- Green and red reserved exclusively for financial P&L values
+- Information-dense layout leaning toward data density over airiness
+- Eased, considered interactions — gentle transitions, no snap animations
+- Full accessibility: WCAG AA, keyboard navigation, screen reader support, reduced motion respected
 
-## 2. Colors: The Sage Palette
+## 2. Colors: The Slate Record Palette
 
-A near-monochrome neutral foundation with one grounded accent. Sage appears on interactive elements only; it is never used decoratively.
+A near-monochromatic palette anchored in blue-tinted neutrals with a single confident slate blue accent. Color does almost no work at rest — it activates on interaction and on financial data.
 
 ### Primary
-- **Sage** (#7A8F5E): The sole interactive accent. Used on primary buttons, focus rings, hover states for entry cards, and active navigation indicators. Muted and organic, never vivid. Its restraint makes it meaningful when it does appear.
-- **Sage Hover** (#6A7D4E): Deepened sage for button hover and active press states.
-- **Sage Light** (#E0E9D8): Tinted background for selected states, active sidebar items, or subtle callout surfaces.
+- **Composed Slate** (`#4072B0`): The system accent. Used on interactive elements (active nav state, primary button, focus rings, links), and nowhere else. Its restraint is the point. Covers ≤10% of any screen at rest.
+- **Accent Hover** (`#3362A0`): Darker state for hover and pressed on accent elements. Direct replacement, no other treatment.
+- **Accent Wash** (`#EBF0F9`): Very light tint used for active nav backgrounds, selected pill backgrounds, and tinted surface states. Never used as a standalone decorative color.
 
 ### Neutral
-- **Surface** (#FDFEFE): Primary background for cards, modals, the sidebar, and the navbar. Near-white with a trace of cool.
-- **Surface Alt** (#F8F9F6): Page-level background, entry card default state, form area fill. Slightly warmer than surface to create a two-tone tonal depth without shadows.
-- **Ink Primary** (#1A1E18): All primary text. Headings, data values, field content. Near-black with a faint green bias so it never reads as pure black against the sage-tinted surfaces.
-- **Ink Secondary** (#6B7368): Secondary labels, timestamps, helper text. Sufficient contrast on both surface values.
-- **Ink Muted** (#9CA398): Placeholder text, empty-state messages, divider labels. Borderline for body copy — use only for intentionally subordinate content.
-- **Border** (#E4E7E0): All hairline borders (cards, inputs, dividers, navbar bottom). Sage-tinted so the grid of borders doesn't read as cold gray.
+- **Page Linen** (`#F4F6FA`): The page background. Near-white with a slight cool cast. Cards sit on top of this as pure white — the contrast creates tonal depth without shadows.
+- **Card White** (`#FFFFFF`): All cards, panels, and content containers. Pure white against Page Linen creates the only structural depth in the system.
+- **Sidebar Slate** (`#ECF0F8`): The sidebar background. Distinctly cooler and more saturated than Page Linen — this gives the sidebar its own identity without resorting to a dark treatment.
+- **Deep Ink** (`#1A2235`): Primary text and headings. A very dark blue-black — not pure black.
+- **Secondary Ink** (`#4B5875`): Secondary text, table cell values, metadata, inactive nav labels.
+- **Muted Ink** (`#7C8BA4`): Table column headers, placeholder text, helper text, timestamp labels.
+- **Hairline** (`#D8E0ED`): Borders, dividers, and input strokes. Blue-tinted — matches the system's overall temperature.
 
-### Tertiary (Data Colors — semantic only)
-- **P&L Positive** (#059669): Trade wins and positive daily/weekly totals. Emerald — not sage. These are financial facts, not brand moments.
-- **P&L Positive Background** (#D1FAE5): Calendar day cell fill for winning days.
-- **P&L Negative** (#DC2626): Trade losses and negative totals.
-- **P&L Negative Background** (#FEE2E2): Calendar day cell fill for losing days.
+### Financial Semantic (reserved — never used for UI)
+- **P&L Gain** (`#059669`): Positive P&L values and calendar cells. Green only. Never used for anything that isn't financial profit.
+- **P&L Gain Wash** (`#D1FAE5`): Background tint behind positive P&L values when a cell or badge is needed.
+- **P&L Loss** (`#DC2626`): Negative P&L values and calendar cells. Red only. Never used for errors, warnings, or any non-financial signal.
+- **P&L Loss Wash** (`#FEE2E2`): Background tint behind negative P&L values.
+- **P&L Breakeven** (`#6B7FAA`): Flat day/trade values. Neutral blue.
+- **P&L Breakeven Wash** (`#E8EEFF`): Background tint for breakeven states.
 
 ### Named Rules
-**The One Voice Rule.** Sage appears on ≤10% of any given screen at rest. Every button, link, and hover state uses it — but surfaces, text, and containers stay neutral. Its scarcity is why it works.
+**The One Voice Rule.** Composed Slate (#4072B0) is used on ≤10% of any given screen at rest. It appears on active states, the primary button, and focus rings. Its rarity is the point — when it appears, it means something.
 
-**The Data Color Rule.** Emerald and red are reserved for financial outcomes only. No emerald success banners. No red error icons styled to match the P&L red. Data colors carry financial meaning and must not be diluted.
+**The P&L Quarantine Rule.** Green (#059669) and red (#DC2626) are completely reserved for financial P&L values. They must not appear on error states, success toasts, status badges, navigation, loading indicators, or anything else. If a UI state needs to communicate success or error, use ink colors and copy — not green and red.
+
+**The Color-Blind Accessibility Rule.** Because green and red are used for P&L, every instance must communicate the same information through a secondary signal (icon, label, or sign prefix like +/−) so color-blind users are never disadvantaged.
 
 ## 3. Typography
 
-**Body Font:** Inter (with `system-ui, sans-serif` fallback)
+**Primary Font:** Manrope (with system-ui, sans-serif fallback)
 
-Inter at this scale reads like a well-kept ledger: geometric enough to feel precise, humanist enough to feel approachable. No display typeface is needed — the field notebook aesthetic is achieved through weight contrast and generous whitespace, not type personality.
+Manrope only. Three weights: Regular (400) for body and labels, Medium (500) for table cells and secondary values, Semibold (600) for headings, primary numbers, and active states. No other weights. No other typefaces.
 
-**Character:** Clean, neutral, and utilitarian. Hierarchy comes from size and weight jumps, not from decorative type choices. The lack of a headline font is intentional.
+**Character:** Geometric and precise, with just enough warmth to avoid feeling cold. The weight contrast between Semibold and Regular creates clear hierarchy without display-heavy drama. Well-suited for financial data — numerals are clean and read well at small sizes.
 
 ### Hierarchy
-- **Display** (600 weight, 1.5rem / 24px, line-height 1.2, letter-spacing -0.01em): Page-level headings only. "Dashboard", entry detail titles. Appears at most once per view.
-- **Title** (600 weight, 1rem / 16px, line-height 1.4): Section headings, sidebar group labels, card headings.
-- **Body** (400 weight, 0.875rem / 14px, line-height 1.6): All prose content, journal entry text, form field values. Cap line length at 70ch in text-heavy views.
-- **Label** (500 weight, 0.75rem / 12px, line-height 1.4, letter-spacing 0.05em): Metadata: timestamps, stat card category names, calendar day headers. Uppercase where used as a category label.
+- **Display** (Semibold 600, 1.75rem, −0.01em tracking, 1.2 line-height): Page titles and the primary number in stat cards. Appears rarely — once per screen at most.
+- **Headline** (Semibold 600, 1.25rem, −0.005em tracking, 1.3 line-height): Section headings, card titles, modal titles.
+- **Title** (Medium 500, 0.9375rem, 1.4 line-height): Sub-section labels, group headings in the sidebar, table card headers.
+- **Body** (Regular 400, 0.875rem, 1.6 line-height): All running prose — journal entry text, descriptions, onboarding copy. Max line length 65–75ch.
+- **Label** (Medium 500, 0.75rem, 0.01em tracking, 1.4 line-height): Table column headers, form labels, metadata timestamps, status pill text, all-caps never used.
+
+### Numeric Treatment
+**The Tabular Rule.** All currency values, percentages, counts, and any number that aligns in a column must use `font-variant-numeric: tabular-nums`. This is not optional — misaligned columns are a functional failure, not a style preference.
 
 ### Named Rules
-**The No Display-Font Rule.** Do not introduce a serif or expressive display typeface for "notebook feel." The field notebook quality is architectural, not typographic. Adding a serif will push the design toward a lifestyle product aesthetic that conflicts with the tool register.
+**The Three-Weight Rule.** Only Regular, Medium, and Semibold are used. If a design impulse reaches for Bold or Light, it's a signal to solve the hierarchy problem differently — through size, color, or spacing, not weight extremes.
 
 ## 4. Elevation
 
-Surfaces are flat at rest. Shadows appear as a response to state (hover interaction) or to communicate that an element is floating above the page (dropdowns, auth card).
+This system uses tonal depth, not shadows at rest. The stack: Page Linen (`#F4F6FA`) as the base → Card White (`#FFFFFF`) for elevated containers → no further layers. The single tonal step is enough to read the structure without any shadow.
 
-The system uses soft ambient shadows — not Material-style directional lifts. Think paper resting on a table under diffuse daylight, not a card under a spotlight.
+Shadows appear only in response to state: hover on interactive cards, lifted dropdowns, and focused modals. They never decorate resting surfaces.
 
 ### Shadow Vocabulary
-- **Ambient Rest** (`0 1px 4px rgba(26,30,24,0.05), 0 2px 12px rgba(26,30,24,0.04)`): Auth page card, floating sidebar dropdowns. Present but barely perceptible.
-- **Hover Lift** (`0 4px 16px rgba(26,30,24,0.08), 0 1px 4px rgba(26,30,24,0.05)`): Stat cards on hover. Signals interactivity.
-- **Dropdown** (`0 8px 24px rgba(26,30,24,0.10), 0 2px 8px rgba(26,30,24,0.06)`): Entry type dropdown in the sidebar. Slightly more prominent to communicate layer separation.
+- **Ambient** (`0 1px 3px rgba(26, 34, 53, 0.06), 0 2px 10px rgba(26, 34, 53, 0.04)`): Applied on card hover. Lifts the card slightly without drama.
+- **Lift** (`0 4px 16px rgba(26, 34, 53, 0.08), 0 1px 4px rgba(26, 34, 53, 0.05)`): Dropdowns, popovers, floating panels.
+- **Modal** (`0 8px 32px rgba(26, 34, 53, 0.12), 0 2px 8px rgba(26, 34, 53, 0.06)`): Modal dialogs and drawers only.
 
 ### Named Rules
-**The Flat-By-Default Rule.** At rest, surfaces are differentiated by background tint (surface vs. surface-alt), not by shadow. Shadows appear only when an element lifts on hover or floats above the layout. A shadow at rest is visual noise.
+**The Flat-by-Default Rule.** Surfaces are flat at rest. A card does not have a shadow until a user interacts with it. Decoration is prohibited; shadow as state feedback is allowed.
 
 ## 5. Components
 
 ### Buttons
 
-Tactile and quiet. Primary buttons use sage fill; ghost buttons use sage outline. Neither size competes with content.
+Buttons are understated and precise. They do not announce themselves. The primary button is the loudest element on a screen — which is why most surfaces have at most one.
 
 - **Shape:** Gently rounded (8px radius)
-- **Primary:** Sage fill (#7A8F5E), surface text (#FDFEFE), padding 10px 20px. Font: label weight (500), 0.875rem. Hover: deepened sage (#6A7D4E), transition 150ms ease-out.
-- **Ghost:** Sage border (1px solid #7A8F5E), sage text, transparent fill. Hover: sage fill, surface text. Used for secondary actions (Sign Out, nav buttons).
-- **Icon Button (circular):** Used in sidebar header for the new entry (+) action. 24px circle, sage fill, surface text. Hover: sage-hover fill.
+- **Primary:** Composed Slate background (#4072B0), white text, 8px 16px padding. Semibold 600 label at 0.875rem.
+- **Primary Hover:** Darker slate (#3362A0), no scale transform, transition 150ms ease-out-quart.
+- **Secondary:** White background, Deep Ink text, 1px Hairline border. Hover: Page Linen background.
+- **Ghost:** Transparent background, Secondary Ink text, no border. Hover: Page Linen background.
+- **Focus:** 2px Composed Slate outline, 2px offset. Visible on all button variants.
+- **Disabled:** 40% opacity, no pointer events.
+
+### Cards / Containers
+
+- **Corner Style:** Gently rounded (12px radius) — consistent across all cards, panels, and section containers.
+- **Background:** Card White (#FFFFFF)
+- **Shadow:** Flat at rest. Ambient shadow on hover.
+- **Border:** None. Tonal depth against Page Linen is sufficient.
+- **Internal Padding:** 24px (lg spacing). Reduced to 16px on compact card variants.
 
 ### Inputs / Fields
 
-Unfussy. No fill at rest — just a border.
+- **Style:** White background, 1px Hairline border (#D8E0ED), 8px radius, 8px 12px padding.
+- **Focus:** Border shifts to Composed Slate (#4072B0). 2px outline, 2px offset in Accent Wash (#EBF0F9).
+- **Error:** Border shifts to P&L Loss red (#DC2626) — the one exception to the P&L Quarantine Rule, since form errors are a distinct pattern from financial data. Pair with an error icon and text label.
+- **Disabled:** Page Linen background, Muted Ink text.
+- **Placeholder:** Muted Ink (#7C8BA4).
 
-- **Style:** Surface fill (#FDFEFE), border (#E4E7E0), rounded (8px), padding 10px 14px
-- **Focus:** Border shifts to sage (#7A8F5E), transition 150ms. No glow or outer ring.
-- **Error:** Border shifts to #DC2626, inline error text in #DC2626 at label weight below the field.
-- **Placeholder:** Ink muted (#9CA398)
-- **Labels:** Ink secondary (#6B7368), label weight (0.75rem, 500)
+### Navigation — Sidebar
 
-### Sidebar Entry Cards
+The sidebar has its own identity. Background is Sidebar Slate (#ECF0F8) — cooler and more saturated than the page, which anchors it visually without resorting to darkness.
 
-The primary navigation element. Compact, scannable rows — not full cards.
+- **Container:** Full-height, fixed width (icon-only: 56px; icon + label: 220px). Sidebar Slate background.
+- **Nav item — default:** Transparent background, Secondary Ink text/icons, 8px radius, 8px 12px padding.
+- **Nav item — hover:** Page Linen background (#F4F6FA), Deep Ink text/icons. Transition 120ms ease-out.
+- **Nav item — active:** Accent Wash background (#EBF0F9), Composed Slate text/icons, Semibold weight.
+- **Section labels:** Muted Ink, Label size (0.75rem), Medium weight, uppercase never used.
+- **Border:** A single 1px Hairline right-border separates sidebar from content area.
 
-- **Trade Entry Card:** Surface-alt fill, border-color border, rounded (6px), padding 8px 12px. P&L value displayed in emerald or red per the data color rule. Date in ink muted. Hover: border shifts to sage, fill to surface-alt darkened. Transition 150ms.
-- **No Trade Entry Card:** Same treatment, no P&L value. Date centered or date + "No Trade" label.
+The sidebar feels like it belongs to this product. It is not a generic nav shell.
 
 ### Stat Cards
 
-The dashboard overview row. Four equal-width tiles.
+Three-level visual hierarchy — the pattern borrowed from the dotman reference:
 
-- **Container:** Surface fill, border (#E4E7E0), rounded (12px), padding 14px 16px
-- **Category Label:** Ink secondary, label weight, uppercase, letter-spacing 0.05em
-- **Value:** Body weight with bold (700), ink primary. No color variation on the number itself — let the value speak.
-- **Hover:** Subtle lift (hover shadow), no border color change, scale 1.02. Transition 300ms ease-out.
+- **Level 1 — Metric label:** Label size (0.75rem), Muted Ink, Regular weight. Top of card.
+- **Level 2 — Primary value:** Display size (1.75rem), Deep Ink, Semibold. The number that matters. Tabular numerals required.
+- **Level 3 — Delta indicator:** Label size (0.75rem), P&L color (green/red only), paired with a directional arrow icon. "this week" / "this session" in Muted Ink alongside.
 
-### Trade Calendar
+Arc gauge variant (for percentage metrics like Win Rate): semicircular progress arc in Composed Slate, with the percentage value centered below. Never use a full-circle gauge — the arc reads direction at a glance.
 
-The visual anchor of the dashboard. A week-grid where P&L data creates the color.
+### Calendar Heatmap
 
-- **Container:** Surface fill, border (#E4E7E0), rounded (12px), max-width 700px
-- **Header Row:** Border-bottom, prev/next as ghost buttons (sage)
-- **Day Headers:** Ink muted, label weight, uppercase, tracking wide
-- **Day Cells:** Transparent/surface-alt at rest. P&L positive days: pnl-positive-bg fill. P&L negative days: pnl-negative-bg fill. Hover: slightly deeper tint. Off-month cells: 35% opacity.
-- **Week Summary Column:** Right-aligned numeric, tabular-nums. Positive weeks: pnl-positive. Negative weeks: pnl-negative.
+The signature component. Receives the highest craft investment in the system.
 
-### Navigation (Navbar + Sidebar)
+- **Cell — profitable day:** P&L Gain Wash background (#D1FAE5), P&L Gain text (#059669). Shows daily P&L (large), trade count (small label below), and win % (muted label).
+- **Cell — losing day:** P&L Loss Wash background (#FEE2E2), P&L Loss text (#DC2626). Same structure.
+- **Cell — breakeven:** P&L Breakeven Wash (#E8EEFF), Breakeven ink (#6B7FAA).
+- **Cell — no trades:** Page Linen background, Muted Ink text (date number only).
+- **Cell — today:** Thin 1px Composed Slate border, no fill change.
+- **Cell — hover:** Ambient shadow lift, slight scale (1.02), transition 150ms ease-out-quart. Reveals a tooltip with full daily breakdown.
+- **Weekly summary column:** Right-aligned, same P&L color rules, Semibold weight for the weekly total, Secondary Ink for trade count.
+- **Corner radius:** 6px per cell.
 
-The navbar and sidebar are chrome, not content. They hold space and provide orientation without demanding attention.
+### Status Pills
 
-- **Navbar:** Surface fill, border-bottom (#E4E7E0), 52px height, horizontal padding 20px. Logo/app name in ink primary (not sage, not blue). User greeting in ink secondary. Sign out as ghost button.
-- **Sidebar:** Surface fill, border-right (#E4E7E0), 240px fixed width. Header: "Entries" label in ink primary, label weight. The new-entry (+) button in sage. Entry list below with 8px internal padding.
+Compact, never boxy. Used for trade status, session state, and account indicators — never for P&L.
 
-### Rich Text Editor (Journal Entry Body)
-
-The entry editor is the notebook page. It should feel minimal and writeable.
-
-- **Container:** Surface-alt fill, border (#E4E7E0), rounded (8px), padding 10px, min-height 300px
-- **Focus:** Border shifts to sage
-- **Toolbar:** Surface fill, border (#E4E7E0), rounded (8px), compact button group. Active formatting button: sage fill, surface text. Inactive: transparent, ink secondary.
+- **Style:** Accent Wash background (#EBF0F9), Composed Slate text (#4072B0), pill radius (9999px), 2px 8px padding, Label size (0.75rem), Medium weight.
+- **Neutral variant:** Border (#D8E0ED) background, Secondary Ink text.
 
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** use sage (#7A8F5E) as the sole accent for all interactive states: buttons, focus rings, hover borders, active nav items.
-- **Do** use emerald and red strictly for financial data: P&L values, calendar day fills, win/loss labels.
-- **Do** differentiate surface depth tonally: surface-alt (#F8F9F6) for page backgrounds and entry cards; surface (#FDFEFE) for cards and layered elements. No shadow needed at rest.
-- **Do** keep the sidebar visually quiet: no background fill variations, no colored section labels, no bold sidebar headers. It is infrastructure.
-- **Do** apply the label scale (0.75rem, 500 weight, uppercase, tracking) for category identifiers and timestamps — never for primary content.
-- **Do** use tabular-nums (`font-variant-numeric: tabular-nums`) on all currency and percentage values so columns align.
-- **Do** cap prose line length at 70ch in the entry editor and any long-form text view.
+- **Do** use `font-variant-numeric: tabular-nums` on every number that could appear in a column or alongside other numbers.
+- **Do** keep Composed Slate (#4072B0) to ≤10% of any given screen at rest. When it appears, it should feel intentional.
+- **Do** communicate P&L gain and loss with a secondary signal (+ / − prefix, up/down arrow icon) alongside color, so color-blind users receive the same information.
+- **Do** use tonal depth (Page Linen → Card White) for structural separation. This is the only depth system at rest.
+- **Do** keep the sidebar background as Sidebar Slate (#ECF0F8). Its distinct identity anchors the layout.
+- **Do** respect `prefers-reduced-motion`: all transitions and animations must be gated behind this media query.
+- **Do** use eased transitions (cubic-bezier ease-out-quart or ease-out-expo). State changes should feel considered, not instant.
+- **Do** design empty states as warm welcomes — a new user with no trades should feel invited, not abandoned.
+- **Do** keep the calendar heatmap as the primary visual landmark on the dashboard. It gets the most craft investment.
+- **Do** use three levels of ink weight (Semibold / Medium / Regular) to build hierarchy within dense data displays.
 
 ### Don't:
-- **Don't** use the current blue-600 (#2563EB) anywhere in the interface going forward. It belongs to the generic Tailwind default, not this system.
-- **Don't** introduce gradient text, glassmorphism, or glow effects. This system has zero decorative surface treatments.
-- **Don't** use side-stripe borders (border-left as a colored accent on cards or alerts). A tinted background or full border is always the right answer.
-- **Don't** build hero metric displays: big number, label, gradient accent. The stat cards are intentionally subdued. The data is the hero, not the presentation.
-- **Don't** color-code anything based on mood or status (success banners in green, info in blue). Semantic color is reserved for financial data. Errors use red text and border, nothing else.
-- **Don't** make the sidebar compete for attention. No bold header blocks, no colored backgrounds, no distinct "active" fill that draws the eye away from content.
-- **Don't** use Bloomberg terminal density, crypto neon styling, navy-and-gold traditional finance patterns, or the blue-purple-gradient SaaS dashboard aesthetic. Each of these is an explicit anti-reference from the product brief.
+- **Don't** use green (#059669) or red (#DC2626) for anything other than financial P&L values. No success toasts in green. No error borders in red. No status badges in these colors. This rule has one exception: input field error borders.
+- **Don't** use shadows on resting surfaces. Cards, panels, and containers are flat at rest. Shadows activate on hover and elevation states only.
+- **Don't** use side-stripe borders (`border-left` or `border-right` as a colored accent). Prohibited on cards, list items, callouts, and alerts.
+- **Don't** use gradient text (`background-clip: text` with a gradient). Use solid Composed Slate or Deep Ink for emphasis.
+- **Don't** use glassmorphism, backdrop-filter blur, or glow effects. They are decorative and prohibited.
+- **Don't** let the UI feel like a brokerage platform. No gamification, no streaks presented as achievements, no visual celebration of trade activity. The product's job is honest reflection, not encouragement.
+- **Don't** let the UI feel like Tradezella or similar tools — no feature-complexity signaling, no sidebar overloaded with navigation items, no dashboards competing for attention.
+- **Don't** use any font other than Manrope. No display typefaces, no serifs, no mono as a display choice.
+- **Don't** use font weights outside Regular (400), Medium (500), and Semibold (600).
+- **Don't** use pure black (#000000) or pure white (#FFFFFF) for surfaces or type. Tint everything toward the system's blue temperature.
+- **Don't** build identical card grids (same height, same icon + heading + body pattern repeated). Cards that display different data should reflect the structure of that data.
+- **Don't** reach for a modal as the first interaction pattern. Exhaust inline and progressive alternatives first.

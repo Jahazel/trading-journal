@@ -14,6 +14,7 @@ import {
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
 import ImageUpload from "./ImageUpload";
+import TextEditor from "./TextEditor";
 
 const NewEntry = () => {
   const {
@@ -26,6 +27,7 @@ const NewEntry = () => {
   const navigate = useNavigate();
   const [cancelConfirming, setCancelConfirming] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [notes, setNotes] = useState<string>("");
 
   const addEntryMutation = useMutation({
     mutationFn: createTradeEntry,
@@ -34,7 +36,6 @@ const NewEntry = () => {
         console.error("No ID returned from the server.");
         return;
       }
-
       queryClient.setQueryData(["entry", data._id], data);
       queryClient.invalidateQueries({ queryKey: ["allEntries"] });
       navigate(`/dashboard/trade-entries/${data._id}`);
@@ -58,7 +59,7 @@ const NewEntry = () => {
   if (error) return <ErrorState message={`Error: ${error.message}`} />;
 
   const handleCancel = () => {
-    if (!isDirty) {
+    if (!isDirty && !notes) {
       navigate(-1);
       return;
     }
@@ -66,34 +67,33 @@ const NewEntry = () => {
   };
 
   const onSubmit = async (data: CreateTradeEntryData): Promise<void> => {
-    addEntryMutation.mutate({ ...data, images: uploadedImages });
+    addEntryMutation.mutate({ ...data, notes, images: uploadedImages });
   };
 
   return (
+    <div className="px-8 py-10">
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-[800px] mx-auto bg-surface p-8 rounded-2xl border border-border grid grid-cols-2 gap-5"
     >
-      <div className="col-span-2 mb-2 pb-4 border-b-2 border-border">
+      {/* Header */}
+      <div className="col-span-2 mb-2 pb-4 border-b border-border">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-ink-primary mb-1">Log New Trade</h2>
-            <p className="text-sm text-ink-secondary">Enter your trade details below</p>
-          </div>
-          <div className="flex items-center gap-2 pt-1">
+          <h2 className="text-2xl font-semibold text-ink-primary">Log New Trade</h2>
+          <div className="flex items-center gap-2 pt-0.5">
             {cancelConfirming ? (
               <>
                 <span className="text-xs text-ink-secondary">Discard changes?</span>
                 <button
                   type="button"
-                  className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-red-600"
+                  className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-red-600 transition-colors duration-100"
                   onClick={() => navigate(-1)}
                 >
                   Discard
                 </button>
                 <button
                   type="button"
-                  className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer hover:bg-surface-alt"
+                  className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer hover:bg-surface-alt transition-colors duration-100"
                   onClick={() => setCancelConfirming(false)}
                 >
                   Keep editing
@@ -102,7 +102,7 @@ const NewEntry = () => {
             ) : (
               <button
                 type="button"
-                className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer hover:bg-surface-alt"
+                className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer hover:bg-surface-alt transition-colors duration-100"
                 onClick={handleCancel}
               >
                 Cancel
@@ -111,11 +111,13 @@ const NewEntry = () => {
           </div>
         </div>
         {addEntryMutation.error && (
-          <span className="block text-sm text-red-500 bg-red-50 border border-red-200 rounded-md px-3 py-2 mt-3">
+          <p className="mt-3 text-sm text-ink-secondary bg-surface-alt border border-border rounded-md px-3 py-2">
             {addEntryMutation.error.message}
-          </span>
+          </p>
         )}
       </div>
+
+      {/* Account */}
       <div>
         <label className={labelStyles}>Trading Account</label>
         <select
@@ -135,6 +137,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.accountId.message}</span>
         )}
       </div>
+
+      {/* Result */}
       <div>
         <label className={labelStyles}>Result</label>
         <select
@@ -152,6 +156,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.result.message}</span>
         )}
       </div>
+
+      {/* Contract */}
       <div>
         <label className={labelStyles}>Contract</label>
         <select
@@ -170,6 +176,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.contract.message}</span>
         )}
       </div>
+
+      {/* Direction */}
       <div>
         <label className={labelStyles}>Direction</label>
         <select
@@ -186,6 +194,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.direction.message}</span>
         )}
       </div>
+
+      {/* Contracts */}
       <div>
         <label className={labelStyles}>Number of Contracts</label>
         <input
@@ -203,6 +213,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.contracts.message}</span>
         )}
       </div>
+
+      {/* Entry Price */}
       <div>
         <label className={labelStyles}>Entry Price</label>
         <input
@@ -211,14 +223,8 @@ const NewEntry = () => {
           className={inputStyles}
           {...register("entryPrice", {
             required: "Entry price is required",
-            min: {
-              value: 4000,
-              message: "Entry price must be greater than 4,000.",
-            },
-            max: {
-              value: 50000,
-              message: "Entry price must be less than 50,000.",
-            },
+            min: { value: 4000, message: "Entry price must be greater than 4,000." },
+            max: { value: 50000, message: "Entry price must be less than 50,000." },
             valueAsNumber: true,
           })}
         />
@@ -226,6 +232,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.entryPrice.message}</span>
         )}
       </div>
+
+      {/* Exit Price */}
       <div>
         <label className={labelStyles}>Exit Price</label>
         <input
@@ -234,14 +242,8 @@ const NewEntry = () => {
           className={inputStyles}
           {...register("exitPrice", {
             required: "Exit price is required",
-            min: {
-              value: 4000,
-              message: "Exit price must be greater than 4,000.",
-            },
-            max: {
-              value: 50000,
-              message: "Exit price must be less than 50,000.",
-            },
+            min: { value: 4000, message: "Exit price must be greater than 4,000." },
+            max: { value: 50000, message: "Exit price must be less than 50,000." },
             valueAsNumber: true,
           })}
         />
@@ -249,6 +251,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.exitPrice.message}</span>
         )}
       </div>
+
+      {/* Stop Loss */}
       <div>
         <label className={labelStyles}>Stop Loss</label>
         <input
@@ -257,14 +261,8 @@ const NewEntry = () => {
           className={inputStyles}
           {...register("stopLoss", {
             required: "Stop loss is required",
-            min: {
-              value: 4000,
-              message: "Stop loss must be greater than 4,000.",
-            },
-            max: {
-              value: 50000,
-              message: "Stop loss must be less than 50,000.",
-            },
+            min: { value: 4000, message: "Stop loss must be greater than 4,000." },
+            max: { value: 50000, message: "Stop loss must be less than 50,000." },
             valueAsNumber: true,
           })}
         />
@@ -272,6 +270,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.stopLoss.message}</span>
         )}
       </div>
+
+      {/* Target */}
       <div>
         <label className={labelStyles}>Target</label>
         <input
@@ -289,6 +289,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.target.message}</span>
         )}
       </div>
+
+      {/* Entry Time */}
       <div>
         <label className={labelStyles}>Entry Time</label>
         <input
@@ -300,6 +302,8 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.entryTime.message}</span>
         )}
       </div>
+
+      {/* Exit Time */}
       <div>
         <label className={labelStyles}>Exit Time</label>
         <input
@@ -311,26 +315,29 @@ const NewEntry = () => {
           <span className={errorStyles}>{errors.exitTime.message}</span>
         )}
       </div>
+
+      {/* Notes */}
       <div className="col-span-2">
         <label className={labelStyles}>Notes</label>
-        <textarea
-          className={`${inputStyles} resize-none min-h-[100px]`}
-          placeholder="Add any notes about this trade..."
-          {...register("notes")}
-        />
+        <TextEditor onChange={setNotes} />
       </div>
+
+      {/* Images */}
       <div className="col-span-2">
         <label className={labelStyles}>Images</label>
         <ImageUpload onChange={setUploadedImages} maxImages={5} />
       </div>
+
+      {/* Submit */}
       <button
         type="submit"
-        className="col-span-2 w-full py-3 bg-sage text-surface rounded-lg text-base font-semibold cursor-pointer transition-colors hover:bg-sage-hover mt-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="col-span-2 w-full py-3 bg-accent text-white rounded-lg text-sm font-semibold cursor-pointer transition-colors duration-150 hover:bg-accent-hover mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={addEntryMutation.isPending}
       >
         {addEntryMutation.isPending ? "Submitting..." : "Submit"}
       </button>
     </form>
+    </div>
   );
 };
 
