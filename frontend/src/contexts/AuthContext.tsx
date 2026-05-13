@@ -5,11 +5,13 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse, AuthState } from "../types/auth.types";
 
 const AuthContext = createContext<AuthState | null>(null);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,8 +48,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
 
-    // localStorage.removeItem("accountObj");
-
+    queryClient.clear();
     setUser(null);
     setUserId(null);
   };
