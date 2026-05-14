@@ -67,7 +67,7 @@ const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
           New Account
         </h2>
 
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-4">
             <div>
               <label className={labelStyles}>Account Name</label>
@@ -126,14 +126,15 @@ const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
               Cancel
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit((data) => mutation.mutate(data))}
               disabled={mutation.isPending}
               className="px-4 py-2 bg-accent text-white text-sm font-semibold rounded-lg cursor-pointer transition-colors duration-150 hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {mutation.isPending ? "Creating…" : "Create account"}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

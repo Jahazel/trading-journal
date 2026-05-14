@@ -31,6 +31,7 @@ const NewEntry = () => {
   const [addingAccount, setAddingAccount] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [notes, setNotes] = useState<string>("");
+  const [selectedAccountId, setSelectedAccountId] = useState("");
 
   const addEntryMutation = useMutation({
     mutationFn: createTradeEntry,
@@ -139,11 +140,14 @@ const NewEntry = () => {
           <select
             className={selectStyles}
             {...accountRest}
+            value={selectedAccountId}
             onChange={(e) => {
               if (e.target.value === "__new__") {
                 setAddingAccount(true);
+                setSelectedAccountId("");
                 setValue("accountId", "", { shouldValidate: false });
               } else {
+                setSelectedAccountId(e.target.value);
                 rhfAccountOnChange(e);
               }
             }}
@@ -163,7 +167,7 @@ const NewEntry = () => {
       {addingAccount && (
         <AccountModal
           onClose={() => setAddingAccount(false)}
-          onSuccess={(acc) => setValue("accountId", acc._id)}
+          onSuccess={(acc) => { setSelectedAccountId(acc._id); setValue("accountId", acc._id); }}
         />
       )}
 

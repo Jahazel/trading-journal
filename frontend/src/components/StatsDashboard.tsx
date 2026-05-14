@@ -8,7 +8,7 @@ import { formatCurrency, pnlColor } from "../utils/formatUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { computeStreak } from "../utils/tradeUtils";
 import AccountModal from "./AccountModal";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -95,7 +95,7 @@ const CardSkeleton = () => (
 const StatsDashboard = () => {
   const { user } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
-  const accountSelectRef = useRef<HTMLSelectElement>(null);
+  const [selectedAccountId, setSelectedAccountId] = useState("");
 
   const {
     data: stats,
@@ -170,16 +170,14 @@ const StatsDashboard = () => {
           </button>
         ) : (
           <select
-            ref={accountSelectRef}
             aria-label="Select trading account"
-            defaultValue={accounts[0]._id}
+            value={selectedAccountId || accounts[0]._id}
             className="text-sm text-ink-secondary border border-border rounded-lg px-3 py-1.5 bg-surface cursor-pointer outline-none focus:border-accent transition-colors duration-150"
             onChange={(e) => {
               if (e.target.value === "__new__") {
                 setModalOpen(true);
-                requestAnimationFrame(() => {
-                  if (accountSelectRef.current) accountSelectRef.current.value = accounts[0]._id;
-                });
+              } else {
+                setSelectedAccountId(e.target.value);
               }
             }}
           >
@@ -191,7 +189,7 @@ const StatsDashboard = () => {
         )}
       </div>
 
-      {modalOpen && <AccountModal onClose={() => setModalOpen(false)} />}
+      {modalOpen && <AccountModal onClose={() => setModalOpen(false)} onSuccess={(acc) => setSelectedAccountId(acc._id)} />}
 
       {/* KPI cards */}
       <div className="px-8 py-6">
