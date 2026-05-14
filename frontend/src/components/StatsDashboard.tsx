@@ -166,11 +166,13 @@ const StatsDashboard = () => {
             onClick={() => setModalOpen(true)}
             className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer whitespace-nowrap"
           >
-            + New Account
+            New Account
           </button>
         ) : (
           <select
             ref={accountSelectRef}
+            aria-label="Select trading account"
+            defaultValue={accounts[0]._id}
             className="text-sm text-ink-secondary border border-border rounded-lg px-3 py-1.5 bg-surface cursor-pointer outline-none focus:border-accent transition-colors duration-150"
             onChange={(e) => {
               if (e.target.value === "__new__") {
@@ -184,7 +186,7 @@ const StatsDashboard = () => {
             {accounts.map((account) => (
               <option key={account._id} value={account._id}>{account.accountName}</option>
             ))}
-            <option value="__new__">+ New account</option>
+            <option value="__new__">New account</option>
           </select>
         )}
       </div>

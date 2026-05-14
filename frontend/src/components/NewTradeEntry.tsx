@@ -73,6 +73,10 @@ const NewEntry = () => {
     addEntryMutation.mutate({ ...data, notes, images: uploadedImages });
   };
 
+  const { onChange: rhfAccountOnChange, ...accountRest } = register("accountId", {
+    required: "Selecting a trading account is required.",
+  });
+
   return (
     <div className="px-8 py-10">
     <form
@@ -129,21 +133,26 @@ const NewEntry = () => {
             onClick={() => setAddingAccount(true)}
             className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer"
           >
-            + New Account
+            New Account
           </button>
         ) : (
           <select
             className={selectStyles}
-            {...register("accountId", { required: "Selecting a trading account is required." })}
+            {...accountRest}
             onChange={(e) => {
-              if (e.target.value === "__new__") { setAddingAccount(true); setValue("accountId", ""); }
+              if (e.target.value === "__new__") {
+                setAddingAccount(true);
+                setValue("accountId", "", { shouldValidate: false });
+              } else {
+                rhfAccountOnChange(e);
+              }
             }}
           >
             <option value="">Select a trading account</option>
             {accounts?.map((account) => (
               <option value={account._id} key={account._id}>{account.accountName}</option>
             ))}
-            <option value="__new__">+ Add new account</option>
+            <option value="__new__">Add new account</option>
           </select>
         )}
         {errors.accountId && (
