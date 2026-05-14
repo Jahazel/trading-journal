@@ -2,6 +2,8 @@
 export const formInputStyles =
   "w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-accent font-inherit";
 export const formSelectStyles = `${formInputStyles} cursor-pointer`;
+export const accountSelectStyles =
+  "w-full text-sm text-ink-muted bg-transparent border-0 outline-none cursor-pointer hover:text-ink-primary transition-colors duration-150 font-inherit";
 export const formLabelStyles =
   "block text-sm font-medium text-ink-secondary mb-1.5";
 export const formErrorStyles = "block text-xs text-pnl-negative mt-1";
