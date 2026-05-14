@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStats, getTradeEntries } from "../api/api";
+import { getStats, getTradeEntries, getAccounts } from "../api/api";
 import { Stats, TradeEntry } from "../types/tradeEntry.types";
 import TradeCalendar from "./TradeCalendar";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { formatCurrency, pnlColor } from "../utils/formatUtils";
 import { useAuth } from "../contexts/AuthContext";
+import { computeStreak } from "../utils/tradeUtils";
+import AccountModal from "./AccountModal";
+import { useState, useRef } from "react";
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -14,21 +17,6 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-function computeStreak(trades: TradeEntry[]): { count: number; type: "win" | "loss" } | null {
-  if (trades.length === 0) return null;
-  const sorted = [...trades].sort(
-    (a, b) => new Date(b.exitTime).getTime() - new Date(a.exitTime).getTime()
-  );
-  const latest = sorted[0].result;
-  if (latest === "Break Even") return null;
-  const type = latest === "Win" ? "win" : "loss";
-  let count = 0;
-  for (const t of sorted) {
-    if (t.result === latest) count++;
-    else break;
-  }
-  return { count, type };
-}
 
 const ActivityDots = ({ trades }: { trades: TradeEntry[] }) => {
   const now = new Date();
@@ -106,6 +94,8 @@ const CardSkeleton = () => (
 
 const StatsDashboard = () => {
   const { user } = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
+  const accountSelectRef = useRef<HTMLSelectElement>(null);
 
   const {
     data: stats,
@@ -119,6 +109,11 @@ const StatsDashboard = () => {
   const { data: trades = [], isLoading: tradesLoading } = useQuery({
     queryKey: ["trades"],
     queryFn: getTradeEntries,
+  });
+
+  const { data: accounts = [] } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
   });
 
   const isLoading = statsLoading || tradesLoading;
@@ -156,14 +151,45 @@ const StatsDashboard = () => {
   return (
     <div>
       {/* Content header */}
-      <div className="px-8 py-5 border-b border-border">
-        <p className="text-xs font-medium text-ink-muted tracking-wide mb-0.5">
-          {format(new Date(), "MMMM yyyy")}
-        </p>
-        <h1 className="text-xl font-semibold text-ink-primary tracking-tight" style={{ textWrap: "balance" } as React.CSSProperties}>
-          {getGreeting()}{user ? `, ${user}` : ""}
-        </h1>
+      <div className="px-8 py-5 border-b border-border flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs font-medium text-ink-muted tracking-wide mb-0.5">
+            {format(new Date(), "MMMM yyyy")}
+          </p>
+          <h1 className="text-xl font-semibold text-ink-primary tracking-tight" style={{ textWrap: "balance" } as React.CSSProperties}>
+            {getGreeting()}{user ? `, ${user}` : ""}
+          </h1>
+        </div>
+
+        {accounts.length === 0 ? (
+          <button
+            onClick={() => setModalOpen(true)}
+            className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer whitespace-nowrap"
+          >
+            + New Account
+          </button>
+        ) : (
+          <select
+            ref={accountSelectRef}
+            className="text-sm text-ink-secondary border border-border rounded-lg px-3 py-1.5 bg-surface cursor-pointer outline-none focus:border-accent transition-colors duration-150"
+            onChange={(e) => {
+              if (e.target.value === "__new__") {
+                setModalOpen(true);
+                requestAnimationFrame(() => {
+                  if (accountSelectRef.current) accountSelectRef.current.value = accounts[0]._id;
+                });
+              }
+            }}
+          >
+            {accounts.map((account) => (
+              <option key={account._id} value={account._id}>{account.accountName}</option>
+            ))}
+            <option value="__new__">+ New account</option>
+          </select>
+        )}
       </div>
+
+      {modalOpen && <AccountModal onClose={() => setModalOpen(false)} />}
 
       {/* KPI cards */}
       <div className="px-8 py-6">

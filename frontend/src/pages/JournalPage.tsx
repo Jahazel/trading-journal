@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTradeEntries, getNoTradeEntries } from "../api/api";
+import { getTradeEntries, getNoTradeEntries, getAccounts } from "../api/api";
+import AccountModal from "../components/AccountModal";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { SidebarEntry } from "../types/common.types";
@@ -254,6 +256,7 @@ const EntryRow = ({ entry }: { entry: SidebarEntry }) => {
 const JournalPage = () => {
   const navigate = useNavigate();
   const [newEntryOpen, setNewEntryOpen] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
   const newEntryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -269,6 +272,11 @@ const JournalPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const { data: accounts = [], isLoading: accountsLoading } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
+  });
+
   const { data: allEntries = [], isLoading } = useQuery<SidebarEntry[]>({
     queryKey: ["allEntries"],
     queryFn: async () => {
@@ -283,7 +291,25 @@ const JournalPage = () => {
     },
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading || accountsLoading) return <LoadingSpinner />;
+
+  if (accounts.length === 0) {
+    return (
+      <div className="mx-auto max-w-5xl px-10 py-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink-primary mb-8">Journal</h1>
+        <p className="text-sm text-ink-secondary mb-4">
+          You need a trading account before you can log entries.
+        </p>
+        <button
+          onClick={() => setAccountModalOpen(true)}
+          className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer"
+        >
+          + New Account
+        </button>
+        {accountModalOpen && <AccountModal onClose={() => setAccountModalOpen(false)} />}
+      </div>
+    );
+  }
 
   const recent = allEntries.slice(0, RECENT_COUNT);
   const older = allEntries.slice(RECENT_COUNT);

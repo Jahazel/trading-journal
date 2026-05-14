@@ -7,6 +7,7 @@ import ImageUpload from "./ImageUpload";
 import { useState } from "react";
 import { CreateNoTradeEntryData } from "../types/noTradeEntry.types";
 import { getAccounts } from "../api/api";
+import AccountModal from "./AccountModal";
 import {
   formInputStyles as inputStyles,
   formSelectStyles as selectStyles,
@@ -21,6 +22,7 @@ const NewNoTradeEntry = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<CreateNoTradeEntryData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
@@ -28,6 +30,7 @@ const NewNoTradeEntry = () => {
   const [notes, setNotes] = useState<string>("");
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [cancelConfirming, setCancelConfirming] = useState(false);
+  const [addingAccount, setAddingAccount] = useState(false);
 
   const handleCancel = () => {
     if (!isDirty && !notes) {
@@ -120,23 +123,40 @@ const NewNoTradeEntry = () => {
       {/* Account */}
       <div>
         <label className={labelStyles}>Trading Account</label>
-        <select
-          className={selectStyles}
-          {...register("accountId", {
-            required: "Selecting a trading account is required.",
-          })}
-        >
-          <option value="">Select a trading account</option>
-          {accounts?.map((account) => (
-            <option value={account._id} key={account._id}>
-              {account.accountName}
-            </option>
-          ))}
-        </select>
+        {accounts && accounts.length === 0 ? (
+          <button
+            type="button"
+            onClick={() => setAddingAccount(true)}
+            className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer"
+          >
+            + New Account
+          </button>
+        ) : (
+          <select
+            className={selectStyles}
+            {...register("accountId", { required: "Selecting a trading account is required." })}
+            onChange={(e) => {
+              if (e.target.value === "__new__") { setAddingAccount(true); setValue("accountId", ""); }
+            }}
+          >
+            <option value="">Select a trading account</option>
+            {accounts?.map((account) => (
+              <option value={account._id} key={account._id}>{account.accountName}</option>
+            ))}
+            <option value="__new__">+ Add new account</option>
+          </select>
+        )}
         {errors.accountId && (
           <span className={errorStyles}>{errors.accountId.message}</span>
         )}
       </div>
+
+      {addingAccount && (
+        <AccountModal
+          onClose={() => setAddingAccount(false)}
+          onSuccess={(acc) => setValue("accountId", acc._id)}
+        />
+      )}
 
       {/* Date */}
       <div>
