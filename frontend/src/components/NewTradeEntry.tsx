@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { CreateTradeEntryData } from "../types/tradeEntry.types";
 import { getAccounts } from "../api/api";
 import { useState } from "react";
+import AccountModal from "./AccountModal";
 import {
   formInputStyles as inputStyles,
   formSelectStyles as selectStyles,
@@ -21,13 +22,16 @@ const NewEntry = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<CreateTradeEntryData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [cancelConfirming, setCancelConfirming] = useState(false);
+  const [addingAccount, setAddingAccount] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [notes, setNotes] = useState<string>("");
+  const [selectedAccountId, setSelectedAccountId] = useState("");
 
   const addEntryMutation = useMutation({
     mutationFn: createTradeEntry,
@@ -69,6 +73,10 @@ const NewEntry = () => {
   const onSubmit = async (data: CreateTradeEntryData): Promise<void> => {
     addEntryMutation.mutate({ ...data, notes, images: uploadedImages });
   };
+
+  const { onChange: rhfAccountOnChange, ...accountRest } = register("accountId", {
+    required: "Selecting a trading account is required.",
+  });
 
   return (
     <div className="px-8 py-10">
@@ -120,23 +128,48 @@ const NewEntry = () => {
       {/* Account */}
       <div>
         <label className={labelStyles}>Trading Account</label>
-        <select
-          className={selectStyles}
-          {...register("accountId", {
-            required: "Selecting a trading account is required.",
-          })}
-        >
-          <option value="">Select a trading account</option>
-          {accounts?.map((account) => (
-            <option value={account._id} key={account._id}>
-              {account.accountName}
-            </option>
-          ))}
-        </select>
+        {accounts && accounts.length === 0 ? (
+          <button
+            type="button"
+            onClick={() => setAddingAccount(true)}
+            className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer"
+          >
+            New Account
+          </button>
+        ) : (
+          <select
+            className={selectStyles}
+            {...accountRest}
+            value={selectedAccountId}
+            onChange={(e) => {
+              if (e.target.value === "__new__") {
+                setAddingAccount(true);
+                setSelectedAccountId("");
+                setValue("accountId", "", { shouldValidate: false });
+              } else {
+                setSelectedAccountId(e.target.value);
+                rhfAccountOnChange(e);
+              }
+            }}
+          >
+            <option value="">Select a trading account</option>
+            {accounts?.map((account) => (
+              <option value={account._id} key={account._id}>{account.accountName}</option>
+            ))}
+            <option value="__new__">Add new account</option>
+          </select>
+        )}
         {errors.accountId && (
           <span className={errorStyles}>{errors.accountId.message}</span>
         )}
       </div>
+
+      {addingAccount && (
+        <AccountModal
+          onClose={() => setAddingAccount(false)}
+          onSuccess={(acc) => { setSelectedAccountId(acc._id); setValue("accountId", acc._id); }}
+        />
+      )}
 
       {/* Result */}
       <div>
