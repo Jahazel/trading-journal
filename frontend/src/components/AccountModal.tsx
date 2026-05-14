@@ -22,8 +22,8 @@ const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
 
   const mutation = useMutation({
     mutationFn: createAccount,
-    onSuccess: (account) => {
-      queryClient.invalidateQueries({ queryKey: ["allAccounts"] });
+    onSuccess: async (account) => {
+      await queryClient.invalidateQueries({ queryKey: ["allAccounts"] });
       onSuccess?.(account);
       onClose();
     },
