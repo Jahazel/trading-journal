@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTradeEntries, getNoTradeEntries, getAccounts } from "../api/api";
 import AccountModal from "../components/AccountModal";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { SidebarEntry } from "../types/common.types";
@@ -36,6 +35,22 @@ const ChevronDownIcon = () => (
     aria-hidden="true"
   >
     <path d="M2.5 4.5L6 8l3.5-3.5" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4.5 2.5L8 6l-3.5 3.5" />
   </svg>
 );
 
@@ -220,33 +235,40 @@ const EntryRow = ({ entry }: { entry: SidebarEntry }) => {
   const trade = isTrade ? (entry as TradeEntry) : null;
 
   return (
-    <div className="flex items-center gap-4 px-5 py-3.5 transition-colors duration-100 hover:bg-surface-alt">
-      <span className="w-28 shrink-0 tabular-nums text-sm text-ink-secondary">
-        {formattedDate}
-      </span>
-      <div className="w-20 shrink-0">
+    <div className="group flex items-start justify-between gap-6 rounded-md px-3 py-4 transition-[background-color,box-shadow] duration-150 ease-out hover:bg-surface-alt hover:shadow-ambient">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <span className="text-[0.9375rem] font-medium leading-snug text-ink-primary">
+          {formattedDate}
+        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+              isTrade
+                ? "bg-accent-light text-accent"
+                : "border border-border bg-surface-alt text-ink-muted"
+            }`}
+          >
+            {isTrade ? "Trade" : "No Trade"}
+          </span>
+          <span className="truncate text-sm text-ink-muted">
+            {trade ? `${trade.contract} · ${trade.direction}` : "No trade taken"}
+          </span>
+        </div>
+      </div>
+      <div className="flex shrink-0 items-center gap-1.5 pt-0.5">
         <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${
-            isTrade
-              ? "bg-accent-light text-accent"
-              : "border border-border bg-surface-alt text-ink-muted"
+          className={`text-[0.9375rem] font-semibold tabular-nums ${
+            trade ? pnlColor(trade.pnl) : "text-ink-muted"
           }`}
         >
-          {isTrade ? "Trade" : "No Trade"}
+          {trade
+            ? `${trade.pnl > 0 ? "+" : ""}${formatCurrency(trade.pnl)}`
+            : "—"}
+        </span>
+        <span className="text-ink-muted opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+          <ChevronRightIcon />
         </span>
       </div>
-      <span className="flex-1 text-sm text-ink-secondary">
-        {trade ? `${trade.contract} · ${trade.direction}` : "—"}
-      </span>
-      <span
-        className={`text-sm font-medium tabular-nums ${
-          trade ? pnlColor(trade.pnl) : "text-ink-muted"
-        }`}
-      >
-        {trade
-          ? `${trade.pnl > 0 ? "+" : ""}${formatCurrency(trade.pnl)}`
-          : "—"}
-      </span>
     </div>
   );
 };
@@ -356,21 +378,7 @@ const JournalPage = () => {
                   {older.length} {older.length === 1 ? "entry" : "entries"}
                 </span>
               </div>
-              <div className="overflow-hidden rounded-xl border border-border bg-surface">
-                <div className="flex items-center gap-4 border-b border-border px-5 py-3">
-                  <span className="w-28 shrink-0 text-xs font-medium text-ink-muted">
-                    Date
-                  </span>
-                  <span className="w-20 shrink-0 text-xs font-medium text-ink-muted">
-                    Type
-                  </span>
-                  <span className="flex-1 text-xs font-medium text-ink-muted">
-                    Details
-                  </span>
-                  <span className="text-xs font-medium text-ink-muted">
-                    P&amp;L
-                  </span>
-                </div>
+              <div className="border-t border-border">
                 {older.map((entry) => (
                   <Link
                     key={entry._id}
