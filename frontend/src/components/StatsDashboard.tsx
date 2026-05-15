@@ -92,6 +92,12 @@ const CardSkeleton = () => (
   </div>
 );
 
+const ChevronDownIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+    <path d="M2 3.5L5 6.5L8 3.5" />
+  </svg>
+);
+
 const StatsDashboard = () => {
   const { user } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
@@ -164,28 +170,34 @@ const StatsDashboard = () => {
         {accounts.length === 0 ? (
           <button
             onClick={() => setModalOpen(true)}
-            className="text-sm text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-1 text-sm font-medium text-ink-muted hover:text-ink-primary transition-colors duration-150 cursor-pointer whitespace-nowrap"
           >
             New Account
+            <ChevronDownIcon />
           </button>
         ) : (
-          <select
-            aria-label="Select trading account"
-            value={selectedAccountId || accounts[0]._id}
-            className="text-sm text-ink-secondary border border-border rounded-lg px-3 py-1.5 bg-surface cursor-pointer outline-none focus:border-accent transition-colors duration-150"
-            onChange={(e) => {
-              if (e.target.value === "__new__") {
-                setModalOpen(true);
-              } else {
-                setSelectedAccountId(e.target.value);
-              }
-            }}
-          >
-            {accounts.map((account) => (
-              <option key={account._id} value={account._id}>{account.accountName}</option>
-            ))}
-            <option value="__new__">New account</option>
-          </select>
+          <div className="relative flex items-center group">
+            <select
+              aria-label="Select trading account"
+              value={selectedAccountId || accounts[0]._id}
+              className="appearance-none text-sm font-medium text-ink-muted group-hover:text-ink-primary bg-transparent border-0 outline-none cursor-pointer transition-colors duration-150 whitespace-nowrap pr-3"
+              onChange={(e) => {
+                if (e.target.value === "__new__") {
+                  setModalOpen(true);
+                } else {
+                  setSelectedAccountId(e.target.value);
+                }
+              }}
+            >
+              {accounts.map((account) => (
+                <option key={account._id} value={account._id}>{account.accountName}</option>
+              ))}
+              <option value="__new__">New account</option>
+            </select>
+            <span className="absolute right-0 pointer-events-none text-ink-muted group-hover:text-ink-primary transition-colors duration-150">
+              <ChevronDownIcon />
+            </span>
+          </div>
         )}
       </div>
 

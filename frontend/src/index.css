@@ -89,6 +89,8 @@
 
 .ProseMirror {
   min-height: 300px;
+  max-height: 300px;
+  overflow-y: auto;
   padding: 10px;
   background: var(--color-surface-alt);
   color: var(--color-ink-primary);
