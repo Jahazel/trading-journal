@@ -1,14 +1,14 @@
 import { useRef, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createAccount } from "../api/api";
 import { Account, CreateAccountData } from "../types/account.types";
 import {
   formInputStyles as inputStyles,
-  formSelectStyles as selectStyles,
   formLabelStyles as labelStyles,
   formErrorStyles as errorStyles,
 } from "../utils/styleConstants";
+import Select from "./Select";
 
 interface AccountModalProps {
   onClose: () => void;
@@ -16,7 +16,7 @@ interface AccountModalProps {
 }
 
 const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateAccountData>({ mode: "onTouched" });
+  const { register, control, handleSubmit, formState: { errors } } = useForm<CreateAccountData>({ mode: "onTouched" });
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -99,14 +99,24 @@ const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
 
             <div>
               <label className={labelStyles}>Account Type</label>
-              <select
-                className={selectStyles}
-                {...register("type", { required: "Account type is required." })}
-              >
-                <option value="">Select a type</option>
-                <option value="personal">Personal</option>
-                <option value="funded">Funded</option>
-              </select>
+              <Controller
+                name="type"
+                control={control}
+                rules={{ required: "Account type is required." }}
+                render={({ field }) => (
+                  <Select
+                    id="modal-account-type"
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    placeholder="Select a type"
+                    options={[
+                      { value: "personal", label: "Personal" },
+                      { value: "funded", label: "Funded" },
+                    ]}
+                  />
+                )}
+              />
               {errors.type && <span className={errorStyles}>{errors.type.message}</span>}
             </div>
           </div>
