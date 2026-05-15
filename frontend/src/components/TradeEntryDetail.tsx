@@ -12,13 +12,20 @@ import { TradeEntry } from "../types/tradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
 import { formatCurrency, pnlColor, toDatetimeLocal, formatDateTime } from "../utils/formatUtils";
 import {
-  detailRowStyles as rowStyles,
-  detailLabelStyles as labelStyles,
-  detailValueStyles as valueStyles,
-  detailInputStyles as inlineInputStyles,
+  formInputStyles,
+  formLabelStyles as panelLabelStyles,
+  detailClickValueStyles as clickValueStyles,
 } from "../utils/styleConstants";
+import Select from "./Select";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
+
+const SectionHeader = ({ label }: { label: string }) => (
+  <div className="flex items-center gap-3 mb-4">
+    <span className="text-xs font-medium text-ink-muted tracking-[0.01em]">{label}</span>
+    <div className="flex-1 h-px bg-border" />
+  </div>
+);
 
 const TradeDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -151,7 +158,7 @@ const TradeDetail = () => {
 
   const sharedInputProps = {
     onBlur: () => handleSave(),
-    onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") handleSave();
       if (e.key === "Escape") {
         setActiveField(null);
@@ -159,41 +166,43 @@ const TradeDetail = () => {
       }
     },
     autoFocus: true,
-    onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
       setTempValue(e.target.value);
     },
     value: tempValue,
   };
 
   return (
-    <div className="px-8 py-10">
-      <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+    <div className="px-4 py-8 sm:px-8">
+      <div className="max-w-5xl mx-auto bg-surface rounded-2xl border border-border overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-6 border-b border-border">
-          <div className="flex items-start justify-between mb-1.5">
+        <div className="px-8 py-6 border-b border-border">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="text-xs font-medium text-ink-muted mb-0.5">
-                Net P&L
-              </div>
-              <div className={`text-2xl font-semibold tabular-nums mb-1.5 ${pnlColor(pnl)}`}>
+              <p className="text-xs font-medium text-ink-muted mb-1">Net P&L</p>
+              <p className={`text-xl font-semibold tabular-nums ${pnlColor(pnl)}`}>
                 {pnl > 0 ? "+" : ""}{formatCurrency(pnl)}
-              </div>
+              </p>
             </div>
-
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3">
+              <div aria-live="polite" className="text-xs font-medium">
+                {saveStatus === "saved" && <span className="text-accent">Saved</span>}
+                {saveStatus === "error" && <span className="text-ink-muted">Could not save</span>}
+              </div>
+              {deleteError && <p className="text-xs text-ink-muted">{deleteError}</p>}
               {deleteConfirming ? (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-ink-secondary">Delete this trade?</span>
                   <button
-                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2.5 py-1 bg-ink-primary text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-150 hover:bg-ink-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleDeleteConfirm}
                     disabled={deleteMutation.isPending}
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete"}
                   </button>
                   <button
-                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-surface-alt"
+                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-150 hover:bg-surface-alt"
                     onClick={handleDeleteCancel}
                     disabled={deleteMutation.isPending}
                   >
@@ -202,230 +211,190 @@ const TradeDetail = () => {
                 </div>
               ) : (
                 <button
-                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors duration-100 hover:bg-red-500 hover:text-white"
+                  className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer transition-colors duration-150 hover:bg-surface-alt"
                   onClick={handleDeleteClick}
                 >
                   Delete Trade
                 </button>
               )}
-              {deleteError && (
-                <p className="text-xs text-ink-muted">{deleteError}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-ink-muted">
-              Entry: {formattedEntry} &nbsp;&middot;&nbsp; Exit: {formattedExit}
-            </div>
-            <div aria-live="polite" className="text-xs font-medium transition-opacity duration-300">
-              {saveStatus === "saved" && (
-                <span className="text-accent">Saved</span>
-              )}
-              {saveStatus === "error" && (
-                <span className="text-ink-muted">Could not save</span>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Fields */}
-        <div className="px-8">
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("accountId", accountId)}
-          >
-            <span className={labelStyles}>Account</span>
-            <div className={valueStyles}>
-              {activeField === "accountId" ? (
-                <select className={inlineInputStyles} {...sharedInputProps}>
-                  {accounts?.map((account) => (
-                    <option value={account._id} key={account._id}>
-                      {account.accountName}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <span>
-                  {accounts?.find((a) => a._id === accountId)?.accountName ?? "No account"}
-                </span>
-              )}
+        {/* Body */}
+        <div className="flex flex-col lg:flex-row">
+
+          {/* Left: Fields */}
+          <div className="flex-1 min-w-0 px-8 py-7 flex flex-col gap-7">
+
+            {/* Session */}
+            <div>
+              <SectionHeader label="Session" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={panelLabelStyles}>Account</label>
+                  <Select
+                    id="detail-accountId"
+                    value={accountId}
+                    onChange={(val) => handleSave(val, "accountId")}
+                    options={accounts?.map((a) => ({ value: a._id, label: a.accountName })) ?? []}
+                  />
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Result</label>
+                  <Select
+                    id="detail-result"
+                    value={result}
+                    onChange={(val) => handleSave(val, "result")}
+                    options={[
+                      { value: "Win", label: "Win" },
+                      { value: "Loss", label: "Loss" },
+                      { value: "Break Even", label: "Break Even" },
+                    ]}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Instrument */}
+            <div>
+              <SectionHeader label="Instrument" />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className={panelLabelStyles}>Contract</label>
+                  <Select
+                    id="detail-contract"
+                    value={contract}
+                    onChange={(val) => handleSave(val, "contract")}
+                    options={[
+                      { value: "NQ", label: "NQ" },
+                      { value: "MNQ", label: "MNQ" },
+                      { value: "ES", label: "ES" },
+                      { value: "MES", label: "MES" },
+                    ]}
+                  />
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Direction</label>
+                  <Select
+                    id="detail-direction"
+                    value={direction}
+                    onChange={(val) => handleSave(val, "direction")}
+                    options={[
+                      { value: "Long", label: "Long" },
+                      { value: "Short", label: "Short" },
+                    ]}
+                  />
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Contracts</label>
+                  {activeField === "contracts" ? (
+                    <input type="number" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("contracts", contracts)}>
+                      {contracts}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Price Levels */}
+            <div>
+              <SectionHeader label="Price Levels" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={panelLabelStyles}>Entry Price</label>
+                  {activeField === "entryPrice" ? (
+                    <input type="number" step="0.01" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("entryPrice", entryPrice)}>
+                      ${entryPrice?.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Exit Price</label>
+                  {activeField === "exitPrice" ? (
+                    <input type="number" step="0.01" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("exitPrice", exitPrice)}>
+                      ${exitPrice?.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Stop Loss</label>
+                  {activeField === "stopLoss" ? (
+                    <input type="number" step="0.01" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("stopLoss", stopLoss)}>
+                      ${stopLoss?.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Target</label>
+                  {activeField === "target" ? (
+                    <input type="number" step="0.01" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("target", target)}>
+                      ${target?.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Timing */}
+            <div>
+              <SectionHeader label="Timing" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={panelLabelStyles}>Entry Time</label>
+                  {activeField === "entryTime" ? (
+                    <input type="datetime-local" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("entryTime", toDatetimeLocal(entryTime))}>
+                      {formattedEntry}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Exit Time</label>
+                  {activeField === "exitTime" ? (
+                    <input type="datetime-local" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("exitTime", toDatetimeLocal(exitTime))}>
+                      {formattedExit}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right: Notes + Images */}
+          <div className="lg:w-[400px] shrink-0 border-t border-border lg:border-t-0 lg:border-l bg-surface-alt px-6 py-7 flex flex-col gap-6">
+            <div className="flex-1 flex flex-col">
+              <p className={panelLabelStyles}>Notes</p>
+              <TextEditor key={id} onSave={handleSave} content={notes} />
+            </div>
+            <div>
+              <p className={panelLabelStyles}>Images</p>
+              <ImageUpload
+                key={`img-${id}`}
+                initialUrls={entry.images ?? []}
+                maxImages={5}
+                onChange={(urls) => {
+                  if (!id) return;
+                  updateTradeMutation.mutate({ id, images: urls });
+                }}
+              />
             </div>
           </div>
 
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("result", result)}
-          >
-            <span className={labelStyles}>Result</span>
-            <div className={valueStyles}>
-              {activeField === "result" ? (
-                <select className={inlineInputStyles} {...sharedInputProps}>
-                  <option value="Win">Win</option>
-                  <option value="Loss">Loss</option>
-                  <option value="Break Even">Break Even</option>
-                </select>
-              ) : (
-                <span>{result}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("contract", contract)}
-          >
-            <span className={labelStyles}>Contract</span>
-            <div className={valueStyles}>
-              {activeField === "contract" ? (
-                <select className={inlineInputStyles} {...sharedInputProps}>
-                  <option value="NQ">NQ</option>
-                  <option value="MNQ">MNQ</option>
-                  <option value="ES">ES</option>
-                  <option value="MES">MES</option>
-                </select>
-              ) : (
-                <span>{contract}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("direction", direction)}
-          >
-            <span className={labelStyles}>Direction</span>
-            <div className={valueStyles}>
-              {activeField === "direction" ? (
-                <select
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                  onChange={(e) => {
-                    setTempValue(e.target.value);
-                    handleSave(e.target.value, "direction");
-                  }}
-                >
-                  <option value="Long">Long</option>
-                  <option value="Short">Short</option>
-                </select>
-              ) : (
-                <span className="text-sm text-ink-primary">{direction}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("contracts", contracts)}
-          >
-            <span className={labelStyles}>Contracts</span>
-            <div className={valueStyles}>
-              {activeField === "contracts" ? (
-                <input type="number" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span>{contracts}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("entryPrice", entryPrice)}
-          >
-            <span className={labelStyles}>Entry Price</span>
-            <div className={valueStyles}>
-              {activeField === "entryPrice" ? (
-                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span className="tabular-nums">${entryPrice?.toLocaleString()}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("exitPrice", exitPrice)}
-          >
-            <span className={labelStyles}>Exit Price</span>
-            <div className={valueStyles}>
-              {activeField === "exitPrice" ? (
-                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span className="tabular-nums">${exitPrice?.toLocaleString()}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("stopLoss", stopLoss)}
-          >
-            <span className={labelStyles}>Stop Loss</span>
-            <div className={valueStyles}>
-              {activeField === "stopLoss" ? (
-                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span className="tabular-nums">${stopLoss?.toLocaleString()}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("target", target)}
-          >
-            <span className={labelStyles}>Target</span>
-            <div className={valueStyles}>
-              {activeField === "target" ? (
-                <input type="number" step="0.01" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span className="tabular-nums">${target?.toLocaleString()}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("entryTime", toDatetimeLocal(entryTime))}
-          >
-            <span className={labelStyles}>Entry Time</span>
-            <div className={valueStyles}>
-              {activeField === "entryTime" ? (
-                <input type="datetime-local" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span>{formattedEntry}</span>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={`${rowStyles} border-b-0`}
-            onClick={() => !activeField && activate("exitTime", toDatetimeLocal(exitTime))}
-          >
-            <span className={labelStyles}>Exit Time</span>
-            <div className={valueStyles}>
-              {activeField === "exitTime" ? (
-                <input type="datetime-local" className={inlineInputStyles} {...sharedInputProps} />
-              ) : (
-                <span>{formattedExit}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="py-5 border-t border-border">
-            <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
-            <ImageUpload
-              key={id}
-              initialUrls={entry.images ?? []}
-              maxImages={5}
-              onChange={(urls) => {
-                if (!id) return;
-                updateTradeMutation.mutate({ id, images: urls });
-              }}
-            />
-          </div>
-
-          <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>
     </div>

@@ -12,13 +12,20 @@ import { NoTradeEntry } from "../types/noTradeEntry.types.js";
 import { getAccounts } from "../api/api.js";
 import { formatDateTime } from "../utils/formatUtils";
 import {
-  detailRowStyles as rowStyles,
-  detailLabelStyles as labelStyles,
-  detailValueStyles as valueStyles,
-  detailInputStyles as inlineInputStyles,
+  formInputStyles,
+  formLabelStyles as panelLabelStyles,
+  detailClickValueStyles as clickValueStyles,
 } from "../utils/styleConstants";
+import Select from "./Select";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
+
+const SectionHeader = ({ label }: { label: string }) => (
+  <div className="flex items-center gap-3 mb-4">
+    <span className="text-xs font-medium text-ink-muted tracking-[0.01em]">{label}</span>
+    <div className="flex-1 h-px bg-border" />
+  </div>
+);
 
 const NoTradeEntryDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -125,7 +132,7 @@ const NoTradeEntryDetail = () => {
 
   const sharedInputProps = {
     onBlur: () => handleSave(),
-    onKeyDown: (e: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") handleSave();
       if (e.key === "Escape") {
         setActiveField(null);
@@ -133,37 +140,41 @@ const NoTradeEntryDetail = () => {
       }
     },
     autoFocus: true,
-    onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
       setTempValue(e.target.value);
     },
     value: tempValue,
   };
 
   return (
-    <div className="px-8 py-10">
-      <div className="max-w-[680px] mx-auto bg-surface rounded-xl border border-border overflow-hidden">
+    <div className="px-4 py-8 sm:px-8">
+      <div className="max-w-4xl mx-auto bg-surface rounded-2xl border border-border overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-6 border-b border-border">
-          <div className="flex items-start justify-between mb-1.5">
+        <div className="px-8 py-6 border-b border-border">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-medium text-ink-muted mb-0.5">No Trade</p>
-              <p className="text-sm text-ink-secondary">{formattedDate}</p>
+              <p className="text-xs font-medium text-ink-muted mb-1">No Trade</p>
+              <p className="text-xl font-semibold text-ink-primary">{formattedDate}</p>
             </div>
-
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3">
+              <div aria-live="polite" className="text-xs font-medium">
+                {saveStatus === "saved" && <span className="text-accent">Saved</span>}
+                {saveStatus === "error" && <span className="text-ink-muted">Could not save</span>}
+              </div>
+              {deleteError && <p className="text-xs text-ink-muted">{deleteError}</p>}
               {deleteConfirming ? (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-ink-secondary">Delete this entry?</span>
                   <button
-                    className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2.5 py-1 bg-ink-primary text-white rounded-md text-xs font-medium cursor-pointer transition-colors duration-150 hover:bg-ink-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleDeleteConfirm}
                     disabled={deleteMutation.isPending}
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete"}
                   </button>
                   <button
-                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-100 hover:bg-surface-alt"
+                    className="px-2.5 py-1 bg-transparent text-ink-secondary border border-border rounded-md text-xs font-medium cursor-pointer transition-colors duration-150 hover:bg-surface-alt"
                     onClick={handleDeleteCancel}
                     disabled={deleteMutation.isPending}
                   >
@@ -172,84 +183,67 @@ const NoTradeEntryDetail = () => {
                 </div>
               ) : (
                 <button
-                  className="px-3.5 py-1.5 bg-transparent text-red-500 border border-red-500 rounded-md text-sm cursor-pointer transition-colors duration-100 hover:bg-red-500 hover:text-white"
+                  className="px-3.5 py-1.5 bg-transparent text-ink-secondary border border-border rounded-md text-sm cursor-pointer transition-colors duration-150 hover:bg-surface-alt"
                   onClick={handleDeleteClick}
                 >
                   Delete Entry
                 </button>
               )}
-              {deleteError && (
-                <p className="text-xs text-ink-muted">{deleteError}</p>
-              )}
             </div>
-          </div>
-
-          <div aria-live="polite" className="text-xs font-medium transition-opacity duration-300 text-right">
-            {saveStatus === "saved" && (
-              <span className="text-accent">Saved</span>
-            )}
-            {saveStatus === "error" && (
-              <span className="text-ink-muted">Could not save</span>
-            )}
           </div>
         </div>
 
-        {/* Fields */}
-        <div className="px-8">
-          <div
-            className={rowStyles}
-            onClick={() => !activeField && activate("accountId", accountId)}
-          >
-            <span className={labelStyles}>Account</span>
-            <div className={valueStyles}>
-              {activeField === "accountId" ? (
-                <select className={inlineInputStyles} {...sharedInputProps}>
-                  {accounts?.map((account) => (
-                    <option value={account._id} key={account._id}>
-                      {account.accountName}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <span>
-                  {accounts?.find((a) => a._id === accountId)?.accountName ?? "No account"}
-                </span>
-              )}
+        {/* Body */}
+        <div className="flex flex-col lg:flex-row">
+
+          {/* Left: Fields */}
+          <div className="lg:w-[280px] shrink-0 px-8 py-7 flex flex-col gap-5">
+            <div>
+              <SectionHeader label="Session" />
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className={panelLabelStyles}>Account</label>
+                  <Select
+                    id="detail-nte-accountId"
+                    value={accountId}
+                    onChange={(val) => handleSave(val, "accountId")}
+                    options={accounts?.map((a) => ({ value: a._id, label: a.accountName })) ?? []}
+                  />
+                </div>
+                <div>
+                  <label className={panelLabelStyles}>Date</label>
+                  {activeField === "entryTime" ? (
+                    <input type="datetime-local" className={formInputStyles} {...sharedInputProps} />
+                  ) : (
+                    <div className={clickValueStyles} onClick={() => activate("entryTime", entryTime)}>
+                      {formattedDate}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div
-            className={`${rowStyles} border-b-0`}
-            onClick={() => !activeField && activate("entryTime", entryTime)}
-          >
-            <span className={labelStyles}>Date</span>
-            <div className={valueStyles}>
-              {activeField === "entryTime" ? (
-                <input
-                  type="datetime-local"
-                  className={inlineInputStyles}
-                  {...sharedInputProps}
-                />
-              ) : (
-                <span>{formattedDate}</span>
-              )}
+          {/* Right: Notes + Images */}
+          <div className="flex-1 min-w-0 border-t border-border lg:border-t-0 lg:border-l bg-surface-alt px-6 py-7 flex flex-col gap-6">
+            <div className="flex-1 flex flex-col">
+              <p className={panelLabelStyles}>Notes</p>
+              <TextEditor key={id} onSave={handleSave} content={notes} />
+            </div>
+            <div>
+              <p className={panelLabelStyles}>Images</p>
+              <ImageUpload
+                key={`img-${id}`}
+                initialUrls={entry.images ?? []}
+                maxImages={5}
+                onChange={(urls) => {
+                  if (!id) return;
+                  updateMutation.mutate({ id, images: urls });
+                }}
+              />
             </div>
           </div>
 
-          <div className="py-5 border-t border-border">
-            <p className="text-sm font-medium text-ink-secondary mb-3">Images</p>
-            <ImageUpload
-              key={id}
-              initialUrls={entry.images ?? []}
-              maxImages={5}
-              onChange={(urls) => {
-                if (!id) return;
-                updateMutation.mutate({ id, images: urls });
-              }}
-            />
-          </div>
-
-          <TextEditor key={id} onSave={handleSave} content={notes} />
         </div>
       </div>
     </div>
