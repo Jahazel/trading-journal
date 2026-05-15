@@ -1,7 +1,8 @@
 // Form field styles (NewTradeEntry, NewNoTradeEntry)
 export const formInputStyles =
-  "w-full px-3.5 py-2.5 border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-accent font-inherit";
-export const formSelectStyles = `${formInputStyles} cursor-pointer`;
+  "w-full px-3.5 py-2.5 bg-surface border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/10 font-inherit";
+export const formSelectStyles =
+  "w-full appearance-none px-3.5 py-2.5 pr-10 bg-surface border border-border rounded-lg text-sm text-ink-primary outline-none transition-colors hover:border-ink-muted focus:border-accent focus:ring-2 focus:ring-accent/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed font-inherit";
 export const accountSelectStyles =
   "w-full text-sm text-ink-muted bg-transparent border-0 outline-none cursor-pointer hover:text-ink-primary transition-colors duration-150 font-inherit";
 export const formLabelStyles =
