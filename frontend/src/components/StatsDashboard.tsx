@@ -8,6 +8,7 @@ import { formatCurrency, pnlColor } from "../utils/formatUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { computeStreak } from "../utils/tradeUtils";
 import AccountModal from "./AccountModal";
+import Select from "./Select";
 import { useState } from "react";
 
 function getGreeting(): string {
@@ -176,27 +177,22 @@ const StatsDashboard = () => {
             <ChevronDownIcon />
           </button>
         ) : (
-          <div className="relative flex items-center group">
-            <select
-              aria-label="Select trading account"
-              value={selectedAccountId || accounts[0]._id}
-              className="appearance-none text-sm font-medium text-ink-muted group-hover:text-ink-primary bg-transparent border-0 outline-none cursor-pointer transition-colors duration-150 whitespace-nowrap pr-3"
-              onChange={(e) => {
-                if (e.target.value === "__new__") {
+          <div className="w-48">
+            <Select
+              id="dashboard-account"
+              value={selectedAccountId || (accounts[0]?._id ?? "")}
+              onChange={(val) => {
+                if (val === "__new__") {
                   setModalOpen(true);
                 } else {
-                  setSelectedAccountId(e.target.value);
+                  setSelectedAccountId(val);
                 }
               }}
-            >
-              {accounts.map((account) => (
-                <option key={account._id} value={account._id}>{account.accountName}</option>
-              ))}
-              <option value="__new__">New account</option>
-            </select>
-            <span className="absolute right-0 pointer-events-none text-ink-muted group-hover:text-ink-primary transition-colors duration-150">
-              <ChevronDownIcon />
-            </span>
+              options={[
+                ...accounts.map((a) => ({ value: a._id, label: a.accountName })),
+                { value: "__new__", label: "+ New account" },
+              ]}
+            />
           </div>
         )}
       </div>

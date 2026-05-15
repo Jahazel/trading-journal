@@ -119,9 +119,9 @@ const Sidebar = () => {
       {/* Log Entry */}
       <div className="px-3 pb-3" ref={menuRef}>
         {menuOpen && (
-          <div className="mb-1.5 rounded-lg border border-border bg-surface shadow-dropdown overflow-hidden">
+          <div className="mb-1.5 rounded-lg border border-border bg-surface shadow-dropdown py-1 overflow-y-auto">
             <button
-              className="w-full cursor-pointer border-b border-border px-3.5 py-2.5 text-left text-sm font-medium text-ink-primary transition-colors hover:bg-surface-alt"
+              className="w-full cursor-pointer px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors duration-100 hover:bg-surface-alt select-none"
               onClick={() => {
                 navigate("/dashboard/trade-entries/new-entry");
                 setMenuOpen(false);
@@ -130,7 +130,7 @@ const Sidebar = () => {
               Trade Entry
             </button>
             <button
-              className="w-full cursor-pointer px-3.5 py-2.5 text-left text-sm font-medium text-ink-primary transition-colors hover:bg-surface-alt"
+              className="w-full cursor-pointer px-3.5 py-2.5 text-left text-sm text-ink-primary transition-colors duration-100 hover:bg-surface-alt select-none"
               onClick={() => {
                 navigate("/dashboard/no-trade-entries/new-entry");
                 setMenuOpen(false);
