@@ -40,8 +40,8 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
   const isNextMonthFuture = startOfMonth(nextMonth) > startOfMonth(new Date());
 
   return (
-    <div className="bg-surface border border-border rounded-xl overflow-hidden max-w-[700px]">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+    <div className="bg-surface border border-border rounded-xl overflow-hidden max-w-full md:max-w-[492px] xl:max-w-[700px]">
+      <div className="flex items-center justify-between px-4 py-3 xl:px-6 xl:py-4 border-b border-border">
         <button
           className={calendarNavBtnStyles}
           onClick={() => setCurrentMonth(prevMonth)}
@@ -79,11 +79,11 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
       </div>
 
       <div className="overflow-x-auto">
-        <div className="min-w-[692px]">
+        <div className="min-w-[492px] xl:min-w-[692px] w-max">
           <div role="grid" aria-label={format(currentMonth, "MMMM yyyy")}>
             <div
               role="row"
-              className="grid grid-cols-[repeat(7,86px)_90px] border-b border-border"
+              className="grid grid-cols-[repeat(7,60px)_72px] xl:grid-cols-[repeat(7,86px)_90px] border-b border-border"
             >
               {WEEKDAY_LABELS.map((d) => (
                 <div
@@ -111,7 +111,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                 <div
                   key={format(week[0], "yyyy-MM-dd")}
                   role="row"
-                  className="grid grid-cols-[repeat(7,86px)_90px] grid-rows-[64px] border-b border-border last:border-b-0"
+                  className="grid grid-cols-[repeat(7,60px)_72px] xl:grid-cols-[repeat(7,86px)_90px] grid-rows-[52px] xl:grid-rows-[64px] border-b border-border last:border-b-0"
                 >
                   {week.map((day) => {
                     const dateKey = format(day, "yyyy-MM-dd");
@@ -131,7 +131,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                         role="gridcell"
                         aria-label={`${format(day, "MMMM d, yyyy")}${pnlLabel ? `, ${pnlLabel}` : ""}`}
                         aria-current={todayCell ? "date" : undefined}
-                        className={`p-3 w-full border-r border-border flex flex-col gap-1 min-w-0 overflow-hidden ${cellBg}${todayCell ? " ring-1 ring-inset ring-accent" : ""}`}
+                        className={`p-2 xl:p-3 w-full border-r border-border flex flex-col gap-1 min-w-0 overflow-hidden ${cellBg}${todayCell ? " ring-1 ring-inset ring-accent" : ""}`}
                       >
                         <span
                           className={`text-xs font-medium ${isCurrentMonth ? "text-ink-primary" : "text-ink-muted"}`}
@@ -139,7 +139,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
                           {format(day, "d")}
                         </span>
                         {dayPnl !== undefined && isCurrentMonth && (
-                          <span className="text-xs tabular-nums text-ink-primary">
+                          <span className="text-[10px] xl:text-xs tabular-nums text-ink-primary">
                             ${dayPnl.toFixed(2)}
                           </span>
                         )}
@@ -163,7 +163,7 @@ const TradeCalendar = ({ trades }: TradeCalendarProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-5 px-6 py-3 border-t border-border">
+      <div className="flex items-center gap-5 px-4 py-3 xl:px-6 border-t border-border">
         <span className="flex items-center gap-1.5 text-xs text-ink-secondary">
           <span className="inline-block w-3 h-3 rounded-sm bg-pnl-positive-bg flex-shrink-0" />
           Profit

@@ -158,7 +158,7 @@ const StatsDashboard = () => {
   return (
     <div>
       {/* Content header */}
-      <div className="px-8 py-5 border-b border-border flex items-center justify-between gap-4">
+      <div className="px-4 py-4 md:px-8 md:py-5 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <p className="text-xs font-medium text-ink-muted tracking-wide mb-0.5">
             {format(new Date(), "MMMM yyyy")}
@@ -177,7 +177,7 @@ const StatsDashboard = () => {
             <ChevronDownIcon />
           </button>
         ) : (
-          <div className="w-48">
+          <div className="w-full sm:w-48">
             <Select
               id="dashboard-account"
               value={selectedAccountId || (accounts[0]?._id ?? "")}
@@ -200,7 +200,7 @@ const StatsDashboard = () => {
       {modalOpen && <AccountModal onClose={() => setModalOpen(false)} onSuccess={(acc) => setSelectedAccountId(acc._id)} />}
 
       {/* KPI cards */}
-      <div className="px-8 py-6">
+      <div className="px-4 py-4 sm:px-6 md:px-8 md:py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {isLoading ? (
             <>
@@ -270,10 +270,10 @@ const StatsDashboard = () => {
       </div>
 
       {/* Calendar + Recent Trades */}
-      <div className="px-8 pt-2 pb-10 flex flex-col gap-8 items-start lg:flex-row lg:gap-6">
+      <div className="px-4 pt-2 pb-8 sm:px-6 md:px-8 md:pb-10 flex flex-col gap-8 items-start lg:flex-row lg:gap-6">
         <TradeCalendar trades={trades} />
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 w-full lg:w-auto">
           <h2 className="mb-4 text-[0.9375rem] font-semibold text-ink-primary">Recent Trades</h2>
           {trades.length === 0 ? (
             <p className="text-sm text-ink-secondary">
