@@ -8,6 +8,7 @@ import type { ITradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import type { ErrorResponse } from "../types/common.types.js";
 import { handleServerError } from "../utils/handleError.js";
+import { sanitizeNotes } from "../utils/sanitizeHtml.js";
 import type {
   TradeEntryParams,
   CreateTradeEntryBody,
@@ -126,7 +127,7 @@ export async function createTradeEntry(
       entryTime,
       exitTime,
       pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
-      notes,
+      notes: sanitizeNotes(notes),
       images: images ?? [],
     });
 
@@ -206,7 +207,7 @@ export async function updateTradeEntry(
       entryPrice ?? tradeEntry.entryPrice,
       direction ?? tradeEntry.direction,
     );
-    if (notes !== undefined) tradeEntry.notes = notes;
+    if (notes !== undefined) tradeEntry.notes = sanitizeNotes(notes);
     if (images !== undefined) tradeEntry.images = images;
 
     const savedTradeEntry = await tradeEntry.save();

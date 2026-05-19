@@ -10,6 +10,7 @@ import type {
   UpdateEntryBody,
 } from "../types/noTradeEntry.types.js";
 import { handleServerError } from "../utils/handleError.js";
+import { sanitizeNotes } from "../utils/sanitizeHtml.js";
 
 type ErrorResponse = { message: string };
 
@@ -82,7 +83,7 @@ export async function createNoTradeEntry(
       userId,
       accountId,
       entryTime,
-      notes,
+      notes: sanitizeNotes(notes),
       images: images ?? [],
     });
 
@@ -131,7 +132,7 @@ export async function updateNoTradeEntry(
       }
       noTradeEntry.accountId = new Types.ObjectId(accountId);
     }
-    if (notes !== undefined) noTradeEntry.notes = notes;
+    if (notes !== undefined) noTradeEntry.notes = sanitizeNotes(notes);
     if (entryTime !== undefined) noTradeEntry.entryTime = new Date(entryTime);
     if (images !== undefined) noTradeEntry.images = images;
 
