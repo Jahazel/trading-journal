@@ -24,9 +24,9 @@ export async function getTradeEntries(
   try {
     const userId = req.userId!;
 
-    const tradeEntries = await TradeEntry.find({ userId }).sort({
-      createdAt: -1,
-    });
+    const tradeEntries = await TradeEntry.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(200);
 
     return res.status(200).json(tradeEntries);
   } catch (error: unknown) {
