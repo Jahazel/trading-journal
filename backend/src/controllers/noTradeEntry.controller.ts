@@ -18,7 +18,7 @@ export async function getNoTradeEntries(
   res: Response<ApiResponse<INoTradeEntry[]>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
 
     const noTradeEntries = await NoTradeEntry.find({ userId }).sort({
       createdAt: -1,
@@ -35,7 +35,7 @@ export async function getNoTradeEntry(
   res: Response<ApiResponse<INoTradeEntry>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const noTradeEntryId = req.params.id;
 
     if (!noTradeEntryId) {
@@ -65,7 +65,7 @@ export async function createNoTradeEntry(
   res: Response<ApiResponse<INoTradeEntry>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const { accountId, entryTime, notes, images } = req.body;
 
     const account = await Account.findById(accountId);
@@ -99,7 +99,7 @@ export async function updateNoTradeEntry(
   res: Response<ApiResponse<INoTradeEntry>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const noTradeEntryId = req.params.id;
     const { accountId, entryTime, notes, images } = req.body;
 
@@ -148,7 +148,7 @@ export async function deleteNoTradeEntry(
   res: Response<ErrorResponse>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const noTradeEntryId = req.params.id;
 
     if (!noTradeEntryId) {

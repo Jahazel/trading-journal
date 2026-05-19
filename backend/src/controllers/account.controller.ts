@@ -17,7 +17,7 @@ export async function getAccounts(
   res: Response<ApiResponse<IAccount[]>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
 
     const accounts = await Account.find({ userId }).sort({
       createdAt: -1,
@@ -34,7 +34,7 @@ export async function getAccount(
   res: Response<ApiResponse<IAccount>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const accountId = req.params.id;
 
     if (!accountId) {
@@ -64,7 +64,7 @@ export async function createAccount(
   res: Response<ApiResponse<IAccount>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const { accountName, startingBalance, type } = req.body;
 
     if (!accountName || !startingBalance || !type) {
@@ -104,7 +104,7 @@ export async function updateAccount(
 ) {
   try {
     const { accountName, startingBalance, status, type } = req.body;
-    const userId = req.userId;
+    const userId = req.userId!;
     const accountId = req.params.id;
 
     if (startingBalance !== undefined && startingBalance < 0) {
@@ -154,7 +154,7 @@ export async function deleteAccount(
   res: Response<ErrorResponse>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const accountId = req.params.id;
 
     if (!accountId) {

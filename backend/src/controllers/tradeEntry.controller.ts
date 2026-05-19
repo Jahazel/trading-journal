@@ -21,7 +21,7 @@ export async function getTradeEntries(
   res: Response<ApiResponse<ITradeEntry[]>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
 
     const tradeEntries = await TradeEntry.find({ userId }).sort({
       createdAt: -1,
@@ -38,7 +38,7 @@ export async function getTradeEntry(
   res: Response<ApiResponse<ITradeEntry>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const tradeEntryId = req.params.id;
 
     if (!tradeEntryId) {
@@ -85,7 +85,7 @@ export async function createTradeEntry(
   res: Response<ApiResponse<ITradeEntry>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const {
       accountId,
       result,
@@ -158,7 +158,7 @@ export async function updateTradeEntry(
       notes,
       images,
     } = req.body;
-    const userId = req.userId;
+    const userId = req.userId!;
     const tradeId = req.params.id;
 
     if (!tradeId) {
@@ -222,7 +222,7 @@ export async function deleteTradeEntry(
   res: Response<ErrorResponse>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const tradeId = req.params.id;
 
     if (!tradeId) {
@@ -256,7 +256,7 @@ export async function getStats(
   res: Response<ApiResponse<TradeStatsResponse>>,
 ) {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
 
     const objectId = new mongoose.Types.ObjectId(userId);
 
