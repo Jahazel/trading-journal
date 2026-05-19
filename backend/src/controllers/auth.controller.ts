@@ -7,6 +7,13 @@ import type { IUser } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import { handleServerError } from "../utils/handleError.js";
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export async function signUp(
   req: Request<{}, {}, SignupBody>,
   res: Response<ApiResponse<IUser>>,
@@ -89,12 +96,18 @@ export async function login(
       expiresIn: "7d",
     });
 
+    res.cookie("token", token, COOKIE_OPTIONS);
+
     return res.status(200).json({
-      token: token,
       username: existingUser.username,
       userId: existingUser.id,
     });
   } catch (error: unknown) {
     return handleServerError(res, error);
   }
+}
+
+export function logout(_req: Request, res: Response) {
+  res.clearCookie("token", COOKIE_OPTIONS);
+  return res.status(200).json({ message: "Logged out successfully." });
 }

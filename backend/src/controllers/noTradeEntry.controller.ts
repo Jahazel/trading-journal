@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 import NoTradeEntry from "../models/noTradeEntry.model.js";
+import Account from "../models/account.model.js";
 import type { INoTradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import type {
@@ -67,6 +68,16 @@ export async function createNoTradeEntry(
     const userId = req.userId;
     const { accountId, entryTime, notes, images } = req.body;
 
+    const account = await Account.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: "Account not found." });
+    }
+    if (account.userId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to use this account." });
+    }
+
     const newNoTradeEntry = new NoTradeEntry({
       userId,
       accountId,
@@ -108,8 +119,18 @@ export async function updateNoTradeEntry(
         .json({ message: "You don't have permission to update this entry." });
     }
 
-    if (accountId !== undefined)
+    if (accountId !== undefined) {
+      const account = await Account.findById(accountId);
+      if (!account) {
+        return res.status(404).json({ message: "Account not found." });
+      }
+      if (account.userId.toString() !== userId) {
+        return res
+          .status(403)
+          .json({ message: "You don't have permission to use this account." });
+      }
       noTradeEntry.accountId = new Types.ObjectId(accountId);
+    }
     if (notes !== undefined) noTradeEntry.notes = notes;
     if (entryTime !== undefined) noTradeEntry.entryTime = new Date(entryTime);
     if (images !== undefined) noTradeEntry.images = images;

@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AuthResponse, AuthState } from "../types/auth.types";
+import { logoutUser } from "../api/api";
 
 const AuthContext = createContext<AuthState | null>(null);
 
@@ -18,11 +19,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     try {
-      const token = localStorage.getItem("token");
       const username = localStorage.getItem("username");
       const userId = localStorage.getItem("userId");
 
-      if (token && username && userId) {
+      if (username && userId) {
         setUser(username);
         setUserId(userId);
       }
@@ -34,8 +34,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const setAuth = ({ token, username, userId }: AuthResponse) => {
-    localStorage.setItem("token", token);
+  const setAuth = ({ username, userId }: AuthResponse) => {
     localStorage.setItem("username", username);
     localStorage.setItem("userId", userId);
 
@@ -43,8 +42,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserId(userId);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+      // proceed with local cleanup even if server call fails
+    }
+
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
 

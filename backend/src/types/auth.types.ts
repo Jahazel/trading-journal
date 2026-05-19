@@ -10,7 +10,6 @@ export interface LoginBody {
 }
 
 export interface LoginRes {
-  token: string;
   username: string;
   userId: string;
 }

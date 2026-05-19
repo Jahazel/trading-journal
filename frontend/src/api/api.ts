@@ -19,14 +19,7 @@ import { Account, CreateAccountData } from "../types/account.types";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-
-  return config;
+  withCredentials: true,
 });
 
 export const login = async (
@@ -48,6 +41,15 @@ export const signup = async (userData: SignupData): Promise<SignupResponse> => {
     return response.data;
   } catch (error) {
     console.error("Error signing up:", error);
+    throw error;
+  }
+};
+
+export const logoutUser = async (): Promise<void> => {
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    console.error("Error logging out:", error);
     throw error;
   }
 };

@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import type { Request, Response } from "express";
 import { POINT_VALUES } from "../config/constants.js";
 import TradeEntry from "../models/tradeEntry.model.js";
+import Account from "../models/account.model.js";
 import type { ITradeEntry } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import type { ErrorResponse } from "../types/common.types.js";
@@ -101,6 +102,16 @@ export async function createTradeEntry(
       images,
     } = req.body;
 
+    const account = await Account.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: "Account not found." });
+    }
+    if (account.userId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You don't have permission to use this account." });
+    }
+
     const newTradeEntry = new TradeEntry({
       userId,
       accountId,
@@ -166,8 +177,18 @@ export async function updateTradeEntry(
       });
     }
 
-    if (accountId !== undefined)
+    if (accountId !== undefined) {
+      const account = await Account.findById(accountId);
+      if (!account) {
+        return res.status(404).json({ message: "Account not found." });
+      }
+      if (account.userId.toString() !== userId) {
+        return res
+          .status(403)
+          .json({ message: "You don't have permission to use this account." });
+      }
       tradeEntry.accountId = new Types.ObjectId(accountId);
+    }
     if (result !== undefined) tradeEntry.result = result;
     if (contract !== undefined) tradeEntry.contract = contract;
     if (direction !== undefined) tradeEntry.direction = direction;

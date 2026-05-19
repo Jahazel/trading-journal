@@ -35,11 +35,7 @@ const LoginPage = () => {
     setAuthError(null);
     try {
       const data = await login(credentials);
-      setAuth({
-        token: data.token,
-        username: data.username,
-        userId: data.userId,
-      });
+      setAuth({ username: data.username, userId: data.userId });
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof AxiosError) {
