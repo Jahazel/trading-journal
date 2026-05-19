@@ -7,11 +7,14 @@ import type { IUser } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import { handleServerError } from "../utils/handleError.js";
 
+const DUMMY_HASH =
+  "$2b$12$xxxxxxxxxxxxxxxxxxxxxxuOWdGxkqtjsAl0z0IfAh1T1TU68vKu";
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: 24 * 60 * 60 * 1000,
 };
 
 export async function signUp(
@@ -20,6 +23,14 @@ export async function signUp(
 ) {
   try {
     const { username, email, password } = req.body;
+
+    if (
+      typeof username !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({ message: "Invalid input." });
+    }
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Please enter all fields." });
@@ -70,22 +81,25 @@ export async function login(
     const { email, password } = req.body;
     const secret = process.env.JWT_SECRET;
 
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({ message: "Invalid input." });
+    }
+
     if (!email || !password) {
       return res.status(400).json({ message: "Please enter all fields." });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const existingUser = await User.findOne({
-      email: email,
+      email: normalizedEmail,
     }).select("+password");
 
-    if (!existingUser) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
+    const hashToCompare = existingUser?.password ?? DUMMY_HASH;
+    const isMatch = await bcrypt.compare(password, hashToCompare);
 
-    const isMatch = await bcrypt.compare(password, existingUser.password);
-
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+    if (!existingUser || !isMatch) {
+      return res.status(400).json({ message: "Invalid email or password." });
     }
 
     if (!secret) {
@@ -93,7 +107,7 @@ export async function login(
     }
 
     const token = jsonwebtoken.sign({ id: existingUser.id }, secret, {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
 
     res.cookie("token", token, COOKIE_OPTIONS);

@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+
+mongoose.set("sanitizeFilter", true);
+
 const connectionString = process.env.MONGO_URI as string;
 
 async function connectDB() {
