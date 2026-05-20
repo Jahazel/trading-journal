@@ -10,10 +10,12 @@ import { handleServerError } from "../utils/handleError.js";
 const DUMMY_HASH =
   "$2b$12$xxxxxxxxxxxxxxxxxxxxxxuOWdGxkqtjsAl0z0IfAh1T1TU68vKu";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: isProduction,
+  sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
   maxAge: 24 * 60 * 60 * 1000,
 };
 
