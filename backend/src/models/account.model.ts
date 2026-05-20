@@ -8,7 +8,7 @@ const accountSchema = new Schema<IAccount>(
       ref: "User",
       required: true,
     },
-    accountName: { type: String, required: true },
+    accountName: { type: String, required: true, maxlength: 100, trim: true },
     startingBalance: { type: Number, required: true },
     status: {
       type: String,

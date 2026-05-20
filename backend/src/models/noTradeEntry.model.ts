@@ -14,8 +14,15 @@ const noTradeEntrySchema = new Schema<INoTradeEntry>(
       required: true,
     },
     entryTime: { type: Date, required: true },
-    notes: { type: String },
-    images: [{ type: String }],
+    notes: { type: String, maxlength: 65536 },
+    images: {
+      type: [{ type: String }],
+      validate: {
+        validator: (arr: string[]) => arr.length <= 20,
+        message: "A maximum of 20 images are allowed per entry.",
+      },
+      default: [],
+    },
   },
   { timestamps: true, collection: "no_trade_entries" },
 );

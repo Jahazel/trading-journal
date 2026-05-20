@@ -1,7 +1,13 @@
+import mongoose from "mongoose";
 import type { Response } from "express";
 
 export function handleServerError(res: Response<any>, error: unknown) {
-  console.error(error);
+  if (error instanceof mongoose.Error.ValidationError) {
+    const messages = Object.values(error.errors).map((e) => e.message);
+    return res.status(400).json({ message: messages.join(", ") });
+  }
+
+  console.error(error instanceof Error ? error.stack : error);
 
   const message =
     process.env.NODE_ENV === "production"

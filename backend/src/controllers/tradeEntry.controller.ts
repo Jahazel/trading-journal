@@ -119,6 +119,10 @@ export async function createTradeEntry(
         .json({ message: "You don't have permission to use this account." });
     }
 
+    if (new Date(exitTime) < new Date(entryTime)) {
+      return res.status(400).json({ message: "Exit time must be after entry time." });
+    }
+
     if (images && !validateImageUrls(images)) {
       return res.status(400).json({ message: "Invalid image URL." });
     }
@@ -223,6 +227,12 @@ export async function updateTradeEntry(
       direction ?? tradeEntry.direction,
       result ?? tradeEntry.result,
     );
+    const effectiveEntry = entryTime ? new Date(entryTime) : tradeEntry.entryTime;
+    const effectiveExit = exitTime ? new Date(exitTime) : tradeEntry.exitTime;
+    if (effectiveExit < effectiveEntry) {
+      return res.status(400).json({ message: "Exit time must be after entry time." });
+    }
+
     if (notes !== undefined) tradeEntry.notes = sanitizeNotes(notes);
     if (images !== undefined) {
       if (!validateImageUrls(images)) {

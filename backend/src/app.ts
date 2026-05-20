@@ -11,7 +11,14 @@ import uploadRoutes from "./routes/upload.routes.js";
 
 const app = express();
 
-const allowedOrigins = (process.env.FRONTEND_URL ?? "http://localhost:5173")
+const rawOrigins = process.env.FRONTEND_URL;
+
+if (!rawOrigins && process.env.NODE_ENV === "production") {
+  console.error("FATAL: FRONTEND_URL is not set in production.");
+  process.exit(1);
+}
+
+const allowedOrigins = (rawOrigins ?? "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);

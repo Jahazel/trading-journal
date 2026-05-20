@@ -40,8 +40,15 @@ const tradeEntrySchema = new Schema<ITradeEntry>(
     entryTime: { type: Date, required: true },
     exitTime: { type: Date, required: true },
     pnl: { type: Number },
-    notes: { type: String },
-    images: [{ type: String }],
+    notes: { type: String, maxlength: 65536 },
+    images: {
+      type: [{ type: String }],
+      validate: {
+        validator: (arr: string[]) => arr.length <= 20,
+        message: "A maximum of 20 images are allowed per entry.",
+      },
+      default: [],
+    },
   },
   { timestamps: true },
 );

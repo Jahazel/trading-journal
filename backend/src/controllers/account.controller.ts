@@ -77,10 +77,10 @@ export async function createAccount(
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    if (startingBalance < 0) {
+    if (startingBalance <= 0) {
       return res
         .status(400)
-        .json({ message: "Starting balance must be a positive value." });
+        .json({ message: "Starting balance must be greater than zero." });
     }
 
     if (type !== "personal" && type !== "funded") {
@@ -113,10 +113,10 @@ export async function updateAccount(
     const userId = req.userId!;
     const accountId = req.params.id;
 
-    if (startingBalance !== undefined && startingBalance < 0) {
+    if (startingBalance !== undefined && startingBalance <= 0) {
       return res
         .status(400)
-        .json({ message: "Starting balance must be a positive value." });
+        .json({ message: "Starting balance must be greater than zero." });
     }
 
     if (type !== undefined && type !== "personal" && type !== "funded") {
