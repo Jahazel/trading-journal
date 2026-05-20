@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import type { Request, Response } from "express";
 import Account from "../models/account.model.js";
 import TradeEntry from "../models/tradeEntry.model.js";
@@ -39,6 +40,10 @@ export async function getAccount(
 
     if (!accountId) {
       return res.status(400).json({ message: "Account ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(accountId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const account = await Account.findById(accountId);
@@ -123,6 +128,10 @@ export async function updateAccount(
       return res.status(400).json({ message: "Account ID is required." });
     }
 
+    if (!mongoose.isValidObjectId(accountId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
+    }
+
     const account = await Account.findById(accountId);
 
     if (!account) {
@@ -159,6 +168,10 @@ export async function deleteAccount(
 
     if (!accountId) {
       return res.status(400).json({ message: "Account ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(accountId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const account = await Account.findById(accountId);

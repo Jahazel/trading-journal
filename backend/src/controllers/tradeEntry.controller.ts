@@ -9,6 +9,7 @@ import type { ApiResponse } from "../types/common.types.js";
 import type { ErrorResponse } from "../types/common.types.js";
 import { handleServerError } from "../utils/handleError.js";
 import { sanitizeNotes } from "../utils/sanitizeHtml.js";
+import { validateImageUrls } from "../utils/validateImages.js";
 import type {
   TradeEntryParams,
   CreateTradeEntryBody,
@@ -44,6 +45,10 @@ export async function getTradeEntry(
 
     if (!tradeEntryId) {
       return res.status(400).json({ message: "Trade ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(tradeEntryId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const tradeEntry = await TradeEntry.findById(tradeEntryId);
@@ -113,6 +118,10 @@ export async function createTradeEntry(
         .json({ message: "You don't have permission to use this account." });
     }
 
+    if (images && !validateImageUrls(images)) {
+      return res.status(400).json({ message: "Invalid image URL." });
+    }
+
     const newTradeEntry = new TradeEntry({
       userId,
       accountId,
@@ -166,6 +175,10 @@ export async function updateTradeEntry(
       return res.status(400).json({ message: "Trade ID is required." });
     }
 
+    if (!mongoose.isValidObjectId(tradeId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
+    }
+
     const tradeEntry = await TradeEntry.findById(tradeId);
 
     if (!tradeEntry) {
@@ -208,7 +221,12 @@ export async function updateTradeEntry(
       direction ?? tradeEntry.direction,
     );
     if (notes !== undefined) tradeEntry.notes = sanitizeNotes(notes);
-    if (images !== undefined) tradeEntry.images = images;
+    if (images !== undefined) {
+      if (!validateImageUrls(images)) {
+        return res.status(400).json({ message: "Invalid image URL." });
+      }
+      tradeEntry.images = images;
+    }
 
     const savedTradeEntry = await tradeEntry.save();
 
@@ -228,6 +246,10 @@ export async function deleteTradeEntry(
 
     if (!tradeId) {
       return res.status(400).json({ message: "Trade ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(tradeId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const tradeEntry = await TradeEntry.findById(tradeId);

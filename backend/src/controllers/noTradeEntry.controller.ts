@@ -1,5 +1,5 @@
+import mongoose, { Types } from "mongoose";
 import type { Request, Response } from "express";
-import { Types } from "mongoose";
 import NoTradeEntry from "../models/noTradeEntry.model.js";
 import Account from "../models/account.model.js";
 import type { INoTradeEntry } from "../types/models.types.js";
@@ -11,6 +11,7 @@ import type {
 } from "../types/noTradeEntry.types.js";
 import { handleServerError } from "../utils/handleError.js";
 import { sanitizeNotes } from "../utils/sanitizeHtml.js";
+import { validateImageUrls } from "../utils/validateImages.js";
 
 type ErrorResponse = { message: string };
 
@@ -41,6 +42,10 @@ export async function getNoTradeEntry(
 
     if (!noTradeEntryId) {
       return res.status(400).json({ message: "Trade ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(noTradeEntryId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
@@ -79,6 +84,10 @@ export async function createNoTradeEntry(
         .json({ message: "You don't have permission to use this account." });
     }
 
+    if (images && !validateImageUrls(images)) {
+      return res.status(400).json({ message: "Invalid image URL." });
+    }
+
     const newNoTradeEntry = new NoTradeEntry({
       userId,
       accountId,
@@ -108,6 +117,10 @@ export async function updateNoTradeEntry(
       return res.status(400).json({ message: "Trade ID is required." });
     }
 
+    if (!mongoose.isValidObjectId(noTradeEntryId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
+    }
+
     const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
 
     if (!noTradeEntry) {
@@ -134,7 +147,12 @@ export async function updateNoTradeEntry(
     }
     if (notes !== undefined) noTradeEntry.notes = sanitizeNotes(notes);
     if (entryTime !== undefined) noTradeEntry.entryTime = new Date(entryTime);
-    if (images !== undefined) noTradeEntry.images = images;
+    if (images !== undefined) {
+      if (!validateImageUrls(images)) {
+        return res.status(400).json({ message: "Invalid image URL." });
+      }
+      noTradeEntry.images = images;
+    }
 
     const savedNoTradeEntry = await noTradeEntry.save();
 
@@ -154,6 +172,10 @@ export async function deleteNoTradeEntry(
 
     if (!noTradeEntryId) {
       return res.status(400).json({ message: "Trade ID is required." });
+    }
+
+    if (!mongoose.isValidObjectId(noTradeEntryId)) {
+      return res.status(400).json({ message: "Invalid ID format." });
     }
 
     const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
