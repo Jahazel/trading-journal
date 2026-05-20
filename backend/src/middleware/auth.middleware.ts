@@ -12,6 +12,7 @@ export default async function authMiddleware(
     const secret = process.env.JWT_SECRET;
 
     if (!token) {
+      console.warn(`[auth] missing token on ${req.method} ${req.path}`);
       return res
         .status(401)
         .json({ message: "Access denied. No token provided." });
@@ -30,6 +31,7 @@ export default async function authMiddleware(
 
     next();
   } catch {
+    console.warn(`[auth] invalid or expired token from IP: ${req.ip}`);
     return res.status(401).json({ message: "Invalid or expired token." });
   }
 }

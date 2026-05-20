@@ -55,6 +55,7 @@ export async function getNoTradeEntry(
     }
 
     if (noTradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied access to no-trade entry ${noTradeEntryId}`);
       return res
         .status(403)
         .json({ message: "You don't have permission to view this entry." });
@@ -128,6 +129,7 @@ export async function updateNoTradeEntry(
     }
 
     if (noTradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied update on no-trade entry ${noTradeEntryId}`);
       return res
         .status(403)
         .json({ message: "You don't have permission to update this entry." });
@@ -185,6 +187,7 @@ export async function deleteNoTradeEntry(
     }
 
     if (noTradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied delete on no-trade entry ${noTradeEntryId}`);
       return res
         .status(403)
         .json({ message: "You don't have permission to delete this entry." });

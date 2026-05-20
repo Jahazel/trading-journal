@@ -24,6 +24,22 @@ const authLimiter = rateLimit({
   message: { message: "Too many attempts. Please try again in 15 minutes." },
 });
 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests. Please try again later." },
+});
+
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Upload limit reached. Please try again later." },
+});
+
 app.use(helmet());
 app.use(express.json({ limit: "50kb" }));
 app.use(cookieParser());
@@ -34,9 +50,9 @@ app.use(
   }),
 );
 app.use("/api/auth", authLimiter, authRoutes);
-app.use("/api/trades-entry", tradeEntryRoutes);
-app.use("/api/no-trade-entries", noTradeEntryRoutes);
-app.use("/api/accounts", accountRoutes);
-app.use("/api/upload", uploadRoutes);
+app.use("/api/trades-entry", apiLimiter, tradeEntryRoutes);
+app.use("/api/no-trade-entries", apiLimiter, noTradeEntryRoutes);
+app.use("/api/accounts", apiLimiter, accountRoutes);
+app.use("/api/upload", uploadLimiter, uploadRoutes);
 
 export default app;

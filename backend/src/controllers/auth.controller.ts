@@ -101,6 +101,7 @@ export async function login(
     const isMatch = await bcrypt.compare(password, hashToCompare);
 
     if (!existingUser || !isMatch) {
+      console.warn(`[auth] failed login attempt for email: ${normalizedEmail}`);
       return res.status(400).json({ message: "Invalid email or password." });
     }
 

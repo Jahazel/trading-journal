@@ -53,6 +53,7 @@ export async function getAccount(
     }
 
     if (account.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied access to account ${accountId}`);
       return res.status(403).json({
         message: "You don't have permission to view this account.",
       });
@@ -139,6 +140,7 @@ export async function updateAccount(
     }
 
     if (account.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied update on account ${accountId}`);
       return res.status(403).json({
         message: "You don't have permission to update this account.",
       });
@@ -181,6 +183,7 @@ export async function deleteAccount(
     }
 
     if (account.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied delete on account ${accountId}`);
       return res.status(403).json({
         message: "You don't have permission to delete this account.",
       });

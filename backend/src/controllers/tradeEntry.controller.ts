@@ -58,6 +58,7 @@ export async function getTradeEntry(
     }
 
     if (tradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied access to trade entry ${tradeEntryId}`);
       return res.status(403).json({
         message: "You don't have permission to view this trade entry.",
       });
@@ -135,7 +136,7 @@ export async function createTradeEntry(
       target,
       entryTime,
       exitTime,
-      pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction),
+      pnl: getPnl(contract, contracts, exitPrice, entryPrice, direction, result),
       notes: sanitizeNotes(notes),
       images: images ?? [],
     });
@@ -186,6 +187,7 @@ export async function updateTradeEntry(
     }
 
     if (tradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied update on trade entry ${tradeId}`);
       return res.status(403).json({
         message: "You don't have permission to update this trade entry.",
       });
@@ -219,6 +221,7 @@ export async function updateTradeEntry(
       exitPrice ?? tradeEntry.exitPrice,
       entryPrice ?? tradeEntry.entryPrice,
       direction ?? tradeEntry.direction,
+      result ?? tradeEntry.result,
     );
     if (notes !== undefined) tradeEntry.notes = sanitizeNotes(notes);
     if (images !== undefined) {
@@ -259,6 +262,7 @@ export async function deleteTradeEntry(
     }
 
     if (tradeEntry.userId.toString() !== userId) {
+      console.warn(`[authz] user ${userId} denied delete on trade entry ${tradeId}`);
       return res.status(403).json({
         message: "You don't have permission to delete this trade entry.",
       });
