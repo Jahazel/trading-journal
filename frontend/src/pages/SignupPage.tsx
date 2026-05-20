@@ -141,7 +141,7 @@ const SignupPage = () => {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
-                      placeholder="At least 6 characters"
+                      placeholder="At least 8 characters"
                       aria-describedby={
                         errors.password ? "password-error" : undefined
                       }
@@ -150,8 +150,8 @@ const SignupPage = () => {
                       {...register("password", {
                         required: "Password is required.",
                         minLength: {
-                          value: 6,
-                          message: "Password must be at least 6 characters.",
+                          value: 8,
+                          message: "Password must be at least 8 characters.",
                         },
                       })}
                     />

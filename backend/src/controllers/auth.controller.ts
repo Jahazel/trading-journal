@@ -6,6 +6,7 @@ import User from "../models/user.model.js";
 import type { IUser } from "../types/models.types.js";
 import type { ApiResponse } from "../types/common.types.js";
 import { handleServerError } from "../utils/handleError.js";
+import { logger } from "../utils/logger.js";
 
 const DUMMY_HASH =
   "$2b$12$xxxxxxxxxxxxxxxxxxxxxxuOWdGxkqtjsAl0z0IfAh1T1TU68vKu";
@@ -57,7 +58,7 @@ export async function signUp(
       }
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = new User({
       username: username,
@@ -101,7 +102,7 @@ export async function login(
     const isMatch = await bcrypt.compare(password, hashToCompare);
 
     if (!existingUser || !isMatch) {
-      console.warn(`[auth] failed login attempt for email: ${normalizedEmail}`);
+      logger.warn(`[auth] failed login attempt for email: ${normalizedEmail}`);
       return res.status(400).json({ message: "Invalid email or password." });
     }
 

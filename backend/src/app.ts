@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "./utils/logger.js";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -14,7 +15,7 @@ const app = express();
 const rawOrigins = process.env.FRONTEND_URL;
 
 if (!rawOrigins && process.env.NODE_ENV === "production") {
-  console.error("FATAL: FRONTEND_URL is not set in production.");
+  logger.error("FATAL: FRONTEND_URL is not set in production.");
   process.exit(1);
 }
 

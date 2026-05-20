@@ -23,6 +23,7 @@ export async function getNoTradeEntries(
     const userId = req.userId!;
 
     const noTradeEntries = await NoTradeEntry.find({ userId })
+      .select("entryTime accountId createdAt")
       .sort({ createdAt: -1 })
       .limit(200);
 
@@ -48,17 +49,10 @@ export async function getNoTradeEntry(
       return res.status(400).json({ message: "Invalid ID format." });
     }
 
-    const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
+    const noTradeEntry = await NoTradeEntry.findOne({ _id: noTradeEntryId, userId });
 
     if (!noTradeEntry) {
       return res.status(404).json({ message: "Entry not found." });
-    }
-
-    if (noTradeEntry.userId.toString() !== userId) {
-      console.warn(`[authz] user ${userId} denied access to no-trade entry ${noTradeEntryId}`);
-      return res
-        .status(403)
-        .json({ message: "You don't have permission to view this entry." });
     }
 
     return res.status(200).json(noTradeEntry);
@@ -75,14 +69,9 @@ export async function createNoTradeEntry(
     const userId = req.userId!;
     const { accountId, entryTime, notes, images } = req.body;
 
-    const account = await Account.findById(accountId);
+    const account = await Account.findOne({ _id: accountId, userId });
     if (!account) {
       return res.status(404).json({ message: "Account not found." });
-    }
-    if (account.userId.toString() !== userId) {
-      return res
-        .status(403)
-        .json({ message: "You don't have permission to use this account." });
     }
 
     if (images && !validateImageUrls(images)) {
@@ -122,28 +111,16 @@ export async function updateNoTradeEntry(
       return res.status(400).json({ message: "Invalid ID format." });
     }
 
-    const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
+    const noTradeEntry = await NoTradeEntry.findOne({ _id: noTradeEntryId, userId });
 
     if (!noTradeEntry) {
       return res.status(404).json({ message: "Entry not found." });
     }
 
-    if (noTradeEntry.userId.toString() !== userId) {
-      console.warn(`[authz] user ${userId} denied update on no-trade entry ${noTradeEntryId}`);
-      return res
-        .status(403)
-        .json({ message: "You don't have permission to update this entry." });
-    }
-
     if (accountId !== undefined) {
-      const account = await Account.findById(accountId);
+      const account = await Account.findOne({ _id: accountId, userId });
       if (!account) {
         return res.status(404).json({ message: "Account not found." });
-      }
-      if (account.userId.toString() !== userId) {
-        return res
-          .status(403)
-          .json({ message: "You don't have permission to use this account." });
       }
       noTradeEntry.accountId = new Types.ObjectId(accountId);
     }
@@ -180,17 +157,10 @@ export async function deleteNoTradeEntry(
       return res.status(400).json({ message: "Invalid ID format." });
     }
 
-    const noTradeEntry = await NoTradeEntry.findById(noTradeEntryId);
+    const noTradeEntry = await NoTradeEntry.findOne({ _id: noTradeEntryId, userId });
 
     if (!noTradeEntry) {
       return res.status(404).json({ message: "Entry not found." });
-    }
-
-    if (noTradeEntry.userId.toString() !== userId) {
-      console.warn(`[authz] user ${userId} denied delete on no-trade entry ${noTradeEntryId}`);
-      return res
-        .status(403)
-        .json({ message: "You don't have permission to delete this entry." });
     }
 
     await NoTradeEntry.findByIdAndDelete(noTradeEntryId);
