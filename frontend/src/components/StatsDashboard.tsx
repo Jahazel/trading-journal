@@ -104,26 +104,30 @@ const StatsDashboard = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState("");
 
+  const { data: accounts = [], isLoading: accountsLoading } = useQuery({
+    queryKey: ["allAccounts"],
+    queryFn: getAccounts,
+  });
+
+  const effectiveAccountId = selectedAccountId || accounts[0]?._id;
+
   const {
     data: stats,
     isLoading: statsLoading,
     error,
   } = useQuery<Stats>({
-    queryKey: ["stats"],
-    queryFn: getStats,
+    queryKey: ["stats", effectiveAccountId],
+    queryFn: () => getStats(effectiveAccountId),
+    enabled: !!effectiveAccountId,
   });
 
   const { data: trades = [], isLoading: tradesLoading } = useQuery({
-    queryKey: ["trades"],
-    queryFn: getTradeEntries,
+    queryKey: ["trades", effectiveAccountId],
+    queryFn: () => getTradeEntries(effectiveAccountId),
+    enabled: !!effectiveAccountId,
   });
 
-  const { data: accounts = [] } = useQuery({
-    queryKey: ["allAccounts"],
-    queryFn: getAccounts,
-  });
-
-  const isLoading = statsLoading || tradesLoading;
+  const isLoading = accountsLoading || statsLoading || tradesLoading;
 
   const tradeCount = trades.length;
   const wins = trades.filter((t) => t.result === "Win").length;
