@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTradeEntries, getNoTradeEntries, getAccounts } from "../api/api";
+import { queryKeys } from "../api/queryKeys";
 import AccountModal from "../components/AccountModal";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -295,12 +296,12 @@ const JournalPage = () => {
   }, []);
 
   const { data: accounts = [], isLoading: accountsLoading } = useQuery({
-    queryKey: ["allAccounts"],
+    queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
   });
 
   const { data: allEntries = [], isLoading } = useQuery<SidebarEntry[]>({
-    queryKey: ["allEntries"],
+    queryKey: queryKeys.allEntries(),
     queryFn: async () => {
       const [tradeEntries, noTradeEntries] = await Promise.all([
         getTradeEntries(),

@@ -1,5 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { createTradeEntry } from "../api/api";
+import { queryKeys } from "../api/queryKeys";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { CreateTradeEntryData } from "../types/tradeEntry.types";
@@ -47,8 +48,8 @@ const NewEntry = () => {
         console.error("No ID returned from the server.");
         return;
       }
-      queryClient.setQueryData(["entry", data._id], data);
-      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      queryClient.setQueryData(queryKeys.tradeEntry(data._id), data);
+      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
       navigate(`/dashboard/trade-entries/${data._id}`);
       reset();
     },
@@ -62,7 +63,7 @@ const NewEntry = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["allAccounts"],
+    queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
   });
 

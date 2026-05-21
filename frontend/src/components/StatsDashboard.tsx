@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStats, getTradeEntries, getAccounts } from "../api/api";
+import { queryKeys } from "../api/queryKeys";
 import { Stats, TradeEntry } from "../types/tradeEntry.types";
 import TradeCalendar from "./TradeCalendar";
 import { Link } from "react-router-dom";
@@ -105,7 +106,7 @@ const StatsDashboard = () => {
   const [selectedAccountId, setSelectedAccountId] = useState("");
 
   const { data: accounts = [], isLoading: accountsLoading } = useQuery({
-    queryKey: ["allAccounts"],
+    queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
   });
 
@@ -116,13 +117,13 @@ const StatsDashboard = () => {
     isLoading: statsLoading,
     error,
   } = useQuery<Stats>({
-    queryKey: ["stats", effectiveAccountId],
+    queryKey: queryKeys.stats(effectiveAccountId),
     queryFn: () => getStats(effectiveAccountId),
     enabled: !!effectiveAccountId,
   });
 
   const { data: trades = [], isLoading: tradesLoading } = useQuery({
-    queryKey: ["trades", effectiveAccountId],
+    queryKey: queryKeys.tradeEntries(effectiveAccountId),
     queryFn: () => getTradeEntries(effectiveAccountId),
     enabled: !!effectiveAccountId,
   });

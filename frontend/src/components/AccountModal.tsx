@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createAccount } from "../api/api";
+import { queryKeys } from "../api/queryKeys";
 import { Account, CreateAccountData } from "../types/account.types";
 import {
   formInputStyles as inputStyles,
@@ -23,7 +24,7 @@ const AccountModal = ({ onClose, onSuccess }: AccountModalProps) => {
   const mutation = useMutation({
     mutationFn: createAccount,
     onSuccess: async (account) => {
-      await queryClient.invalidateQueries({ queryKey: ["allAccounts"] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.accounts() });
       onSuccess?.(account);
       onClose();
     },

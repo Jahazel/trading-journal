@@ -4,6 +4,7 @@ import {
   getTradeEntry,
   updateTradeEntry,
 } from "../api/api.js";
+import { queryKeys } from "../api/queryKeys";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import TextEditor from "./TextEditor.js";
@@ -51,7 +52,7 @@ const TradeDetail = () => {
     isLoading,
     error,
   } = useQuery<TradeEntry>({
-    queryKey: ["entry", id],
+    queryKey: queryKeys.tradeEntry(id!),
     queryFn: () => {
       if (!id) throw new Error("No id provided");
       return getTradeEntry(id);
@@ -60,15 +61,15 @@ const TradeDetail = () => {
   });
 
   const { data: accounts } = useQuery({
-    queryKey: ["allAccounts"],
+    queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
   });
 
   const updateTradeMutation = useMutation({
     mutationFn: updateTradeEntry,
     onSuccess: (data) => {
-      queryClient.setQueryData(["entry", id], data);
-      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      queryClient.setQueryData(queryKeys.tradeEntry(id!), data);
+      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
       setSaveStatus("saved");
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
@@ -81,7 +82,7 @@ const TradeDetail = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteTradeEntry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
       navigate("/dashboard");
     },
     onError: () => {
