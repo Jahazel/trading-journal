@@ -201,7 +201,7 @@ const NewNoTradeEntry = () => {
             </div>
             <div>
               <label className={labelStyles}>Images</label>
-              <ImageUpload onChange={setUploadedImages} maxImages={5} />
+              <ImageUpload onChange={setUploadedImages} maxImages={10} />
             </div>
           </div>
 

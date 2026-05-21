@@ -386,7 +386,7 @@ const TradeDetail = () => {
               <ImageUpload
                 key={`img-${id}`}
                 initialUrls={entry.images ?? []}
-                maxImages={5}
+                maxImages={10}
                 onChange={(urls) => {
                   if (!id) return;
                   updateTradeMutation.mutate({ id, images: urls });
