@@ -5,3 +5,6 @@ node_modules/
 CLAUDE.md
 .impeccable
 dist
+audits/
+frontend/test-results/
+frontend/playwright-report/

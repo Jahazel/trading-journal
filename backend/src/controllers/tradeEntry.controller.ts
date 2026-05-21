@@ -24,8 +24,12 @@ export async function getTradeEntries(
 ) {
   try {
     const userId = req.userId!;
+    const { accountId } = req.query as { accountId?: string };
 
-    const tradeEntries = await TradeEntry.find({ userId })
+    const filter: Record<string, unknown> = { userId };
+    if (accountId) filter.accountId = new Types.ObjectId(accountId);
+
+    const tradeEntries = await TradeEntry.find(filter)
       .select("result contract direction contracts pnl entryTime exitTime accountId createdAt")
       .sort({ createdAt: -1 })
       .limit(200);
@@ -184,41 +188,51 @@ export async function updateTradeEntry(
       if (!account) {
         return res.status(404).json({ message: "Account not found." });
       }
-      tradeEntry.accountId = new Types.ObjectId(accountId);
     }
-    if (result !== undefined) tradeEntry.result = result;
-    if (contract !== undefined) tradeEntry.contract = contract;
-    if (direction !== undefined) tradeEntry.direction = direction;
-    if (contracts !== undefined) tradeEntry.contracts = contracts;
-    if (entryPrice !== undefined) tradeEntry.entryPrice = entryPrice;
-    if (exitPrice !== undefined) tradeEntry.exitPrice = exitPrice;
-    if (stopLoss !== undefined) tradeEntry.stopLoss = stopLoss;
-    if (target !== undefined) tradeEntry.target = target;
-    if (entryTime !== undefined) tradeEntry.entryTime = new Date(entryTime);
-    if (exitTime !== undefined) tradeEntry.exitTime = new Date(exitTime);
-    tradeEntry.pnl = getPnl(
-      contract ?? tradeEntry.contract,
-      contracts ?? tradeEntry.contracts,
-      exitPrice ?? tradeEntry.exitPrice,
-      entryPrice ?? tradeEntry.entryPrice,
-      direction ?? tradeEntry.direction,
-      result ?? tradeEntry.result,
-    );
+
+    if (images !== undefined && !validateImageUrls(images)) {
+      return res.status(400).json({ message: "Invalid image URL." });
+    }
+
     const effectiveEntry = entryTime ? new Date(entryTime) : tradeEntry.entryTime;
     const effectiveExit = exitTime ? new Date(exitTime) : tradeEntry.exitTime;
     if (effectiveExit < effectiveEntry) {
       return res.status(400).json({ message: "Exit time must be after entry time." });
     }
 
-    if (notes !== undefined) tradeEntry.notes = sanitizeNotes(notes);
-    if (images !== undefined) {
-      if (!validateImageUrls(images)) {
-        return res.status(400).json({ message: "Invalid image URL." });
-      }
-      tradeEntry.images = images;
-    }
+    const update: Record<string, unknown> = {
+      pnl: getPnl(
+        contract ?? tradeEntry.contract,
+        contracts ?? tradeEntry.contracts,
+        exitPrice ?? tradeEntry.exitPrice,
+        entryPrice ?? tradeEntry.entryPrice,
+        direction ?? tradeEntry.direction,
+        result ?? tradeEntry.result,
+      ),
+    };
+    if (accountId !== undefined) update.accountId = new Types.ObjectId(accountId);
+    if (result !== undefined) update.result = result;
+    if (contract !== undefined) update.contract = contract;
+    if (direction !== undefined) update.direction = direction;
+    if (contracts !== undefined) update.contracts = contracts;
+    if (entryPrice !== undefined) update.entryPrice = entryPrice;
+    if (exitPrice !== undefined) update.exitPrice = exitPrice;
+    if (stopLoss !== undefined) update.stopLoss = stopLoss;
+    if (target !== undefined) update.target = target;
+    if (entryTime !== undefined) update.entryTime = new Date(entryTime);
+    if (exitTime !== undefined) update.exitTime = new Date(exitTime);
+    if (notes !== undefined) update.notes = sanitizeNotes(notes);
+    if (images !== undefined) update.images = images;
 
-    const savedTradeEntry = await tradeEntry.save();
+    const savedTradeEntry = await TradeEntry.findOneAndUpdate(
+      { _id: tradeId, userId },
+      { $set: update },
+      { new: true, runValidators: true },
+    );
+
+    if (!savedTradeEntry) {
+      return res.status(404).json({ message: "Trade entry not found." });
+    }
 
     return res.status(200).json(savedTradeEntry);
   } catch (error: unknown) {
@@ -264,11 +278,15 @@ export async function getStats(
 ) {
   try {
     const userId = req.userId!;
+    const { accountId } = req.query as { accountId?: string };
 
     const objectId = new mongoose.Types.ObjectId(userId);
 
+    const match: Record<string, unknown> = { userId: objectId };
+    if (accountId) match.accountId = new Types.ObjectId(accountId);
+
     const stats = (await TradeEntry.aggregate([
-      { $match: { userId: objectId } },
+      { $match: match },
       {
         $group: {
           _id: null,

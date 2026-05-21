@@ -54,9 +54,11 @@ export const logoutUser = async (): Promise<void> => {
   }
 };
 
-export const getTradeEntries = async (): Promise<TradeEntry[]> => {
+export const getTradeEntries = async (accountId?: string): Promise<TradeEntry[]> => {
   try {
-    const response = await api.get<TradeEntry[]>("/trades-entry");
+    const response = await api.get<TradeEntry[]>("/trades-entry", {
+      params: accountId ? { accountId } : undefined,
+    });
 
     return response.data;
   } catch (error) {
@@ -114,9 +116,11 @@ export const deleteTradeEntry = async (id: string): Promise<Message> => {
   }
 };
 
-export const getStats = async (): Promise<Stats> => {
+export const getStats = async (accountId?: string): Promise<Stats> => {
   try {
-    const response = await api.get<Stats>(`/trades-entry/stats`);
+    const response = await api.get<Stats>(`/trades-entry/stats`, {
+      params: accountId ? { accountId } : undefined,
+    });
 
     return response.data;
   } catch (error) {
