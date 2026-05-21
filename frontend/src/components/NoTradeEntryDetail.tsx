@@ -4,6 +4,7 @@ import {
   getNoTradeEntry,
   updateNoTradeEntry,
 } from "../api/api.js";
+import { queryKeys } from "../api/queryKeys";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from "react";
 import TextEditor from "./TextEditor.js";
@@ -51,7 +52,7 @@ const NoTradeEntryDetail = () => {
     isLoading,
     error,
   } = useQuery<NoTradeEntry>({
-    queryKey: ["noTradeEntry", id],
+    queryKey: queryKeys.noTradeEntry(id!),
     queryFn: () => {
       if (!id) throw new Error("No id provided");
       return getNoTradeEntry(id);
@@ -60,15 +61,15 @@ const NoTradeEntryDetail = () => {
   });
 
   const { data: accounts } = useQuery({
-    queryKey: ["allAccounts"],
+    queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
   });
 
   const updateMutation = useMutation({
     mutationFn: updateNoTradeEntry,
     onSuccess: (data) => {
-      queryClient.setQueryData(["noTradeEntry", id], data);
-      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      queryClient.setQueryData(queryKeys.noTradeEntry(id!), data);
+      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
       setSaveStatus("saved");
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
@@ -81,7 +82,7 @@ const NoTradeEntryDetail = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteNoTradeEntry,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allEntries"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
       navigate("/dashboard");
     },
     onError: () => {
