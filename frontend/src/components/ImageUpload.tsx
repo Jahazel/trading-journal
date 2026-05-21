@@ -73,11 +73,7 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
 
       const newItem: ImageItem = { id, preview, uploading: true };
 
-      setItems((prev) => {
-        const updated = [...prev, newItem];
-        notifyParent(updated);
-        return updated;
-      });
+      setItems((prev) => [...prev, newItem]);
 
       uploadImage(file)
         .then((url) => {
