@@ -12,6 +12,8 @@ import uploadRoutes from "./routes/upload.routes.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const rawOrigins = process.env.FRONTEND_URL;
 
 if (!rawOrigins && process.env.NODE_ENV === "production") {
