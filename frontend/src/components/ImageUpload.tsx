@@ -77,13 +77,14 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
 
       uploadImage(file)
         .then((url) => {
+          let updated: ImageItem[] = [];
           setItems((prev) => {
-            const updated = prev.map((i) =>
+            updated = prev.map((i) =>
               i.id === id ? { ...i, url, uploading: false } : i,
             );
-            notifyParent(updated);
             return updated;
           });
+          notifyParent(updated);
         })
         .catch(() => {
           setItems((prev) =>
@@ -98,11 +99,9 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
   };
 
   const remove = (id: string) => {
-    setItems((prev) => {
-      const updated = prev.filter((i) => i.id !== id);
-      notifyParent(updated);
-      return updated;
-    });
+    const updated = items.filter((i) => i.id !== id);
+    setItems(updated);
+    notifyParent(updated);
   };
 
   const canAddMore = items.length < maxImages;
