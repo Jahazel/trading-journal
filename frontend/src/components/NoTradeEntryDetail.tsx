@@ -1,12 +1,11 @@
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   deleteNoTradeEntry,
   getNoTradeEntry,
   updateNoTradeEntry,
 } from "../api/api.js";
 import { queryKeys } from "../api/queryKeys";
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from "react";
+import { useParams } from "react-router-dom";
 import TextEditor from "./TextEditor.js";
 import ImageUpload from "./ImageUpload";
 import { NoTradeEntry } from "../types/noTradeEntry.types.js";
@@ -20,77 +19,43 @@ import {
 import Select from "./Select";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
-
-const SectionHeader = ({ label }: { label: string }) => (
-  <div className="flex items-center gap-3 mb-4">
-    <span className="text-xs font-medium text-ink-muted tracking-[0.01em]">{label}</span>
-    <div className="flex-1 h-px bg-border" />
-  </div>
-);
+import { useEntryDetail } from "../hooks/useEntryDetail";
+import SectionHeader from "./SectionHeader";
 
 const NoTradeEntryDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeField, setActiveField] = useState<string | null>(null);
-  const [tempValue, setTempValue] = useState("");
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [deleteConfirming, setDeleteConfirming] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    };
-  }, []);
 
   const {
-    data: entry,
+    entry,
     isLoading,
     error,
-  } = useQuery<NoTradeEntry>({
+    saveStatus,
+    deleteConfirming,
+    deleteError,
+    handleSave,
+    handleDeleteClick,
+    handleDeleteCancel,
+    handleDeleteConfirm,
+    activate,
+    activeField,
+    sharedInputProps,
+    deleteMutation,
+    updateMutation,
+  } = useEntryDetail<NoTradeEntry>({
+    id: id!,
     queryKey: queryKeys.noTradeEntry(id!),
     queryFn: () => {
       if (!id) throw new Error("No id provided");
       return getNoTradeEntry(id);
     },
-    enabled: !!id,
+    updateFn: (payload) =>
+      updateNoTradeEntry(payload as Parameters<typeof updateNoTradeEntry>[0]),
+    deleteFn: deleteNoTradeEntry,
   });
 
   const { data: accounts } = useQuery({
     queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: updateNoTradeEntry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.noTradeEntry(id!), data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
-      setSaveStatus("saved");
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
-    },
-    onError: () => {
-      setSaveStatus("error");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteNoTradeEntry,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
-      navigate("/dashboard");
-    },
-    onError: () => {
-      setDeleteConfirming(false);
-      setDeleteError("Could not delete. Try again.");
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => setDeleteError(null), 4000);
-    },
   });
 
   if (isLoading) return <LoadingSpinner message="Loading entry details..." />;
@@ -99,53 +64,6 @@ const NoTradeEntryDetail = () => {
 
   const { accountId, entryTime, notes } = entry;
   const formattedDate = entryTime && formatDateTime(entryTime);
-
-  const handleSave = (value = tempValue, field = activeField) => {
-    if (field) {
-      if (!id) throw new Error("No id provided");
-      updateMutation.mutate({ id, [field]: value });
-      setActiveField(null);
-      setTempValue("");
-    }
-  };
-
-  const handleDeleteClick = () => {
-    setDeleteConfirming(true);
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    deleteTimerRef.current = setTimeout(() => setDeleteConfirming(false), 4000);
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteConfirming(false);
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (!id) return;
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    deleteMutation.mutate(id);
-  };
-
-  const activate = (field: string, value: string) => {
-    setActiveField(field);
-    setTempValue(value);
-  };
-
-  const sharedInputProps = {
-    onBlur: () => handleSave(),
-    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") handleSave();
-      if (e.key === "Escape") {
-        setActiveField(null);
-        setTempValue("");
-      }
-    },
-    autoFocus: true,
-    onChange: (e: ChangeEvent<HTMLInputElement>) => {
-      setTempValue(e.target.value);
-    },
-    value: tempValue,
-  };
 
   return (
     <div className="px-4 py-8 sm:px-8">
