@@ -1,12 +1,11 @@
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   deleteTradeEntry,
   getTradeEntry,
   updateTradeEntry,
 } from "../api/api.js";
 import { queryKeys } from "../api/queryKeys";
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
+import { useParams } from "react-router-dom";
 import TextEditor from "./TextEditor.js";
 import ImageUpload from "./ImageUpload";
 import { TradeEntry } from "../types/tradeEntry.types.js";
@@ -20,77 +19,50 @@ import {
 import Select from "./Select";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorState from "./ErrorState";
+import { useEntryDetail } from "../hooks/useEntryDetail";
+import SectionHeader from "./SectionHeader";
 
-const SectionHeader = ({ label }: { label: string }) => (
-  <div className="flex items-center gap-3 mb-4">
-    <span className="text-xs font-medium text-ink-muted tracking-[0.01em]">{label}</span>
-    <div className="flex-1 h-px bg-border" />
-  </div>
-);
+const NUMERIC_FIELDS = ["contracts", "entryPrice", "exitPrice", "stopLoss", "target"];
 
 const TradeDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeField, setActiveField] = useState<string | null>(null);
-  const [tempValue, setTempValue] = useState<string | number>("");
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [deleteConfirming, setDeleteConfirming] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    };
-  }, []);
 
   const {
-    data: entry,
+    entry,
     isLoading,
     error,
-  } = useQuery<TradeEntry>({
+    saveStatus,
+    deleteConfirming,
+    deleteError,
+    handleSave,
+    handleDeleteClick,
+    handleDeleteCancel,
+    handleDeleteConfirm,
+    activate,
+    activeField,
+    sharedInputProps,
+    deleteMutation,
+    updateMutation,
+  } = useEntryDetail<TradeEntry>({
+    id: id!,
     queryKey: queryKeys.tradeEntry(id!),
     queryFn: () => {
       if (!id) throw new Error("No id provided");
       return getTradeEntry(id);
     },
-    enabled: !!id,
+    updateFn: (payload) => {
+      const coerced: Record<string, unknown> = { ...payload };
+      for (const k of NUMERIC_FIELDS) {
+        if (k in coerced) coerced[k] = Number(coerced[k]);
+      }
+      return updateTradeEntry(coerced as Parameters<typeof updateTradeEntry>[0]);
+    },
+    deleteFn: deleteTradeEntry,
   });
 
   const { data: accounts } = useQuery({
     queryKey: queryKeys.accounts(),
     queryFn: getAccounts,
-  });
-
-  const updateTradeMutation = useMutation({
-    mutationFn: updateTradeEntry,
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKeys.tradeEntry(id!), data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
-      setSaveStatus("saved");
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
-    },
-    onError: () => {
-      setSaveStatus("error");
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteTradeEntry,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.allEntries() });
-      navigate("/dashboard");
-    },
-    onError: () => {
-      setDeleteConfirming(false);
-      setDeleteError("Could not delete. Try again.");
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => setDeleteError(null), 4000);
-    },
   });
 
   if (isLoading) return <LoadingSpinner message="Loading trade details..." />;
@@ -115,63 +87,6 @@ const TradeDetail = () => {
 
   const formattedEntry = entryTime && formatDateTime(entryTime);
   const formattedExit = exitTime && formatDateTime(exitTime);
-
-  const handleSave = (value = tempValue, field = activeField): void => {
-    if (field) {
-      if (!id) throw new Error("No id provided");
-      let finalValue = value;
-      if (
-        field === "contracts" ||
-        field === "entryPrice" ||
-        field === "exitPrice" ||
-        field === "stopLoss" ||
-        field === "target"
-      ) {
-        finalValue = Number(value);
-      }
-      updateTradeMutation.mutate({ id, [field]: finalValue });
-      setActiveField(null);
-      setTempValue("");
-    }
-  };
-
-  const handleDeleteClick = () => {
-    setDeleteConfirming(true);
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    deleteTimerRef.current = setTimeout(() => setDeleteConfirming(false), 4000);
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteConfirming(false);
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (!id) return;
-    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-    deleteMutation.mutate(id);
-  };
-
-  const activate = (field: string, value: string | number) => {
-    setActiveField(field);
-    setTempValue(value);
-  };
-
-  const sharedInputProps = {
-    onBlur: () => handleSave(),
-    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") handleSave();
-      if (e.key === "Escape") {
-        setActiveField(null);
-        setTempValue("");
-      }
-    },
-    autoFocus: true,
-    onChange: (e: ChangeEvent<HTMLInputElement>) => {
-      setTempValue(e.target.value);
-    },
-    value: tempValue,
-  };
 
   return (
     <div className="px-4 py-8 sm:px-8">
@@ -390,7 +305,7 @@ const TradeDetail = () => {
                 maxImages={10}
                 onChange={(urls) => {
                   if (!id) return;
-                  updateTradeMutation.mutate({ id, images: urls });
+                  updateMutation.mutate({ id, images: urls });
                 }}
               />
             </div>

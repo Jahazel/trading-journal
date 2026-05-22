@@ -28,6 +28,17 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return; }
+    const urls = items.filter((i) => i.url && !i.uploading && !i.error).map((i) => i.url!);
+    onChangeRef.current(urls);
+    return () => { mountedRef.current = false; };
+  }, [items]);
+
   const viewableItems = items.filter((i) => !i.uploading && !i.error);
 
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -55,10 +66,6 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxIndex, closeLightbox, goNext, goPrev]);
 
-  const notifyParent = (updated: ImageItem[]) => {
-    onChange(updated.filter((i) => i.url).map((i) => i.url!));
-  };
-
   const processFiles = (files: FileList | null) => {
     if (!files) return;
 
@@ -77,13 +84,9 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
 
       uploadImage(file)
         .then((url) => {
-          setItems((prev) => {
-            const updated = prev.map((i) =>
-              i.id === id ? { ...i, url, uploading: false } : i,
-            );
-            notifyParent(updated);
-            return updated;
-          });
+          setItems((prev) =>
+            prev.map((i) => i.id === id ? { ...i, url, uploading: false } : i),
+          );
         })
         .catch(() => {
           setItems((prev) =>
@@ -98,11 +101,7 @@ const ImageUpload = ({ onChange, initialUrls, maxImages = 10 }: ImageUploadProps
   };
 
   const remove = (id: string) => {
-    setItems((prev) => {
-      const updated = prev.filter((i) => i.id !== id);
-      notifyParent(updated);
-      return updated;
-    });
+    setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   const canAddMore = items.length < maxImages;
